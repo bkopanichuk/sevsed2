@@ -16,6 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.contracts.models.payment_model import ImportPayment
 from apps.l_core.api.base.serializers import BaseOrganizationViewSetMixing
 from ..serializers.contract_serializers import ContractSerializer, RegisterAccrualSerializer, RegisterPaymentSerializer, \
     RegisterActSerializer, StagePropertySerializer, ContractSubscriptionSerializer, ContractProductsSerializer, \
@@ -23,13 +24,11 @@ from ..serializers.contract_serializers import ContractSerializer, RegisterAccru
     UploadCilentBanklSerializer, ConvertCilentBanklSerializer
 from ...models.contract_model import Contract, RegisterPayment, StageProperty, Coordination, ContractSubscription, \
     ContractProducts
-from apps.contracts.models.payment_model import ImportPayment
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 MEDIA_URL = settings.MEDIA_URL
 
 
-# ViewSets define the view behavior.
 class ContractSerializerViewSet(XLSXFileMixin, BaseOrganizationViewSetMixing):
     """Договори"""
     permit_list_expands = ['contractor_data']
@@ -54,6 +53,7 @@ class ContractSerializerViewSet(XLSXFileMixin, BaseOrganizationViewSetMixing):
                        'subject_contract', 'copy_contract', 'contractor', 'contractor_name', 'price_contract',
                        'contract_time', 'expiration_date')
 
+
 class RegisterAccrualViewSet(BaseOrganizationViewSetMixing):
     """Реєстр нарахувань за договорами (рахунки)"""
     permit_list_expands = ['contract']
@@ -68,7 +68,6 @@ class RegisterAccrualViewSet(BaseOrganizationViewSetMixing):
     ordering = ['date_accrual', 'date_sending_doc']
 
 
-
 class RegisterPaymentViewSet(BaseOrganizationViewSetMixing):
     """Реєстр платежів. Всі платежі привязані до договорів"""
     permit_list_expands = ['contract_data']
@@ -76,7 +75,6 @@ class RegisterPaymentViewSet(BaseOrganizationViewSetMixing):
     serializer_class = RegisterPaymentSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = ['contract__id']
-
 
 
 class RegisterActViewSet(BaseOrganizationViewSetMixing):
@@ -136,7 +134,6 @@ class CoordinationViewSet(BaseOrganizationViewSetMixing):
         serializer.save()
 
 
-
 @api_view(['GET'])
 def refresh_total_balance(request):
     """Оновити баланс за всіма договорами"""
@@ -184,7 +181,7 @@ def calculate_accrual_in_range(request):
 
 
 class UploadClientBankViewSet(BaseOrganizationViewSetMixing):
-    """дані проплат за договорами"""
+    """Дані проплат за договорами"""
     queryset = ImportPayment.objects.all()
     serializer_class = UploadCilentBanklSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
@@ -228,6 +225,7 @@ def get_accrual_zip(request):
 class ConvertClientBankView(APIView):
     """Конвертувати дані Клієнт-банку з CSV в XML - який здатен прочитати 1с"""
     permission_classes = [IsAuthenticated]
+
     def post(self, request):
         serializer = ConvertCilentBanklSerializer(data=request.data)
         if serializer.is_valid():
