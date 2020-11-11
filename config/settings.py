@@ -193,3 +193,28 @@ AUTH_SERVER_SYNC_PERMISSION_URL = 'http://10.0.30.220:9999/sync-server/sync-perm
 AUTH_SERVER_MAX_TOKEN_AGE = 40 * 60  ##140 хвилин
 AUTH_SERVER_SECRET_KEY = 'sed2'
 AUTH_SERVER_CLIENT_ID = 'sed2'
+
+
+
+import os
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+    },
+}
