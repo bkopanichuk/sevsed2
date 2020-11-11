@@ -153,6 +153,7 @@ def generate_acts_view(request):
 
 @api_view(['GET'])
 def calculate_accrual(request):
+    """Запустити процес створення нахувань"""
     from apps.contracts.tasks import calculate_accruals
     result = calculate_accruals.delay()
     return JsonResponse({'task_id': result.task_id})
@@ -172,6 +173,7 @@ def clear_accrual_data(request):
 
 @api_view(['POST'])
 def calculate_accrual_in_range(request):
+    """Запустити процес створення нахувань у вказаному часовому проміжку"""
     serializer = calculateAccrualSerializer(data=request.data)
     if serializer.is_valid():
         data = serializer.validated_data
@@ -182,6 +184,7 @@ def calculate_accrual_in_range(request):
 
 
 class UploadClientBankViewSet(BaseOrganizationViewSetMixing):
+    """дані проплат за договорами"""
     queryset = ImportPayment.objects.all()
     serializer_class = UploadCilentBanklSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
@@ -189,6 +192,7 @@ class UploadClientBankViewSet(BaseOrganizationViewSetMixing):
 
 @api_view(['POST'])
 def upload_client_bank(request):
+    """Завантажити дані проплат за договорами з клієнт-банку"""
     serializer = UploadCilentBanklSerializer(data=request.data)
     if serializer.is_valid():
         res = serializer.save()
