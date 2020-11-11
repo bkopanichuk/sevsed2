@@ -1,0 +1,30 @@
+[
+  {
+    "model": "document.incomingdocumenttype",
+    "pk": 1,
+    "fields": {
+      "name": "Звернення громадян"
+    }
+  },
+  {
+    "model": "document.incomingdocumenttype",
+    "pk": 2,
+    "fields": {
+      "name": "Повідомлення"
+    }
+  },
+  {
+    "model": "document.outgoingdocumenttype",
+    "pk": 1,
+    "fields": {
+      "name": "Відповідь на вхідний"
+    }
+  },
+    {
+    "model": "document.outgoingdocumenttype",
+    "pk": 2,
+    "fields": {
+      "name": "Ініціативний лист"
+    }
+  }
+]

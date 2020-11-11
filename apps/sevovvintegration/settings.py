@@ -1,0 +1,1 @@
+WSDL = "apps/sevovvintegration/config/DIR.wsdl"

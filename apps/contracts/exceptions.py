@@ -1,0 +1,2 @@
+class StartDateOrEndDateIsNone(Exception):
+    pass

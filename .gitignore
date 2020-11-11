@@ -1,0 +1,10 @@
+/env/
+/media/admin-interface/
+/media/uploads/
+/venv/
+/db.sqlite3
+/apps/atu/migrations/
+/apps/contracts/migrations/
+/apps/document/migrations/
+/apps/l_core/migrations/
+/apps/sevovvintegration/migrations/

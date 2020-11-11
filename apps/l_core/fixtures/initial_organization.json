@@ -1,0 +1,77 @@
+[
+  {
+    "model": "l_core.coreorganization",
+    "pk": 1,
+    "fields": {
+      "name": "ADMIN",
+      "full_name": "ADMIN",
+      "edrpou": "00000000",
+      "system_id": "",
+      "system_password": ""
+    }
+  },
+   {
+    "model": "l_core.coreorganization",
+    "pk": 2,
+    "fields": {
+      "name": "PRODUCER",
+      "full_name": "TEST PRODUCER",
+      "edrpou": "23455432",
+       "system_id": "ecc37736-8da8-415c-85b6-d12a8fc3e62d",
+       "system_password": "08a3d06a-ccb6-4465-b8fa-937e7276b442"
+    }
+  },
+   {
+    "model": "l_core.coreorganization",
+    "pk": 3,
+    "fields": {
+      "name": "CONSUMER",
+      "full_name": "TEST CONSUMER",
+      "edrpou": "12341234",
+       "system_id": "2c1e8ad0-3a19-41fb-9540-74b5189cca5e",
+       "system_password": "c106b12a-a704-460e-ba2b-30dbf9a6c823"
+    }
+  },
+ {
+ "model": "l_core.coreuser",
+ "pk": 1,
+ "fields": {
+  "password": "pbkdf2_sha256$216000$XHvaAXUupOJ5$CWSLLClQj7FwFZFX4uhK0Di6EcE2sSPexUKsR5M/ILk=",
+  "last_login": null,
+  "is_superuser": true,
+  "username": "root",
+  "is_staff": true,
+  "is_active": true,
+  "date_joined": "2020-10-03T19:06:23.517Z",
+  "organization": 1,
+  "department": null,
+  "first_name": "Олександр",
+  "last_name": "Лець",
+  "email": "letsolexandr@gmail.com",
+  "ipn": null,
+  "groups": [],
+  "user_permissions": []
+ }
+},
+  {
+ "model": "l_core.coreuser",
+ "pk": 2,
+ "fields": {
+  "password": "pbkdf2_sha256$216000$XHvaAXUupOJ5$CWSLLClQj7FwFZFX4uhK0Di6EcE2sSPexUKsR5M/ILk=",
+  "last_login": null,
+  "is_superuser": true,
+  "username": "test",
+  "is_staff": true,
+  "is_active": true,
+  "date_joined": "2020-10-03T19:06:23.517Z",
+  "organization": 2,
+  "department": null,
+  "first_name": "TEST",
+  "last_name": "TEST",
+  "email": "test@gmail.com",
+  "ipn": null,
+  "groups": [],
+  "user_permissions": []
+ }
+}
+]
