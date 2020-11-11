@@ -16,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.l_core.api.base.serializers import BaseViewSetMixing
+from apps.l_core.api.base.serializers import BaseOrganizationViewSetMixing
 from ..serializers.contract_serializers import ContractSerializer, RegisterAccrualSerializer, RegisterPaymentSerializer, \
     RegisterActSerializer, StagePropertySerializer, ContractSubscriptionSerializer, ContractProductsSerializer, \
     CoordinationSerializer, RegisterAccrual, RegisterAct, ContractFinance, calculateAccrualSerializer, \
@@ -30,7 +30,7 @@ MEDIA_URL = settings.MEDIA_URL
 
 
 # ViewSets define the view behavior.
-class ContractSerializerViewSet(XLSXFileMixin, BaseViewSetMixing):
+class ContractSerializerViewSet(XLSXFileMixin, BaseOrganizationViewSetMixing):
     """Договори"""
     permit_list_expands = ['contractor_data']
     queryset = Contract.objects
@@ -54,7 +54,7 @@ class ContractSerializerViewSet(XLSXFileMixin, BaseViewSetMixing):
                        'subject_contract', 'copy_contract', 'contractor', 'contractor_name', 'price_contract',
                        'contract_time', 'expiration_date')
 
-class RegisterAccrualViewSet(BaseViewSetMixing):
+class RegisterAccrualViewSet(BaseOrganizationViewSetMixing):
     permit_list_expands = ['contract']
     queryset = RegisterAccrual.objects.all()
     serializer_class = RegisterAccrualSerializer
@@ -68,7 +68,7 @@ class RegisterAccrualViewSet(BaseViewSetMixing):
 
 
 
-class RegisterPaymentViewSet(BaseViewSetMixing):
+class RegisterPaymentViewSet(BaseOrganizationViewSetMixing):
     permit_list_expands = ['contract_data']
     queryset = RegisterPayment.objects.all()
     serializer_class = RegisterPaymentSerializer
@@ -77,7 +77,7 @@ class RegisterPaymentViewSet(BaseViewSetMixing):
 
 
 
-class RegisterActViewSet(BaseViewSetMixing):
+class RegisterActViewSet(BaseOrganizationViewSetMixing):
     permit_list_expands = ['accrual', 'contract']
     queryset = RegisterAct.objects.all()
     serializer_class = RegisterActSerializer
@@ -88,28 +88,28 @@ class RegisterActViewSet(BaseViewSetMixing):
     ordering = ['date_formation_act']
 
 
-class StagePropertyViewSet(BaseViewSetMixing):
+class StagePropertyViewSet(BaseOrganizationViewSetMixing):
     queryset = StageProperty.objects.all()
     serializer_class = StagePropertySerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = ['contract__id']
 
 
-class ContractSubscriptionViewSet(BaseViewSetMixing):
+class ContractSubscriptionViewSet(BaseOrganizationViewSetMixing):
     queryset = ContractSubscription.objects.all()
     serializer_class = ContractSubscriptionSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = ['contract__id']
 
 
-class ContractProductsViewSet(BaseViewSetMixing):
+class ContractProductsViewSet(BaseOrganizationViewSetMixing):
     queryset = ContractProducts.objects.all()
     serializer_class = ContractProductsSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_fields = ['contract__id']
 
 
-class CoordinationViewSet(BaseViewSetMixing):
+class CoordinationViewSet(BaseOrganizationViewSetMixing):
     queryset = Coordination.objects.all()
     serializer_class = CoordinationSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
@@ -172,7 +172,7 @@ def calculate_accrual_in_range(request):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UploadClientBankViewSet(BaseViewSetMixing):
+class UploadClientBankViewSet(BaseOrganizationViewSetMixing):
     queryset = ImportPayment.objects.all()
     serializer_class = UploadCilentBanklSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
