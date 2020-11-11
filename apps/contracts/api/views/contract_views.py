@@ -55,6 +55,7 @@ class ContractSerializerViewSet(XLSXFileMixin, BaseOrganizationViewSetMixing):
                        'contract_time', 'expiration_date')
 
 class RegisterAccrualViewSet(BaseOrganizationViewSetMixing):
+    """Реєстр нарахувань за договорами (рахунки)"""
     permit_list_expands = ['contract']
     queryset = RegisterAccrual.objects.all()
     serializer_class = RegisterAccrualSerializer
@@ -69,6 +70,7 @@ class RegisterAccrualViewSet(BaseOrganizationViewSetMixing):
 
 
 class RegisterPaymentViewSet(BaseOrganizationViewSetMixing):
+    """Реєстр платежів. Всі платежі привязані до договорів"""
     permit_list_expands = ['contract_data']
     queryset = RegisterPayment.objects.all()
     serializer_class = RegisterPaymentSerializer
@@ -78,6 +80,7 @@ class RegisterPaymentViewSet(BaseOrganizationViewSetMixing):
 
 
 class RegisterActViewSet(BaseOrganizationViewSetMixing):
+    """Реєстр актів виконаних послуг. Формуються на основі нарахувань"""
     permit_list_expands = ['accrual', 'contract']
     queryset = RegisterAct.objects.all()
     serializer_class = RegisterActSerializer
@@ -89,6 +92,7 @@ class RegisterActViewSet(BaseOrganizationViewSetMixing):
 
 
 class StagePropertyViewSet(BaseOrganizationViewSetMixing):
+    """детальна інформація контрагента. Привязаний до договору і не змінюється при змінах Контрахента"""
     queryset = StageProperty.objects.all()
     serializer_class = StagePropertySerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
@@ -96,6 +100,7 @@ class StagePropertyViewSet(BaseOrganizationViewSetMixing):
 
 
 class ContractSubscriptionViewSet(BaseOrganizationViewSetMixing):
+    """Реєетр парпметрів абонентської плати за договорами"""
     queryset = ContractSubscription.objects.all()
     serializer_class = ContractSubscriptionSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
@@ -103,6 +108,7 @@ class ContractSubscriptionViewSet(BaseOrganizationViewSetMixing):
 
 
 class ContractProductsViewSet(BaseOrganizationViewSetMixing):
+    """Реєстр наданих послуг за договорами одноразову послуги, або товари"""
     queryset = ContractProducts.objects.all()
     serializer_class = ContractProductsSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
@@ -133,12 +139,14 @@ class CoordinationViewSet(BaseOrganizationViewSetMixing):
 
 @api_view(['GET'])
 def refresh_total_balance(request):
+    """Оновити баланс за всіма договорами"""
     refresh_count = Contract.refresh_total_balance()
     return JsonResponse({'refresh_count': refresh_count})
 
 
 @api_view(['GET'])
 def generate_acts_view(request):
+    """Запустити процес створення актів виконаних послуг"""
     generated_acts = RegisterAct.generate_acts()
     return JsonResponse({'generated_acts': generated_acts})
 
@@ -152,6 +160,7 @@ def calculate_accrual(request):
 
 @api_view(['GET'])
 def clear_accrual_data(request):
+    """Очистити всі акти та нарахування"""
     register_act_count = RegisterAct.objects.all().count()
     RegisterAct.objects.all().delete()
     register_accrual_count = RegisterAccrual.objects.all().count()
@@ -190,6 +199,7 @@ def upload_client_bank(request):
 
 @api_view(['GET'])
 def get_accrual_zip(request):
+    """Завантажити всі акти та нарахування в ZIP"""
     # Create the HttpResponse object with the appropriate PDF headpeers.
     _ids = request.GET.getlist('ids[]')
     ids = [int(item) for item in _ids]
@@ -212,6 +222,7 @@ def get_accrual_zip(request):
 
 
 class ConvertClientBankView(APIView):
+    """Конвертувати дані Клієнт-банку з CSV в XML - який здатен прочитати 1с"""
     permission_classes = [IsAuthenticated]
     def post(self, request):
         serializer = ConvertCilentBanklSerializer(data=request.data)
