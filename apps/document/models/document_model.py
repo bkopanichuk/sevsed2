@@ -195,6 +195,21 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
             (CustomDocumentPermissions.EXECUTE_RESOLUTION, "Може запускати резолюцію на виконання"),
             (CustomDocumentPermissions.SEND_TO_ARCHIVE, "Може відправляти документ в архів"),
             (CustomDocumentPermissions.SEND_TO_OVERVIEW, "Може відправляти документ на узгодження"),
+            (CustomDocumentPermissions.VIEW_ON_REGISTRATION, "Переглядати документи на реєстрації"),
+            (CustomDocumentPermissions.VIEW_REGISTERED, "Переглядати документи зареєстровані"),
+            (CustomDocumentPermissions.VIEW_ON_RESOLUTION, "Переглядати документи на резолюції"),
+            (CustomDocumentPermissions.VIEW_ON_EXECUTION, "Переглядати документи на виконанні"),
+            (CustomDocumentPermissions.VIEW_COMPLETED, "Переглядати документи виконані"),
+            (CustomDocumentPermissions.VIEW_ON_CONTROL, "Переглядати документи на контролі"),
+            (CustomDocumentPermissions.VIEW_ARCHIVED, "Переглядати документи в архіві"),
+            (CustomDocumentPermissions.VIEW_ON_AGREEMENT, "Переглядати документи на погодженні"),
+            (CustomDocumentPermissions.VIEW_PROJECT, "Переглядати документи (проекти)"),
+            (CustomDocumentPermissions.VIEW_REJECT, "Переглядати відмови"),
+            (CustomDocumentPermissions.VIEW_CONCERTED, "Переглядати погоджені"),
+            (CustomDocumentPermissions.VIEW_ON_SIGNING, "Переглядати на підписанні"),
+            (CustomDocumentPermissions.VIEW_SIGNED, "Переглядати підписані"),
+            (CustomDocumentPermissions.VIEW_TRANSFERRED, "Переглядати передані"),
+
         ]
 
     def __str__(self):
