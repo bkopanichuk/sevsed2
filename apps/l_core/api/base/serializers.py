@@ -361,6 +361,8 @@ class GetUserPermissions(APIView):
         ##from l_core.model_details import CoreUser
         ##user = CoreUser.objects.get(pk=3)
         _permissions = user.get_all_permissions()
+        logger.info('USER PERMISSIONS:')
+        logger.info(_permissions)
         ##Permission.objects.filter(user=user).values('id', 'codename')
         permissions = [perm.split('.')[1] for perm in _permissions]
 

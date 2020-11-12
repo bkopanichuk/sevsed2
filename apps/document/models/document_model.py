@@ -194,6 +194,7 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
             (CustomDocumentPermissions.CREATE_RESOLUTION, "Може створювати резолюцію"),
             (CustomDocumentPermissions.EXECUTE_RESOLUTION, "Може запускати резолюцію на виконання"),
             (CustomDocumentPermissions.SEND_TO_ARCHIVE, "Може відправляти документ в архів"),
+            (CustomDocumentPermissions.SEND_TO_OVERVIEW, "Може відправляти документ на узгодження"),
         ]
 
     def __str__(self):

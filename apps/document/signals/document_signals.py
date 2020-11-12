@@ -1,8 +1,12 @@
 from django.db.models import signals
 from apps.document.models.document_model import BaseDocument
 from apps.document.services import CreateFlow
-from apps.document.services.document_service import UpdateMainFileVersion, CheckControllers, \
-    CloseTaskExecutorOnCreateDoc, SetReplyDate, CreatePreview, GenerateText
+from apps.document.services.document_service import UpdateMainFileVersion, \
+  CreatePreview, GenerateText
+from apps.document.services.document.check_controllers_service import CheckControllers
+from apps.document.services.document.close_task_executor_on_create_doc_service import CloseTaskExecutorOnCreateDoc
+from apps.document.services.document.set_reply_date_service import SetReplyDate
+
 
 
 def generate_text(instance, **kwargs):

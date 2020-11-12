@@ -9,3 +9,4 @@ class CustomDocumentPermissions:
     CREATE_RESOLUTION = 'create_resolution'
     EXECUTE_RESOLUTION = 'execute_resolution'
     SEND_TO_ARCHIVE = 'send_to_archive'
+    SEND_TO_OVERVIEW = 'send_to_verview'

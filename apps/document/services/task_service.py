@@ -1,5 +1,5 @@
 from django.utils.timezone import localdate
-from django.db.models import Max
+from django.db.models import Max,Min
 from rest_framework.exceptions import ValidationError
 
 from apps.document.models.document_model import COMPLETED, PASSED_CONTROL, CONCERTED,ON_EXECUTION
@@ -24,34 +24,41 @@ class SetTaskParams:
         self.parent = None
 
     def run(self):
-        self.set_parent_task()
+        # self.set_parent_task()
         self.set_order()
         self.set_task_status()
 
     def set_order(self):
+        if self.task.order:
+            return
         res = self.task.flow.tasks.aggregate(Max('order'))
-        max_order = res.get('order__max',0)
-        self.task.order = max_order+1
+        logger.info(f'order aggregate: {res}')
+        order__max = res.get('order__max') or 0
+        logger.info(f'order__max: {order__max}')
+        self.task.order = order__max+1
+        logger.info(f'self.task.order: {self.task.order}')
 
-    def set_parent_task(self):
-        logger.info(f'set_parent_task')
-        ## Перевіряємо чи встановлена задача вище по ієрархії
-        if not self.task.parent_task:
-            ## перевіряємо чи існують задачів потоці виконання
-            q = self.task.flow.tasks.all().exclude(id=self.task.id)
-            logger.info(f'parent_tasks_q {q}')
-            if q.exists():
-                ## Якщо задачі існують, вибираємо найдавнішу
-                latest_task =  q.latest('date_add')
-                logger.info(f'latest_task: {latest_task}')
-                ## Якщо не встановлено дату створення, або дата створення бульша за найдавнішу існуючу,
-                # встановлюємо батьківську найдавнішу
-                if not self.task.date_add or self.task.date_add > latest_task.date_add:
-                    self.parent = q.latest('date_add')
-                    self.task.parent_task = self.parent
 
-            logger.info(f'self.parent {self.parent}')
-            logger.info(f'self.task.parent_task {self.task.parent_task}')
+
+    # def set_parent_task(self):
+    #     logger.info(f'set_parent_task')
+    #     ## Перевіряємо чи встановлена задача вище по ієрархії
+    #     if not self.task.parent_task:
+    #         ## перевіряємо чи існують задачів потоці виконання
+    #         q = self.task.flow.tasks.all().exclude(id=self.task.id)
+    #         logger.info(f'parent_tasks_q {q}')
+    #         if q.exists():
+    #             ## Якщо задачі існують, вибираємо найдавнішу
+    #             latest_task =  q.latest('date_add')
+    #             logger.info(f'latest_task: {latest_task}')
+    #             ## Якщо не встановлено дату створення, або дата створення бульша за найдавнішу існуючу,
+    #             # встановлюємо батьківську найдавнішу
+    #             if not self.task.date_add or self.task.date_add > latest_task.date_add:
+    #                 self.parent = q.latest('date_add')
+    #                 self.task.parent_task = self.parent
+    #
+    #         logger.info(f'self.parent {self.parent}')
+    #         logger.info(f'self.task.parent_task {self.task.parent_task}')
 
     def set_task_status(self):
         if self.task.task_status == SUCCESS:
@@ -68,25 +75,35 @@ class SetTaskController:
 
     def run(self):
         self.set_controller()
+        self.set_end_date()
 
     def set_controller(self):
         if self.task.author_is_controller and self.task.author:
             self.task.controller = self.task.author
 
+    def set_end_date(self):
+        if not self.task.end_date:
+            self.task.end_date = self.task.document.reply_date
 
-class SetTaskExecutorOrganization:
+
+class SetInitialTaskExecutorParams:
     def __init__(self, task_executor):
         self.task_executor: TaskExecutor = task_executor
 
     def run(self):
         self.set_organization()
+        self.set_end_date()
 
     def set_organization(self):
         self.task_executor.organization = self.task_executor.task.organization
 
+    def set_end_date(self):
+        if not self.task_executor.end_date:
+            self.task_executor.end_date = self.task_executor.task.end_date
+
 
 class SetChildStatus:
-    """Змінити статусдочірніх завдань"""
+    """Змінити статус дочірніх завдань"""
     def __init__(self, task):
         self.task: Task = task
 
@@ -94,13 +111,39 @@ class SetChildStatus:
         self.set_child_task_status()
 
     def set_child_task_status(self):
+        """Відмітити """
         logger.info(f'set_child_task_status:  -  task_status: {self.task.task_status}')
         if self.task.task_status == SUCCESS:
-            q = self.task.flow.tasks.filter(parent_task=self.task).exclude(task_status__in=[SUCCESS, RUNNING])
+            q = self.task.flow.tasks.filter(parent_task=self.task)##.exclude(task_status__in=[SUCCESS, RUNNING])
             if q.exists():
                 self.child = q.earliest('date_add')
-                self.child.task_status = RUNNING
+                self.child.task_status = SUCCESS
                 self.child.save()
+
+
+class ChangeTaskOrder:
+    """Змінити порядок виконання завдань"""
+    def __init__(self, task:Task, order:str):
+        self.task: Task = task
+        self.order = order
+
+    def run(self):
+        self.change_order()
+
+    def change_order(self):
+        """змінити порядок """
+        pass
+
+    def down_order(self):
+        """підняти задачу на пункт вище"""
+        pass
+
+    def up_order(self):
+        """опустити задачу на пункт нижче"""
+        pass
+
+
+
 
 
 
@@ -146,6 +189,7 @@ class RetryTask:
     def run(self):
         self.validate_user()
         self.retry_task()
+        self.retry_task_executors()
         self.retry_flow()
         self.change_document_status()
         return self.task
@@ -313,6 +357,46 @@ class HandleExecuteTask:
                 self.task.flow.status = SUCCESS
                 self.task.flow.save()
                 # self.change_document_status()
+            self.run_next_task_if_this_success()
+
+    def run_next_task_if_this_success(self):
+        logger.info(f'run_next_task_if_this_success')
+        q = self.task.flow.tasks.filter(task_status__in=[PENDING,RUNNING,RETRY]).exclude(id = self.task.id)
+        if q.exists():
+            res= q.aggregate(Min('order'))
+            order__min = res.get('order__min')
+            if order__min:
+                task_by_order = self.task.flow.tasks.get(order=order__min)
+                task_by_order.task_status = RUNNING
+                task_by_order.save()
+
+# class RunNextTask:
+#     def __init__(self, task_executor):
+#         logger.info(f'INIT RunNextTask')
+#         self.task_executor: TaskExecutor = task_executor
+#         self.task = self.task_executor.task
+#
+#     def run(self):
+#         logger.info(f'self.task.task_status: {self.task.task_status}')
+#
+#
+#     def set_succes_status_if_main(self):
+#         if self.task_executor.status == SUCCESS:
+#             if self.task.task_status == SUCCESS:
+#                 self.run_next_task_if_this_success()
+#
+#
+#     def run_next_task_if_this_success(self):
+#         logger.info(f'run_next_task_if_this_success')
+#         q = self.task.flow.tasks.filter(task_status__in=[PENDING,RUNNING,RETRY]).exclude(id = self.task.id)
+#         if q.exists():
+#             res= q.aggregate(Min('order'))
+#             order__min = res.get('order__min')
+#             if order__min:
+#                 task_by_order = self.task.flow.tasks.get(order=order__min)
+#                 task_by_order.task_status = RUNNING
+#                 task_by_order.save()
+
 
 
 class HandleExecuteFlow:

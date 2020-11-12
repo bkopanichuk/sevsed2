@@ -24,12 +24,12 @@ class ResolutionDocument:
 
     def validate_flow(self):
         flow = self.document.flow_set.all().last()
+        logger.info(f'validate_flow : {flow.id}')
         tasks_exists = flow.tasks.all().exists()
         if not tasks_exists:
             raise ServiceException(f'Заборонена передача документа на виконання без резолюції')
 
     def start_flow(self):
-
         flow = self.document.flow_set.all().last()
         logger.info(f'start_flow : {flow.id}')
         flow.status = RUNNING

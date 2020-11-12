@@ -1,7 +1,8 @@
 from django.db.models import signals
 from apps.document.models.task_model import Task, Flow, TaskExecutor
 from apps.document.services.task_service import SetTaskParams, SetChildStatus, HandleExecuteTask, HandleExecuteFlow, \
-    HandleRunFlow, SetTaskExecutorOrganization,SetTaskController
+    HandleRunFlow, SetInitialTaskExecutorParams,SetTaskController\
+    #,RunNextTask
 
 
 def set_parent_task(sender, instance, **kwargs):
@@ -15,13 +16,19 @@ def set_child_status(sender, instance, **kwargs):
 
 
 def set_task_executor_organization(sender, instance, **kwargs):
-    flow = SetTaskExecutorOrganization(task_executor=instance)
+    flow = SetInitialTaskExecutorParams(task_executor=instance)
     flow.run()
 
 
-def handle_execute_task(sender, instance, **kwargs):
-    flow = HandleExecuteTask(task=instance)
-    flow.run()
+def handle_execute_task(sender, instance, created, **kwargs):
+    if not created:
+        flow = HandleExecuteTask(task=instance)
+        flow.run()
+
+# def run_next_task(sender, instance,created, **kwargs):
+#     if not created:
+#         flow = RunNextTask(task_executor=instance)
+#         flow.run()
 
 
 def handle_execute_flow(sender, instance, **kwargs):
@@ -44,5 +51,6 @@ signals.pre_save.connect(receiver=set_task_controller, sender=Task)
 signals.pre_save.connect(receiver=set_task_executor_organization, sender=TaskExecutor)
 signals.post_save.connect(receiver=set_child_status, sender=Task)
 signals.post_save.connect(receiver=handle_execute_task, sender=Task)
+#signals.post_save.connect(receiver=run_next_task, sender=TaskExecutor)
 signals.post_save.connect(receiver=handle_execute_flow, sender=Flow)
 signals.post_save.connect(receiver=handle_run_flow, sender=Flow)
