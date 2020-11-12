@@ -10,9 +10,15 @@ from apps.document.models.task_model import Task, Flow, TaskExecutor
 from apps.l_core.exceptions import ServiceException
 from apps.l_core.ua_sign import verify_external
 
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
+
 
 class SetTaskParams:
     def __init__(self, task):
+        logger.info(f'INIT   SetTaskParams')
         self.task: Task = task
         self.parent = None
 
@@ -21,13 +27,24 @@ class SetTaskParams:
         self.set_task_status()
 
     def set_parent_task(self):
+        logger.info(f' set_parent_task')
+        ## перевіряємо чи встановлена задача вище по ієрархії
         if not self.task.parent_task:
-            q = self.task.flow.tasks.all()
+            ## перевіряємо чи існують задачів потоці виконання
+            q = self.task.flow.tasks.all().exclude(id=self.task.id)
+            logger.info(f' parent_tasks_q {q}')
 
             if q.exists():
-                # raise Exception(q)
-                self.parent = q.latest('date_add')
-                self.task.parent_task = self.parent
+                ## Якщо задачі існують, вибираємо найдавнішу
+                latest_task =  q.latest('date_add')
+                logger.info(f' latest_task: {latest_task}')
+                ## Якщо не встановлено дату створення або дата створення бульша за найдавнішу існуючк, встановлюємо батьківську найдавнішу
+                if not self.task.date_add or self.task.date_add > latest_task.date_add:
+                    self.parent = q.latest('date_add')
+                    self.task.parent_task = self.parent
+
+            logger.info(f' self.parent {self.parent}')
+            logger.info(f' self.task.parent_task {self.task.parent_task}')
 
     def set_task_status(self):
         if self.task.task_status == SUCCESS:
@@ -62,6 +79,7 @@ class SetTaskExecutorOrganization:
 
 
 class SetChildStatus:
+    """Змінити статусдочірніх завдань"""
     def __init__(self, task):
         self.task: Task = task
 
@@ -69,6 +87,7 @@ class SetChildStatus:
         self.set_child_task_status()
 
     def set_child_task_status(self):
+        logger.info(f'set_child_task_status:  -  task_status: {self.task.task_status}')
         if self.task.task_status == SUCCESS:
             q = self.task.flow.tasks.filter(parent_task=self.task).exclude(task_status__in=[SUCCESS, RUNNING])
             if q.exists():
@@ -327,6 +346,7 @@ class HandleExecuteFlow:
 
 
 class HandleRunFlow:
+    """Обробник сигналу запуску пректу завдань на виконання"""
     def __init__(self, flow):
         self.flow: Flow = flow
 
@@ -339,8 +359,12 @@ class HandleRunFlow:
             raise ServiceException('Не вказано "execution_type"')
 
     def run_first_task_if_flow_running(self):
+        logger.info(f'run_first_task_if_flow_running')
+        logger.info(f'flow status:  {self.flow.status}')
         if self.flow.status == RUNNING:
             q = self.flow.tasks.filter(parent_task=None).exclude(task_status__in=[RUNNING, RETRY, SUCCESS])
+            logger.info(f'all flow (id:{self.flow.id}) tasks:  {self.flow.tasks.all()}')
+            logger.info(f'task_status__in=[RUNNING, RETRY, SUCCESS]:  {q}')
             if q.exists():
                 first_task = q.first()
                 first_task.task_status = RUNNING
