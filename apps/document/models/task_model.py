@@ -100,10 +100,10 @@ class Task(CoreBase):
     document = models.ForeignKey(BaseDocument, verbose_name="До документа", on_delete=models.CASCADE, null=True,
                                  blank=True)
     parent_task = models.ForeignKey('self', related_name='p_task', verbose_name="Резолюція залежна від",
-                                    on_delete=models.PROTECT, null=True, blank=True)
+                                    on_delete=models.SET_NULL, null=True, blank=True)
     # To save hierarchy in UI
     parent_node = models.ForeignKey('self', related_name='p_node', verbose_name="Резолюція до",
-                                    on_delete=models.PROTECT, null=True, blank=True)
+                                    on_delete=models.SET_NULL, null=True, blank=True)
     is_completed = models.BooleanField(verbose_name="Чи виконано", default=False)
     title = models.CharField(verbose_name="Завдання", max_length=200)
     controller = models.ForeignKey(CoreUser, related_name='%(class)s_controller', blank=True,
@@ -152,6 +152,7 @@ class TaskExecutor(CoreBase):
     approve_method = models.CharField(max_length=20, verbose_name="Метод підтвердження", choices=APPROVE_METHODS,
                                       null=True)
     sign_info = JSONField(null=True, verbose_name='Детальна інформація про накладений цифровий підпис')
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Виконання завдання'
