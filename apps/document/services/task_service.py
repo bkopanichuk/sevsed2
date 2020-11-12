@@ -1,4 +1,5 @@
 from django.utils.timezone import localdate
+from django.db.models import Max
 from rest_framework.exceptions import ValidationError
 
 from apps.document.models.document_model import COMPLETED, PASSED_CONTROL, CONCERTED,ON_EXECUTION
@@ -24,27 +25,33 @@ class SetTaskParams:
 
     def run(self):
         self.set_parent_task()
+        self.set_order()
         self.set_task_status()
 
+    def set_order(self):
+        res = self.task.flow.tasks.aggregate(Max('order'))
+        max_order = res.get('order__max',0)
+        self.task.order = max_order+1
+
     def set_parent_task(self):
-        logger.info(f' set_parent_task')
-        ## перевіряємо чи встановлена задача вище по ієрархії
+        logger.info(f'set_parent_task')
+        ## Перевіряємо чи встановлена задача вище по ієрархії
         if not self.task.parent_task:
             ## перевіряємо чи існують задачів потоці виконання
             q = self.task.flow.tasks.all().exclude(id=self.task.id)
-            logger.info(f' parent_tasks_q {q}')
-
+            logger.info(f'parent_tasks_q {q}')
             if q.exists():
                 ## Якщо задачі існують, вибираємо найдавнішу
                 latest_task =  q.latest('date_add')
-                logger.info(f' latest_task: {latest_task}')
-                ## Якщо не встановлено дату створення або дата створення бульша за найдавнішу існуючк, встановлюємо батьківську найдавнішу
+                logger.info(f'latest_task: {latest_task}')
+                ## Якщо не встановлено дату створення, або дата створення бульша за найдавнішу існуючу,
+                # встановлюємо батьківську найдавнішу
                 if not self.task.date_add or self.task.date_add > latest_task.date_add:
                     self.parent = q.latest('date_add')
                     self.task.parent_task = self.parent
 
-            logger.info(f' self.parent {self.parent}')
-            logger.info(f' self.task.parent_task {self.task.parent_task}')
+            logger.info(f'self.parent {self.parent}')
+            logger.info(f'self.task.parent_task {self.task.parent_task}')
 
     def set_task_status(self):
         if self.task.task_status == SUCCESS:

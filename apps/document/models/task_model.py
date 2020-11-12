@@ -101,6 +101,7 @@ class Task(CoreBase):
                                  blank=True)
     parent_task = models.ForeignKey('self', related_name='p_task', verbose_name="Резолюція залежна від",
                                     on_delete=models.SET_NULL, null=True, blank=True)
+    order = models.PositiveSmallIntegerField(default=0, verbose_name="Порядок виконання завдань")
     # To save hierarchy in UI
     parent_node = models.ForeignKey('self', related_name='p_node', verbose_name="Резолюція до",
                                     on_delete=models.SET_NULL, null=True, blank=True)
