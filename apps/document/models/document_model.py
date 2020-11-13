@@ -140,7 +140,7 @@ class OutgoingDocument(models.Model):
                                     max_length=20)
     mailing_list = models.ManyToManyField(CoreOrganization, related_name='outgoing_documents', verbose_name='Адресати')
     main_signer = models.ForeignKey(CoreUser, related_name='outgoing_document_signer', verbose_name='Підписант',
-                                    on_delete=models.PROTECT,null=True)
+                                    on_delete=models.PROTECT, null=True)
     mailing_method = models.CharField(choices=MAILING_METHODS, default=LETTER, verbose_name="Спосіб відпралення",
                                       max_length=10)
 
@@ -156,8 +156,8 @@ class innerDocument(models.Model):
 class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
     # General
     title = models.CharField(verbose_name="Назва", max_length=100, default='-')
-    main_file = models.FileField(verbose_name="Головинй файл", upload_to=get_upload_document_path, null=True)
-
+    main_file = models.FileField(verbose_name="Головинй файл", upload_to=get_upload_document_path, null=True,
+                                 max_length=500)
     document_cast = models.CharField(verbose_name="Вид документа", choices=DOCUMENT_CAST,
                                      max_length=100)
     reg_number = models.CharField(verbose_name="Реєстраціний номер", max_length=100, null=True)
@@ -175,11 +175,11 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
     registration = models.ForeignKey(register_model.RegistrationJournal,
                                      verbose_name="Журнал реєстрації",
                                      on_delete=models.PROTECT, null=True, blank=True)
-    case_index = models.CharField( verbose_name="Індекс  та  заголовок справи",
-                                     max_length=100, null=True)
+    case_index = models.CharField(verbose_name="Індекс  та  заголовок справи",
+                                  max_length=100, null=True)
 
-    case_number = models.CharField( verbose_name="Номер тому справи",
-                                     max_length=100, null=True)
+    case_number = models.CharField(verbose_name="Номер тому справи",
+                                   max_length=100, null=True)
 
     preview = models.FileField(upload_to=get_preview_directory, null=True, editable=False, max_length=500)
     preview_pdf = models.FileField(upload_to=get_preview_directory, null=True, editable=False, max_length=500)
@@ -209,6 +209,7 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
             (CustomDocumentPermissions.VIEW_ON_SIGNING, "Переглядати на підписанні"),
             (CustomDocumentPermissions.VIEW_SIGNED, "Переглядати підписані"),
             (CustomDocumentPermissions.VIEW_TRANSFERRED, "Переглядати передані"),
+            (CustomDocumentPermissions.CHANGE_DOCUMENT_DICTIONARY, "Редагувати довідники документів"),
 
         ]
 
@@ -222,7 +223,7 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
 class MainFileVersion(models.Model):
     document = models.ForeignKey(BaseDocument, on_delete=models.CASCADE)
     add_date = models.DateTimeField(auto_now_add=True, null=True)
-    main_file = models.FileField(verbose_name="Головинй файл", upload_to=get_upload_document_path, null=True)
+    main_file = models.FileField(verbose_name="Головинй файл", upload_to=get_upload_document_path, null=True,max_length=500)
 
     class Meta:
         verbose_name = 'Документ'

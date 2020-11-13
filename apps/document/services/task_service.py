@@ -78,8 +78,8 @@ class SetTaskController:
         self.set_end_date()
 
     def set_controller(self):
-        if self.task.author_is_controller and self.task.author:
-            self.task.controller = self.task.author
+        if self.task.author_is_controller:
+            self.task.controller = self.task.editor or  self.task.author
 
     def set_end_date(self):
         if not self.task.end_date:

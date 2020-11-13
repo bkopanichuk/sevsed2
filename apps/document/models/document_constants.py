@@ -26,3 +26,8 @@ class CustomDocumentPermissions:
     VIEW_ON_SIGNING = 'view_on_singing'
     VIEW_SIGNED = 'view_signed'
     VIEW_TRANSFERRED = 'view_transfered'
+    CHANGE_DOCUMENT_DICTIONARY = 'change_document_dictionary'
+
+
+class CustomTaskPermissions:
+    SET_CONTROLLER = 'set_controller'

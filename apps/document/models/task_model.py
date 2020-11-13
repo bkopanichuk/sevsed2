@@ -4,7 +4,7 @@ from django.utils.timezone import localdate
 from django.contrib.auth import get_user_model
 from django.contrib.postgres.fields import JSONField
 from simple_history.models import HistoricalRecords
-
+from apps.document.models.document_constants import CustomTaskPermissions
 from apps.document.models.document_model import BaseDocument
 from apps.l_core.models import CoreBase, CoreUser
 
@@ -125,6 +125,10 @@ class Task(CoreBase):
         verbose_name = 'Завдання'
         verbose_name_plural = 'Завдання'
         ordering = ['date_add']
+        permissions = [
+            (CustomTaskPermissions.SET_CONTROLLER, "Встановлювати контролера"),
+
+        ]
 
     def __str__(self):
         return self.title

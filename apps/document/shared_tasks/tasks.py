@@ -7,8 +7,7 @@ from preview_generator.manager import PreviewManager
 from preview_generator.preview.generic_preview import UnavailablePreviewType
 from celery import shared_task
 
-from apps.document.models.document_model import get_upload_document_path, get_preview_directory, BaseDocument, \
-    MainFileVersion
+from apps.document.models.document_model import get_upload_document_path, get_preview_directory, BaseDocument
 from apps.document.models.textract_model import DocumentGeneratedText
 from config.settings import MEDIA_ROOT
 import textract as tx
