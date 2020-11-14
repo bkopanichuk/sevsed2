@@ -9,6 +9,9 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
+from django.utils.log import DEFAULT_LOGGING
+import logging.config
+from .common.djangocolors_formatter import DjangoColorsFormatter
 import os
 from pathlib import Path
 
@@ -59,7 +62,7 @@ INSTALLED_APPS = [
     'apps.sevovvintegration.apps.SevovvintegrationConfig',
     'simple_history',
     'preview_generator',
-    'silk',
+    #'silk',
     'apps.uaoauth',
     'apps.contracts',
     'multiselectfield',
@@ -79,7 +82,7 @@ MIDDLEWARE = [
     'simple_history.middleware.HistoryRequestMiddleware',
     ##'activity_log.middleware.ActivityLogMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
-    'silk.middleware.SilkyMiddleware',
+    #'silk.middleware.SilkyMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -196,25 +199,63 @@ AUTH_SERVER_CLIENT_ID = 'sed2'
 
 
 
-import os
 
-LOGGING = {
+LOGGING_CONFIG = None
+
+LOGLEVEL = os.environ.get('LOGLEVEL', 'info',).upper()
+
+logging.config.dictConfig({
     'version': 1,
     'disable_existing_loggers': False,
+    'formatters': {
+        'default': {
+            '()': DjangoColorsFormatter,
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        'django.server': DEFAULT_LOGGING['formatters']['django.server'],
+    },
     'handlers': {
+        # console logs to stderr
         'console': {
             'class': 'logging.StreamHandler',
+            'formatter': 'default',
         },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'WARNING',
+        'django.server': DEFAULT_LOGGING['handlers']['django.server'],
     },
     'loggers': {
-        'django': {
+        # default for all undefined Python modules
+        '': {
+            'level': 'INFO',
             'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        # '': {
+        #     'level': 'DEBUG',
+        #     'handlers': ['console'],
+        # },
+        'root': {
+            'level': 'ERROR',
+            'handlers': ['console']
+        },
+        # Our application code
+        'l_core': {
+            'level': 'DEBUG',
+            'handlers': ['console', ],
+            # Avoid double logging because of root logger
             'propagate': False,
         },
+        'contracts': {
+            'level': 'DEBUG',
+            'handlers': ['console', ],
+            # Avoid double logging because of root logger
+            'propagate': False,
+        },
+        'document': {
+            'level': 'DEBUG',
+            'handlers': ['console', ],
+            # Avoid double logging because of root logger
+            'propagate': False,
+        },
+        # Default runserver request logging
+        'django.server': DEFAULT_LOGGING['loggers']['django.server'],
     },
-}
+})

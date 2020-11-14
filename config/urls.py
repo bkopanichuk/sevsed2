@@ -14,13 +14,15 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, re_path
 
 from rest_framework import permissions
 from django.views.generic import TemplateView
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from django.conf.urls import url, include
+
+from apps.document.views import protectedMedia
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -69,4 +71,4 @@ urlpatterns = [
     # path('sync-client/', include('sync_client.urls')),
 ]
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + urlpatterns
-urlpatterns += [path('silk/', include('silk.urls'))]
+#urlpatterns += [path('silk/', include('silk.urls'))]
