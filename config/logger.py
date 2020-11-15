@@ -79,6 +79,10 @@ LOGGING = {
             'handlers': ['logfile', 'console'],
             'level': min_level,  # this level or higher goes to the console,
         },
+        'document': {
+            'handlers': ['logfile', 'console'],
+            'level': min_level,  # this level or higher goes to the console,
+        },
         'django': {  # configure all of Django's loggers
             'handlers': ['logfile', 'console'],
             'level': min_django_level,  # this level or higher goes to the console

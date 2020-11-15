@@ -123,6 +123,7 @@ class SetChildStatus:
 
 class ChangeTaskOrder:
     """Змінити порядок виконання завдань"""
+    ## TODO Додати функціональність зміни порядку виконання завдань
     def __init__(self, task:Task, order:str):
         self.task: Task = task
         self.order = order
@@ -212,7 +213,8 @@ class RetryTask:
         self.task.flow.save()
 
     def retry_task_executors(self):
-        """ Переводимо виконавців завдання в активний статус, інакше виконавці не побачать що задача повернута на доопрацювання"""
+        """ Переводимо виконавців завдання в активний статус,
+         інакше виконавці не побачать що задача повернута на доопрацювання"""
         task_executors =  self.task.task_executors.all()
         task_executors.update(status= RETRY)
 

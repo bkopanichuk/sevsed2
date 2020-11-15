@@ -93,7 +93,7 @@ class OutgoingDocumentSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseDocument
         fields = ['id', 'main_file', 'reg_number', 'document_cast',
-                  'reg_date', 'outgoing_type', 'approve_type', 'comment', 'correspondent', 'signer',
+                  'reg_date', 'outgoing_type', 'approve_type', 'comment', 'correspondent', 'signer','main_signer',
                   '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview',
                   'preview_pdf', 'registration_type', 'execute_task_on_create', 'status']
         read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author', 'status']

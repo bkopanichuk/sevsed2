@@ -6,6 +6,7 @@ from apps.document.services.document_service import UpdateMainFileVersion, \
 from apps.document.services.document.check_controllers_service import CheckControllers
 from apps.document.services.document.close_task_executor_on_create_doc_service import CloseTaskExecutorOnCreateDoc
 from apps.document.services.document.set_reply_date_service import SetReplyDate
+from apps.document.services.document.set_outgoing_approver_service import SetOutgoingApproval
 
 
 
@@ -31,6 +32,11 @@ def update_main_file_version(instance, created, **kwargs):
     service = UpdateMainFileVersion(doc=instance)
     service.run()
 
+def set_outgoing_approval(instance, created, **kwargs):
+    if created:
+        service = SetOutgoingApproval(doc=instance)
+        service.run()
+
 
 def create_base_task(instance, action, **kwargs):
     print('action', action)
@@ -55,4 +61,5 @@ signals.pre_save.connect(receiver=check_controlers, sender=BaseDocument)
 signals.post_save.connect(receiver=create_preview, sender=BaseDocument)
 signals.post_save.connect(receiver=close_task_if_exist, sender=BaseDocument)
 signals.post_save.connect(receiver=update_main_file_version, sender=BaseDocument)
+signals.post_save.connect(receiver=set_outgoing_approval, sender=BaseDocument)
 signals.m2m_changed.connect(receiver=create_base_task, sender=BaseDocument.approvers_list.through)
