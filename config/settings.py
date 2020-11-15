@@ -33,6 +33,7 @@ from .rest_settings import REST_FRAMEWORK, REST_REGISTRATION
 from .email_settings import *
 from .cors_settings import *
 from .database_settings import DATABASES
+from .celery_backend_options import *
 
 # Application definition
 
@@ -62,6 +63,7 @@ INSTALLED_APPS = [
     'apps.sevovvintegration.apps.SevovvintegrationConfig',
     'simple_history',
     'preview_generator',
+    'django_celery_results',
     #'silk',
     'apps.uaoauth',
     'apps.contracts',
@@ -119,18 +121,20 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASE_ROUTERS = ['activity_log.router.DatabaseAppsRouter']
 DATABASE_APPS_MAPPING = {'activity_log': 'logs'}
 
+REDIS_URL = "redis://127.0.0.1:6379"
+
 CACHES = {
     # … default cache config and others
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": REDIS_URL+"/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
     "select2": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379/1",
+        "LOCATION": REDIS_URL+"/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }

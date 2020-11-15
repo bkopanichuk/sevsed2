@@ -27,8 +27,17 @@ CREATE EXTENSION postgis version '3.0.1';
 python manage.py loaddata apps/l_core/fixtures/initial_organization.json
 python manage.py loaddata apps/document/fixtures/inital_dict.json
 ```
+## Запутисти celery
+
+```bash
+celery -A config worker -l INFO
+```
+
 Прописати вірний абсолютний члях до папки з кореневими сертифікатами в файлі  osplm.ini.
 змінити параметр Path в блоці [\SOFTWARE\Institute of Informational Technologies\Certificate Authority-1.3\End User\FileStore]
+
+
+
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
