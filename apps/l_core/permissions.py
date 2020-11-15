@@ -1,11 +1,16 @@
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework import exceptions
-
+import logging
+logger = logging.getLogger(__name__)
 
 
 class LCoreDjangoModelPermissions(DjangoModelPermissions):
+    def __init__(self):
+        super(LCoreDjangoModelPermissions, self).__init__()
+
     perms_map = {
-        'GET': ['%(app_label)s.change_%(model_name)s','%(app_label)s.view_%(model_name)s','%(app_label)s.view_self_%(model_name)s'],
+        # 'GET': ['%(app_label)s.change_%(model_name)s','%(app_label)s.view_%(model_name)s','%(app_label)s.view_self_%(model_name)s'],
+        'GET': ['%(app_label)s.view_%(model_name)s','%(app_label)s.view_self_%(model_name)s'],
         'OPTIONS': [],
         'HEAD': [],
         'POST': ['%(app_label)s.add_%(model_name)s'],
@@ -28,8 +33,9 @@ class LCoreDjangoModelPermissions(DjangoModelPermissions):
 
         if method not in self.perms_map:
             raise exceptions.MethodNotAllowed(method)
-
-        return [perm % kwargs for perm in self.perms_map[method]]
+        req_perms = [perm % kwargs for perm in self.perms_map[method]]
+        logger.debug('required_permissions: %()s',req_perms)
+        return req_perms
 
     def _queryset(self, view):
         assert hasattr(view, 'get_queryset') \
@@ -53,6 +59,12 @@ class LCoreDjangoModelPermissions(DjangoModelPermissions):
         """
         return any(user.has_perm(perm, obj) for perm in perm_list)
 
+    def ignore_permission_method(self,request):
+        ignore_permission_methods = [key for key,value in self.perms_map.items() if not  value]
+        if request.method in ignore_permission_methods:
+            return True
+
+
     def has_permission(self, request, view):
         # Workaround to ensure DjangoModelPermissions are not applied
         # to the root view when using DefaultRouter.
@@ -63,11 +75,13 @@ class LCoreDjangoModelPermissions(DjangoModelPermissions):
                 not request.user.is_authenticated and self.authenticated_users_only):
             return False
 
+        if self.ignore_permission_method(request):
+            return True
+
         queryset = self._queryset(view)
         perms = self.get_required_permissions(request.method, queryset.model)
-        print('LCoreDjangoModelPermissions')
-        print(perms)
-        print(request.user.has_perms(perms))
+        logger.info('requred permissions permissions :%s',perms)
+
 
         return self.has_perms(perms,request.user)
 

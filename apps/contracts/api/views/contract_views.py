@@ -113,6 +113,7 @@ class ContractProductsViewSet(BaseOrganizationViewSetMixing):
     filterset_fields = ['contract__id']
 
 
+##TODO Видалити CoordinationViewSet на сервері і на клієнті
 class CoordinationViewSet(BaseOrganizationViewSetMixing):
     queryset = Coordination.objects.all()
     serializer_class = CoordinationSerializer
@@ -223,7 +224,7 @@ def get_accrual_zip(request):
 
 
 class ConvertClientBankView(APIView):
-    """Конвертувати дані Клієнт-банку з CSV в XML - який здатен прочитати 1с"""
+    """Конвертувати дані Клієнт-банку з CSV в XML - який здатен прочитати 1C"""
     permission_classes = [IsAuthenticated]
 
     def post(self, request):

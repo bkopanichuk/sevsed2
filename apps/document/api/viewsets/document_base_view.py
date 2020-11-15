@@ -22,6 +22,12 @@ from apps.document.services.document.create_new_approve_flow_service import Docu
 from apps.document.services.document.consideration_service import DocumentConsideration
 from apps.document.services.document.senc_to_archive_service import SendToArchive
 from apps.document.services.document.register_document_service import RegisterDocument
+from apps.l_core.permissions import LCoreDjangoModelPermissions
+
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class OrderingFilterMixin(BaseOrganizationViewSetMixing):
@@ -34,6 +40,7 @@ class OrderingFilterMixin(BaseOrganizationViewSetMixing):
 
 
 class BaseDocumentSerializerViewSet(OrderingFilterMixin):
+    permission_classes = [LCoreDjangoModelPermissions]
     queryset = BaseDocument.objects.all()
     search_fields = ['reg_number', 'title', 'comment']
     ordering_fields = ['reg_number', 'reg_date']
