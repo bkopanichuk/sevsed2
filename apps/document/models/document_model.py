@@ -87,7 +87,15 @@ APPROVE_TYPE = [(WITH_APPROVE, "З узгодженням"), (WITHOUT_APPROVE, "
 EMAIL = 'EMAIL'
 SEV = 'SEV'
 LETTER = 'LETTER'
-MAILING_METHODS = ((EMAIL, 'Електронна пошта'), (SEV, 'СЕВОВВ'), (LETTER, 'Лист'))
+REGISTERED_LETTER = 'REGISTERED_LETTER'
+HAND_OUT = 'HAND_OUT'
+
+MAILING_METHODS = ((EMAIL, 'Електронна пошта'),
+                   (SEV, 'СЕВОВВ'),
+                   (LETTER, 'Поштою (просте)'),
+                    (REGISTERED_LETTER, 'Поштою (рекомендоване)'),
+                    (HAND_OUT, 'Наручно'),
+                   )
 
 
 ########################################################################################################################

@@ -14,8 +14,7 @@ from apps.document.models.task_model import Task, TaskExecutor, Flow, FlowApprov
 class SimpleTaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ['id','task_status','__str__','controller_comment']
-
+        fields = ['id','task_status','__str__','controller_comment','approve_type']
 
 class TaskExecutorSerializer(serializers.ModelSerializer):
     #comments = CommentSerializer(many=False, required=False, label="Коментар")
@@ -27,7 +26,7 @@ class TaskExecutorSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskExecutor
         fields = ['id', 'executor', 'executor_role', 'detail', 'result', '__str__', 'end_date', 'status', 'task',
-                  'document', 'approve_method', 'sign_info', 'result_file', 'result_document']
+                  'document', 'approve_method', 'sign_info', 'end_date','result_file', 'result_document']
 
         #read_only_fields = ['comments']
 

@@ -7,7 +7,7 @@ from apps.l_core.exceptions import ServiceException
 
 
 class RegisterDocument:
-    """Зареєструвати документ"""
+    """Зареєструвати документ """
 
     def __init__(self, doc):
         self.document: BaseDocument = doc
@@ -22,8 +22,13 @@ class RegisterDocument:
         return self.document
 
     def create_flow(self):
-        service = CreateFlow(doc=self.document)
-        service.run()
+        """Автоматично створити потік виконання завдань, якщо реєструється вхідний документ
+
+        :return:
+        """
+        if self.document.document_cast == INCOMING:
+            service = CreateFlow(doc=self.document)
+            service.run()
 
     def validate_document_status(self):
         if self.document.status != ON_REGISTRATION:
@@ -31,7 +36,10 @@ class RegisterDocument:
 
     def set_reg_number(self):
         """Автоматично присвоїти реєстраційний номер, якщо обрано автоматичну реєстрацію документа,
-        а також вказано журнал реєстрації"""
+        а також вказано журнал реєстрації
+
+        :return:
+        """
         if self.document.registration_type == AUTOMATIC_REG and self.document.registration:
             registration_journal = self.document.registration
             reg_number = registration_journal.get_next_register_number(self.document)

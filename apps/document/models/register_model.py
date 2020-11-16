@@ -36,7 +36,7 @@ class RegistrationJournal(CoreBase):
     mask = models.ForeignKey(RegistrationMask, on_delete=models.PROTECT, related_name='registration_journals',
                              verbose_name="Маска реєстрації", help_text=MASK_HELP_TEXT)
     max_count_to_new_volume = models.PositiveIntegerField(verbose_name="Кількість документів в томі", default=250)
-    current_max_number = models.PositiveIntegerField(verbose_name="Поточний максимальний номер", default=1,editable=False)
+    current_max_number = models.PositiveIntegerField(verbose_name="Поточний максимальний номер", default=0,editable=False)
     name = models.CharField(verbose_name="Назва", max_length=100)
     document_cast = models.CharField(verbose_name="Вид документа", choices=DOCUMENT_CAST,
                                      max_length=50)

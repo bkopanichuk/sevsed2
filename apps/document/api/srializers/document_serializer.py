@@ -9,10 +9,18 @@ from apps.document.models.document_constants import INCOMING, OUTGOING, INNER, D
 from apps.document.models.document_model import INNER_DOCUMENT_STATUS_CHOICES, OUTGOING_DOCUMENT_STATUS_CHOICES, \
     INCOMING_DOCUMENT_STATUS_CHOICES
 from apps.document.models.document_model import ON_REGISTRATION, PROJECT
+from apps.document.models.document_model import MAILING_METHODS
+
 
 
 class EmptySerializer(serializers.Serializer):
     pass
+
+
+class SendDocumentLetterSerializer(serializers.ModelSerializer):
+    mailing_method = serializers.ChoiceField(required=True, choices=MAILING_METHODS)
+
+
 
 class SendToArchiveSerializer(serializers.ModelSerializer):
 
@@ -52,7 +60,7 @@ class DocumentSerializer(serializers.ModelSerializer):
         model = BaseDocument
         fields = ['id', 'main_file', 'outgoing_number', 'outgoing_date', 'document_cast', 'reg_number',
                   'reg_date', 'incoming_type', 'outgoing_type', 'approve_type', 'comment', 'correspondent',
-                  'signer',
+                  'signer','reply_date',
                   '__str__', 'author', 'document_linked_to', 'department', 'approvers_list', 'preview',
                   'preview_pdf', 'registration_type','registration', 'execute_task_on_create', 'status']
 
@@ -95,7 +103,7 @@ class OutgoingDocumentSerializer(serializers.ModelSerializer):
         fields = ['id', 'main_file', 'reg_number', 'document_cast',
                   'reg_date', 'outgoing_type', 'approve_type', 'comment', 'correspondent', 'signer','main_signer',
                   '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview',
-                  'preview_pdf', 'registration_type', 'execute_task_on_create', 'status']
+                  'preview_pdf', 'registration_type','registration', 'execute_task_on_create', 'status']
         read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author', 'status']
 
 

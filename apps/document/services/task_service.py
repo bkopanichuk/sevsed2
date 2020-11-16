@@ -2,7 +2,7 @@ from django.utils.timezone import localdate
 from django.db.models import Max,Min
 from rest_framework.exceptions import ValidationError
 
-from apps.document.models.document_model import COMPLETED, PASSED_CONTROL, CONCERTED,ON_EXECUTION
+from apps.document.models.document_model import COMPLETED, PASSED_CONTROL, CONCERTED,ON_EXECUTION,ON_REGISTRATION
 from apps.document.models.document_constants import INCOMING, OUTGOING
 from apps.document.models.sign_model import Sign
 from apps.document.models.task_model import PENDING, SUCCESS, RETRY, REJECT, RUNNING, MAIN, BY_ORDER, PARALLEL, \
@@ -434,7 +434,7 @@ class HandleExecuteFlow:
         self.flow.document.save()
 
     def change_outgoing_document_status(self):
-        self.flow.document.status = CONCERTED
+        self.flow.document.status = ON_REGISTRATION
         self.flow.document.save()
 
 
