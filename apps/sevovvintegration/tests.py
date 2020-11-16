@@ -52,23 +52,23 @@ s_xml = """<?xml version="1.0" encoding="UTF-8" ?>
 </Header>"""
 from lxml import etree
 
-xml_schema_path = '/home/geo/Documents/DIR/sed_server/sevsed2/apps/sevovvintegration/wsdl/Order1207_1 5_v.2.2.xsd'
-xml_test_path = '/home/geo/Documents/DIR/sed_server/sevsed2/apps/sevovvintegration/test_data/test_res.xml'
-xml_valid_path = '/home/geo/Documents/DIR/sed_server/sevsed2/apps/sevovvintegration/test_data/t3.xml'
+xml_schema_path = r'C:\Users\o.lec\PycharmProjects\sevsed2\apps\sevovvintegration\wsdl/Order1207_1 5_v.2.2.xsd'
+#xml_test_path = '/home/geo/Documents/DIR/sed_server/sevsed2/apps/sevovvintegration/test_data/test_res.xml'
+#xml_valid_path = '/home/geo/Documents/DIR/sed_server/sevsed2/apps/sevovvintegration/test_data/t3.xml'
 print(xml_schema_path)
 XML_SCHEMA = etree.XMLSchema(file=xml_schema_path)
 
 
 def test():
-    # res = xml.parse_from_string(DocumentXML1207Serializer, s_xml)
+    #res = xml.parse_from_string(DocumentXML1207Serializer, s_xml)
     # pprint(res)
-    # t_xml = xml.serialize_to_string(DocumentXML1207Serializer, res, indent='  ')
-    # print(t_xml)
+    data = xml.parse_from_file(DocumentXML1207Serializer, r'C:\Users\o.lec\PycharmProjects\sevsed2\media\sevovv_integration\organization_1\outgoing\2020\11\13\34D39B22-BB84-4E7F-B425-87A138A55CE2.xml')
+    pprint(data)
     # xml.serialize_to_file(DocumentXML1207Serializer, res, xml_test_path)
-    xml_doc = etree.parse('/home/geo/Documents/DIR/sed_server/sevsed2/media/sevovv_integration/organization_1/outgoing/2020/10/hhhhhhhhhhhhh.xml')
+    xml_doc = etree.parse(r'C:\Users\o.lec\PycharmProjects\sevsed2\media\sevovv_integration\organization_1\outgoing\2020\11\13\34D39B22-BB84-4E7F-B425-87A138A55CE2.xml')
     result = XML_SCHEMA.assertValid(xml_doc)
-    xml_doc_valid = etree.parse(xml_valid_path)
-    result = XML_SCHEMA.validate(xml_doc_valid)
+    #xml_doc_valid = etree.parse(xml_valid_path)
+    #result = XML_SCHEMA.validate(xml_doc_valid)
     print(result)
 
 

@@ -11,13 +11,15 @@ from apps.document.models.document_model import INNER_DOCUMENT_STATUS_CHOICES, O
 from apps.document.models.document_model import ON_REGISTRATION, PROJECT
 from apps.document.models.document_model import MAILING_METHODS
 
+from  apps.l_core.models import CoreOrganization
+
 
 
 class EmptySerializer(serializers.Serializer):
     pass
 
 
-class SendDocumentLetterSerializer(serializers.ModelSerializer):
+class SendDocumentLetterSerializer(serializers.Serializer):
     mailing_method = serializers.ChoiceField(required=True, choices=MAILING_METHODS)
 
 
@@ -97,12 +99,13 @@ class OutgoingDocumentSerializer(serializers.ModelSerializer):
     status = serializers.ChoiceField(choices=OUTGOING_DOCUMENT_STATUS_CHOICES, default=PROJECT)
     document_cast = serializers.ChoiceField(choices=DOCUMENT_CAST, default=OUTGOING)
     reg_number = serializers.CharField(required=False, allow_null=True, allow_blank=True, label="Реєстраціний номер")
+    mailing_list = serializers.PrimaryKeyRelatedField(many=True,queryset=CoreOrganization.objects.all(),required=False)
 
     class Meta:
         model = BaseDocument
         fields = ['id', 'main_file', 'reg_number', 'document_cast',
                   'reg_date', 'outgoing_type', 'approve_type', 'comment', 'correspondent', 'signer','main_signer',
-                  '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview',
+                  '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview','mailing_list','mailing_method',
                   'preview_pdf', 'registration_type','registration', 'execute_task_on_create', 'status']
         read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author', 'status']
 

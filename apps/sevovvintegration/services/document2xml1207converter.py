@@ -15,7 +15,7 @@ MEDIA_ROOT = settings.MEDIA_ROOT
 
 
 class Document2Xml1207Converter():
-    def __init__(self, document: BaseDocument, message_id: str, consumer: CoreOrganization,sign:str):
+    def __init__(self, document: BaseDocument, message_id: str, consumer: CoreOrganization, sign:str):
         self.message_id = message_id
         self.document: BaseDocument = document
         self.consumer: CoreOrganization = consumer

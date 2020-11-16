@@ -134,7 +134,7 @@ class IncomingDocument(models.Model):
                                                on_delete=models.PROTECT, null=True)
     reply_date = models.DateField(verbose_name="Кінцева дата  для надання відповіді", null=True, blank=True)
     source = models.CharField(choices=MAILING_METHODS, default=LETTER, verbose_name="Джерело надходження",
-                              max_length=10)
+                              max_length=50)
 
     class Meta:
         abstract = True
@@ -150,7 +150,7 @@ class OutgoingDocument(models.Model):
     main_signer = models.ForeignKey(CoreUser, related_name='outgoing_document_signer', verbose_name='Підписант',
                                     on_delete=models.PROTECT, null=True)
     mailing_method = models.CharField(choices=MAILING_METHODS, default=LETTER, verbose_name="Спосіб відпралення",
-                                      max_length=10)
+                                      max_length=50)
 
     class Meta:
         abstract = True

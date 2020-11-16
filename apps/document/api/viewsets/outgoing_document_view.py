@@ -81,11 +81,7 @@ class OutgoingDocumentViewSet(OrderingFilterMixin):
     @action(detail=False, methods=['patch'],
             url_path='send_document_letter/(?P<document_id>[^/.]+)')
     def send_document_letter(self, request, document_id):
-        """ Відпровити документ листом (поштою)
-        :param request:  rest_framework.request.Request
-        :param document_id: Первинний ключ документа
-        :return: rest_framework.response.Response
-        """
+        """ Відправити документ листом (поштою) """
         request_serializer = SendDocumentLetterSerializer(data=request.data)
         request_serializer.is_valid(raise_exception=True)
         doc = BaseDocument.objects.get(pk=document_id)
