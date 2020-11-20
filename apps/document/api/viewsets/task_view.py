@@ -84,6 +84,8 @@ class TaskExecutorSerializerViewSet(BaseOrganizationViewSetMixing):
     queryset = TaskExecutor.objects.all()
     serializer_class = TaskExecutorSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
+    ordering_fields = '__all__'
+    ordering = ['date_add']
 
     @swagger_auto_schema(method='get',
                          responses={200: TaskExecutorSerializer(many=False)})

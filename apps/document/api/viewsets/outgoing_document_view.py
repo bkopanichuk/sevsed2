@@ -4,11 +4,12 @@ from rest_framework.response import Response
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.decorators import action
 from .document_base_view import OrderingFilterMixin
-from apps.document.api.srializers.document_serializer import OutgoingDocumentSerializer,SendDocumentLetterSerializer
+from apps.document.api.srializers.document_serializer import OutgoingDocumentSerializer, SendDocumentLetterSerializer
 from apps.document.models.document_model import BaseDocument, ON_REGISTRATION, REGISTERED, \
-    ON_AGREEMENT, ON_SIGNING, CONCERTED, TRANSFERRED,REJECT,ARCHIVED
+    ON_AGREEMENT, ON_SIGNING, CONCERTED, TRANSFERRED, REJECT, ARCHIVED
 from ...models.document_constants import OUTGOING
 from apps.document.services.document.send_document_letter_service import SendDocumentLetter
+from apps.document.services.document.send_document_sev_service import SendDocumentLetter
 
 
 class OutgoingDocumentViewSet(OrderingFilterMixin):
@@ -20,8 +21,8 @@ class OutgoingDocumentViewSet(OrderingFilterMixin):
          })
 
     def get_queryset(self):
-        q = super(OutgoingDocumentViewSet,self).get_queryset()
-        res_q = q.select_related('correspondent','outgoing_type')
+        q = super(OutgoingDocumentViewSet, self).get_queryset()
+        res_q = q.select_related('correspondent', 'outgoing_type')
         return res_q
 
     ### STATUS FILTERS #######################################################################
@@ -30,7 +31,6 @@ class OutgoingDocumentViewSet(OrderingFilterMixin):
     def registered(self, request, ):
         self.queryset = self.queryset.filter(status=REGISTERED)
         return self.list(request)
-
 
     @swagger_auto_schema(method='get', responses={200: OutgoingDocumentSerializer(many=True)})
     @action(detail=False, methods=['get'])
@@ -74,10 +74,12 @@ class OutgoingDocumentViewSet(OrderingFilterMixin):
     def transferred(self, request):
         self.queryset = self.queryset.filter(status=TRANSFERRED)
         return self.list(request)
+
     ###########################################################################################
     ###################SPECIAL METHODS#########################################################
 
-    @swagger_auto_schema(request_body=SendDocumentLetterSerializer(), responses={200: OutgoingDocumentSerializer(many=False)})
+    @swagger_auto_schema(request_body=SendDocumentLetterSerializer(),
+                         responses={200: OutgoingDocumentSerializer(many=False)})
     @action(detail=False, methods=['patch'],
             url_path='send_document_letter/(?P<document_id>[^/.]+)')
     def send_document_letter(self, request, document_id):
@@ -90,3 +92,16 @@ class OutgoingDocumentViewSet(OrderingFilterMixin):
         serializer = OutgoingDocumentSerializer(res, context={'request': request})
         return Response(serializer.data)
 
+    @swagger_auto_schema(request_body=SendDocumentLetterSerializer(),
+                         responses={200: OutgoingDocumentSerializer(many=False)})
+    @action(detail=False, methods=['patch'],
+            url_path='send_document_sevovv/(?P<document_id>[^/.]+)')
+    def send_document_sevovv(self, request, document_id):
+        """ Відправити документ через СЕВ ОВВ """
+        request_serializer = SendDocumentLetterSerializer(data=request.data)
+        request_serializer.is_valid(raise_exception=True)
+        doc = BaseDocument.objects.get(pk=document_id)
+        process = SendDocumentLetter(doc=doc, data=request_serializer.validated_data)
+        res = process.run()
+        serializer = OutgoingDocumentSerializer(res, context={'request': request})
+        return Response(serializer.data)

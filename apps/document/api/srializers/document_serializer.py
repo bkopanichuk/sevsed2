@@ -41,9 +41,9 @@ class DocumentListSerializer(serializers.ModelSerializer):
     class Meta:
         model = BaseDocument
         fields = ['id', 'outgoing_number', 'outgoing_date', 'document_cast', 'reg_number',
-                  'reg_date', 'incoming_type', 'incoming_type_name', 'outgoing_type', 'correspondent',
+                  'reg_date', 'incoming_type', 'incoming_type_name', 'outgoing_type', 'correspondent','status'
 
-                  'correspondent_name', '__str__', 'author', 'department', 'registration_type']
+                  'correspondent_name', '__str__', 'author', 'department', 'registration_type','unique_uuid']
 
     def get_incoming_type_name(self, obj):
         if obj.incoming_type and hasattr(obj.incoming_type, 'name'):
@@ -64,9 +64,9 @@ class DocumentSerializer(serializers.ModelSerializer):
                   'reg_date', 'incoming_type', 'outgoing_type', 'approve_type', 'comment', 'correspondent',
                   'signer','reply_date',
                   '__str__', 'author', 'document_linked_to', 'department', 'approvers_list', 'preview',
-                  'preview_pdf', 'registration_type','registration', 'execute_task_on_create', 'status']
+                  'preview_pdf', 'registration_type','registration', 'execute_task_on_create', 'status','unique_uuid']
 
-        read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author', ]
+        read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author','unique_uuid' ]
 
 
 class IncomingDocumentSerializer(serializers.ModelSerializer):
@@ -91,8 +91,8 @@ class IncomingDocumentSerializer(serializers.ModelSerializer):
                   'signer',
                   '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview', 'incoming_type_name',
                   'reply_date',
-                  'preview_pdf', 'registration','registration_type', 'execute_task_on_create', 'status']
-        read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author', 'correspondent_name']
+                  'preview_pdf', 'registration','registration_type', 'execute_task_on_create', 'status','unique_uuid']
+        read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author', 'correspondent_name','unique_uuid']
 
 
 class OutgoingDocumentSerializer(serializers.ModelSerializer):
@@ -106,8 +106,8 @@ class OutgoingDocumentSerializer(serializers.ModelSerializer):
         fields = ['id', 'main_file', 'reg_number', 'document_cast',
                   'reg_date', 'outgoing_type', 'approve_type', 'comment', 'correspondent', 'signer','main_signer',
                   '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview','mailing_list','mailing_method',
-                  'preview_pdf', 'registration_type','registration', 'execute_task_on_create', 'status']
-        read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author', 'status']
+                  'preview_pdf', 'registration_type','registration', 'execute_task_on_create', 'status','unique_uuid']
+        read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author', 'unique_uuid']
 
 
 class InnerDocumentSerializer(serializers.ModelSerializer):
@@ -119,7 +119,7 @@ class InnerDocumentSerializer(serializers.ModelSerializer):
         fields = ['id', 'main_file', 'reg_number', 'document_cast',
                   'reg_date', 'approve_type', 'comment',
                   '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview',
-                  'preview_pdf', 'registration_type', 'execute_task_on_create', 'status']
+                  'preview_pdf', 'registration_type', 'execute_task_on_create', 'status','unique_uuid']
         read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author', ]
 
 

@@ -25,8 +25,9 @@ class TaskExecutorSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TaskExecutor
-        fields = ['id', 'executor', 'executor_role', 'detail', 'result', '__str__', 'end_date', 'status', 'task',
-                  'document', 'approve_method', 'sign_info', 'end_date','result_file', 'result_document']
+        fields = ['id', 'executor', 'executor_role', 'detail', 'result', '__str__', 'date_add','end_date', 'status', 'task',
+                  'document', 'approve_method', 'sign_info','sign_file', 'end_date','result_file', 'result_document','unique_uuid']
+        read_only_fields = ['sign_file','document',]
 
         #read_only_fields = ['comments']
 
@@ -55,11 +56,12 @@ class TaskExecutorFinishSerializer(serializers.ModelSerializer):
 
 class TaskExecutorFinishApproveSerializer(serializers.ModelSerializer):
     sign = serializers.CharField(label='Цифровий підпис', required=False)
+    sign_file = serializers.FileField(label='Цифровий підпис(файл)', required=False)
     result = serializers.CharField(label='Коментар', required=False,allow_null=True)
 
     class Meta:
         model = TaskExecutor
-        fields = ['id', 'sign','result']
+        fields = ['id', 'sign','result','sign_file']
 
 
 class TaskApproveSerializer(serializers.Serializer):
@@ -80,7 +82,7 @@ class TaskSerializer(WritableNestedModelSerializer):
         model = Task
         fields = ['id', 'format_date_add','task_type', 'title', '__str__', 'flow', 'document', 'parent_task', 'parent_node',
                   'task_status', 'task_executors', 'is_completed', 'end_date', 'execute_date', 'controller',
-                  'author_is_controller', 'approve_type','goal','controller_comment','task_author']
+                  'author_is_controller', 'approve_type','goal','controller_comment','task_author','unique_uuid']
         read_only_fields = ['execute_date', 'is_completed']
 
     def validate_executors(self, attrs):
@@ -102,7 +104,7 @@ class TaskSerializer(WritableNestedModelSerializer):
 class FlowApproveSerializer(serializers.ModelSerializer):
     class Meta:
         model = FlowApprove
-        fields = ['id', 'approver', '__str__', 'status']
+        fields = ['id', 'approver', '__str__', 'status','unique_uuid']
 
 
 class FlowSerializer(serializers.ModelSerializer):
@@ -112,8 +114,8 @@ class FlowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Flow
-        fields = ['id', 'status', 'approvers', 'tasks', 'execution_type']
-        read_only_fields = ['status', 'approvers', 'tasks']
+        fields = ['id', 'status', 'approvers', 'tasks', 'execution_type','unique_uuid']
+        read_only_fields = [ 'approvers', 'tasks']
 
 
 class CreateFlowSerializer(serializers.Serializer):

@@ -76,7 +76,7 @@
       "note": null,
       "author": null,
       "editor": null,
-      "organization": null,
+      "organization": 1,
       "system_id": "ecc37736-8da8-415c-85b6-d12a8fc3e62d",
       "system_password": "08a3d06a-ccb6-4465-b8fa-937e7276b442"
     }
@@ -117,7 +117,7 @@
       "note": null,
       "author": null,
       "editor": null,
-      "organization": null,
+      "organization": 1,
       "system_id": "2c1e8ad0-3a19-41fb-9540-74b5189cca5e",
       "system_password": "c106b12a-a704-460e-ba2b-30dbf9a6c823"
     }

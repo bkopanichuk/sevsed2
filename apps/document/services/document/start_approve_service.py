@@ -1,7 +1,8 @@
 import logging
 
 from apps.document.models.document_model import BaseDocument, ON_AGREEMENT, WITH_APPROVE
-from apps.document.models.task_model import APPROVE, RUNNING, Task, TaskExecutor, MAIN, SIGN, SIMPLE_SIGN,DIGIT_SIGN
+from apps.document.models.task_model import APPROVE, RUNNING,PENDING, Task, TaskExecutor, MAIN, SIGN, SIMPLE_SIGN,DIGIT_SIGN
+
 from apps.document.services import CreateFlow
 from apps.l_core.exceptions import ServiceException
 
@@ -17,11 +18,19 @@ class DocumentStartApprove:
         self.data = data
 
     def run(self):
+        self.validate_main_file()
+        self.validate_status()
         self.validate_main_signer()
         self.validate_approve_list()
         self.start_approve_document()
         self.create_approve_flow()
         return self.document
+
+
+    def validate_main_file(self):
+        if not self.document.main_file:
+            raise ServiceException(
+            f'Спочатку завантажте документ для узгодження')
 
     def validate_status(self):
         if self.document.status == ON_AGREEMENT:
@@ -34,26 +43,43 @@ class DocumentStartApprove:
                 f'Спочатку вкажіть підписанта документа')
 
     def create_task_if_main_signer_exist(self, flow):
+        ## Перевіряємо чи ще немає задачі на підпис в головного підписанта
+        q = Task.objects.filter(flow=flow,
+                        task_type=APPROVE,
+                        goal=APPROVE,
+                        approve_type=SIGN,
+                                task_executors__executor=self.document.main_signer,
+                                task_executors__approve_method = DIGIT_SIGN)
+
+        ## Якщо задача вже існує не продовжуємо виконання функції
+        if q.exists():
+            return
+
         if self.document.main_signer:
+            ## Створюємо завдання на підпис
             task = Task(document=self.document,
                         flow=flow,
                         task_type=APPROVE,
                         goal=APPROVE,
                         approve_type=SIGN,
+                        task_status=PENDING,
                         author=self.document.author,
                         organization=self.document.organization
                         )
             task.save()
+            ## Прописуємо виконавцем завдання головного підписанта
             task_executor = TaskExecutor(task=task,
                                          executor=self.document.main_signer,
                                          executor_role=MAIN,
                                          author=self.document.author,
                                          organization=self.document.organization,
-                                         approve_method = SIMPLE_SIGN
+                                         approve_method = DIGIT_SIGN
                                          )
             task_executor.save()
-            task.task_status = RUNNING
-            task.save()
+            ##Якщо
+            ##if task.flow.tasks.count()>0:
+            ##task.task_status = PENDING
+            #task.save()
 
     def validate_approve_list(self):
         ##Якщо вказано підписанта, не перевіряємо список завдань, завдання буде створено автоматично
@@ -76,7 +102,8 @@ class DocumentStartApprove:
         self.start_flow(res)
 
     def start_flow(self, flow):
-        flow.status = RUNNING
         flow.execution_type = self.data.get('execution_type')
-        flow.save()
         self.create_task_if_main_signer_exist(flow)
+        flow.status = RUNNING
+        flow.save()
+

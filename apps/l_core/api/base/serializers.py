@@ -282,7 +282,7 @@ class CoreOrganizationSerializer(DynamicFieldsModelSerializer):
 
 
 # ViewSets define the view behavior.
-class CoreOrganizationViewSet(BaseOrganizationViewSetMixing):
+class CoreOrganizationViewSet(BaseViewSetMixing):
     queryset = CoreOrganization.objects.all()
     serializer_class = CoreOrganizationSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
@@ -298,6 +298,7 @@ class CoreOrganizationViewSet(BaseOrganizationViewSetMixing):
 
         try:
             filtered_q = q.filter(Q(organization__id=organization__id) | Q(organization__id=SUPERUSER_ID))
+            logger.warning(filtered_q.query)
         except FieldError:
             filtered_q = q
         except Exception as e:

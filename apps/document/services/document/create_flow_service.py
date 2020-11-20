@@ -20,11 +20,7 @@ class CreateFlow:
         return self.create_flow()
 
     def create_flow(self):
-        ##Якщо не вказано список підтвердження не створюємо новий процес виконання
-        logger.info(self.approvers_list)
-        if not self.approvers_list:
-            return
-        ## Додати новий процес розгляду
+        ## Додати новий процес розгляду, або повернути існуючий
         flow_q = self.flow.objects.filter(status=PENDING, document=self.document)
         if flow_q.exists():
             flow = flow_q.first()
@@ -33,12 +29,15 @@ class CreateFlow:
             flow = self.flow.objects.create(author=self.document.author, status=PENDING, document=self.document,
                                             goal=self.goal)
 
+        if not self.approvers_list:
+            return flow
+
         flow.approvers_list.add(*self.approvers_list)
         ## Код що нижче додає список розглядачів.
         # Ніякої бізнес логіки окрім створення списку розглядаів немає.
         ## TODO Автоматично змінювати статус розгляду при відкритті документа
 
-        for approver in self.document.approvers_list.all():
+        for approver in self.approvers_list:
             if not FlowApprove.objects.filter(flow=flow, approver=approver).exists():
                 FlowApprove.objects.create(author=self.document.author, status=PENDING, flow=flow, approver=approver)
         return flow

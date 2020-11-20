@@ -1,4 +1,5 @@
 from django.utils.timezone import localdate
+import base64
 from django.db.models import Max,Min
 from rest_framework.exceptions import ValidationError
 
@@ -6,7 +7,7 @@ from apps.document.models.document_model import COMPLETED, PASSED_CONTROL, CONCE
 from apps.document.models.document_constants import INCOMING, OUTGOING
 from apps.document.models.sign_model import Sign
 from apps.document.models.task_model import PENDING, SUCCESS, RETRY, REJECT, RUNNING, MAIN, BY_ORDER, PARALLEL, \
-    SIMPLE_SIGN
+    SIMPLE_SIGN,SIGN,DIGIT_SIGN
 from apps.document.models.task_model import Task, Flow, TaskExecutor
 from apps.l_core.exceptions import ServiceException
 from apps.l_core.ua_sign import verify_external
@@ -271,13 +272,37 @@ class FinishApprove(FinishExecution):
 
     def run(self):
         self.validate_user()
+        self.validate_data()
+        self.validate_signer()
         self.finish_execution()
         self.set_simple_result()
         self.finish_approve()
         return self.task_executor
 
+
+    def validate_data(self):
+        if self.task_executor.task.approve_type == SIGN and self.task_executor.approve_method==DIGIT_SIGN:
+            if not self.data.get('sign_file') and not self.data.get('sign'):
+                raise ServiceException('Завантажте файл з підписом, або підпишіть скориставшись віджетом підпису')
+
+    def validate_signer(self):
+        ##TODO додати перевірку підписанта чи співпадаться реквізити в ЕЦП з вказаним підписантом
+        pass
+
+    def extract_sign_from_file(self):
+        if self.data.get('sign_file'):
+            sign_file = self.data.get('sign_file')
+            self.task_executor.sign_file = sign_file
+            sign_b64 = base64.b64encode(sign_file.read()).decode()
+            self.task_executor.sign = sign_b64
+
+
+
     def finish_execution(self):
-        self.task_executor.sign = self.data.get('sign')
+        if self.data.get('sign_file') and not self.data.get('sign'):
+            self.extract_sign_from_file()
+        else:
+            self.task_executor.sign = self.data.get('sign')
         self.check_sign()
         self.validate_sign()
         self.task_executor.status = SUCCESS

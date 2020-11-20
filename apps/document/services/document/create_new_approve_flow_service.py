@@ -5,7 +5,7 @@ from apps.l_core.exceptions import ServiceException
 
 
 class DocumentCreateNewApproveFlow:
-    """Відкрити новий процес погодження"""
+    """ Відкрити новий процес погодження """
 
     def __init__(self, doc):
         self.document: BaseDocument = doc
