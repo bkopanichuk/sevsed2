@@ -6,6 +6,10 @@ from .document2xml1207converter import Document2Xml1207Converter
 from ..models import SEVOutgoing
 
 
+def get_sign(document):
+    sign = Sign.objects.filter(document=document, signer=document.main_signer).first()
+    return sign
+
 class CreateSevOutgoing():
 
     def __init__(self,document:BaseDocument):
@@ -15,7 +19,7 @@ class CreateSevOutgoing():
         self.send_to_all()
 
     def send_to_all(self):
-        sign = self.get_sign(self.document)
+        sign = get_sign(self.document)
         for addressee in self.document.mailing_list.all():
             message_id = uuid.uuid4().__str__().upper()
             SEVOutgoing.objects.create(document = self.document,
@@ -24,9 +28,7 @@ class CreateSevOutgoing():
                                        to_org = addressee,
                                        sign=sign)
 
-    def get_sign(self,document):
-        sign = Sign.objects.filter(document=document,signer = document.main_signer).first()
-        return sign
+
 
 
 
@@ -44,6 +46,7 @@ class SendToSEVOVVProcess():
 
     def format_company(self,org):
         return CompanyInfo(org.id ,org.edrpou, org.system_id, org.system_password)
+
 
     def send_message(self):
         conv = Document2Xml1207Converter(self.outgoing_doc.document,

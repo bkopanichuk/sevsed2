@@ -124,7 +124,7 @@ class SetChildStatus:
 
 class ChangeTaskOrder:
     """Змінити порядок виконання завдань"""
-    ## TODO Додати функціональність зміни порядку виконання завдань
+    ## TODO Додати функціональність зміни порядку виконання завдан
     def __init__(self, task:Task, order:str):
         self.task: Task = task
         self.order = order
@@ -249,13 +249,6 @@ class FinishExecution:
             self.task_executor.result_file = self.data.get('result_file')
         self.task_executor.save()
 
-    def save_sign(self):
-        document = self.task_executor.task.document
-        signer = self.task_executor.executor
-        sign = self.task_executor.sign
-        sign_info = self.task_executor.sign_info
-        Sign.objects.create(document=document, signer=signer, sign=sign, sign_info=sign_info)
-
     def finish_task(self):
         if self.task_executor.executor_role == MAIN:
             if self.task_executor.result:
@@ -264,7 +257,6 @@ class FinishExecution:
                 if not self.task_executor.task.controller:
                     self.task_executor.task.is_completed = True
                 self.task_executor.task.save()
-                self.save_sign()
 
 
 class FinishApprove(FinishExecution):
@@ -313,6 +305,8 @@ class FinishApprove(FinishExecution):
         if self.task_executor.approve_method == SIMPLE_SIGN:
             self.task_executor.result = self.data.get('result', 'Підтверджено')
 
+
+
     def validate_sign(self):
         sign_b64 = self.task_executor.sign
         data_path = self.task_executor.task.document.main_file.path
@@ -327,6 +321,14 @@ class FinishApprove(FinishExecution):
         if not self.task_executor.sign:
             raise ValidationError({'sign': 'Цифровий підпис обовязковий'})
 
+    def save_sign(self):
+        if self.task_executor.approve_method == DIGIT_SIGN:
+            document = self.task_executor.task.document
+            signer = self.task_executor.executor
+            sign = self.task_executor.sign
+            sign_info = self.task_executor.sign_info
+            Sign.objects.create(document=document, signer=signer, sign=sign, sign_info=sign_info)
+
     def finish_approve(self):
         if self.task_executor.executor_role == MAIN:
             self.task_executor.task.task_status = SUCCESS
@@ -334,6 +336,7 @@ class FinishApprove(FinishExecution):
             if not self.task_executor.task.controller:
                 self.task_executor.task.is_completed = True
             self.task_executor.task.save()
+        self.save_sign()
 
 
 class RejectApprove(FinishExecution):

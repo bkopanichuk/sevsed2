@@ -5,6 +5,7 @@ from pathlib import Path
 import declxml as xml
 from django.conf import settings
 from django.utils.timezone import now
+from lxml import etree
 
 from apps.document.models.document_model import BaseDocument
 from apps.l_core.models import CoreOrganization
@@ -12,10 +13,16 @@ from ..models import get_outgoing_xml_file_path
 from ..serializers import DocumentXML1207Serializer
 
 MEDIA_ROOT = settings.MEDIA_ROOT
+xml_schema_path = Path('apps/sevovvintegration/wsdl/Order1207_1 5_v.2.2.xsd').absolute().__str__()
+XML_SCHEMA = etree.XMLSchema(file=xml_schema_path)
 
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 class Document2Xml1207Converter():
-    def __init__(self, document: BaseDocument, message_id: str, consumer: CoreOrganization, sign:str):
+    def __init__(self, document: BaseDocument, message_id: str, consumer: CoreOrganization, sign: str):
         self.message_id = message_id
         self.document: BaseDocument = document
         self.consumer: CoreOrganization = consumer
@@ -27,9 +34,16 @@ class Document2Xml1207Converter():
 
     def save_xml(self):
         data = self.get_xml_data()
-        save_path,outgoing_path = self.get_path()
+        save_path, outgoing_path = self.get_path()
         xml.serialize_to_file(DocumentXML1207Serializer, data, save_path, indent='  ')
-        return save_path,outgoing_path
+        self.validate_xml(save_path)
+        return save_path, outgoing_path
+
+    def validate_xml(self, full_path):
+        xml_doc = etree.parse(full_path)
+        result = XML_SCHEMA.validate(xml_doc)
+        #result = XML_SCHEMA.assertValid(xml_doc)
+        logger.warning(result)
 
     def get_path(self):
         file_name = f'{self.message_id}.xml'
@@ -39,7 +53,7 @@ class Document2Xml1207Converter():
 
         ##create path is not exist
         Path(outgoing_dir).mkdir(parents=True, exist_ok=True)
-        return full_path,outgoing_path
+        return full_path, outgoing_path
 
     def get_xml_data(self):
         data = self.get_header_attrs()

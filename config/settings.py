@@ -64,6 +64,7 @@ INSTALLED_APPS = [
     'simple_history',
     'preview_generator',
     'django_celery_results',
+    'django_celery_beat',
     #'silk',
     'apps.uaoauth',
     'apps.contracts',
@@ -80,6 +81,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'apps.l_core.middleware.PyCallGraphMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
     ##'activity_log.middleware.ActivityLogMiddleware',
@@ -171,7 +173,7 @@ LANGUAGE_CODE = 'uk'
 #     ('uk', _('Ukraine')),
 # )
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Kiev'
 
 USE_I18N = True
 

@@ -3,7 +3,7 @@ from django.utils.deprecation import MiddlewareMixin
 from pycallgraph import Config
 from pycallgraph import PyCallGraph
 from pycallgraph.globbing_filter import GlobbingFilter
-from pycallgraph.output import GraphvizOutput, GephiOutput
+from pycallgraph.output import GraphvizOutput
 import time
 from django.conf import settings
 
@@ -30,6 +30,19 @@ class PyCallGraphMiddleware(MiddlewareMixin):
     DEFAULT_EXCLUDE = ['*.__unicode__', '*.__str__']
 
     def process_view(self, request, callback, callback_args, callback_kwargs):
+        """Створює візуальну діаграму проходження запиту, та виклику функційта методів
+        Параметри вказуються в адресному рядку, наприклад:
+        /someview?graph=document.*,django.core.*&exclude_extra=logging&groups=true
+        Детальний опис:
+        -   https://graphviz.org/
+        -   https://pycallgraph.readthedocs.io/en/develop/guide/command_line_usage.html
+        Параметри:
+        graph - перелік модулів,які будуть всклюсені у фінальну візуалізацію, наприклад:
+        graph=document.*,django.core.* -
+        exclude_extra - перелік модулів які необхідно виключити з візуальзації
+        groups - групувати за модулями
+        graph_output - формат вихідного файло, за замовчуванням - png
+        """
         if settings.DEBUG and 'graph' in request.GET:
             visualize_modules = request.GET['graph'].split(',')
             exclude_extra = request.GET.get('exclude_extra','').split(',')
@@ -38,7 +51,6 @@ class PyCallGraphMiddleware(MiddlewareMixin):
             groups = request.GET.get('groups', False)
             max_depth = int(request.GET.get('max_depth', 99999))
             tool = request.GET.get('tool', 'dot')
-            ##https://graphviz.org/
             ## Roadmap
 
             if graph_output not in PyCallGraphMiddleware.VALID_OUTPUT_TYPE:

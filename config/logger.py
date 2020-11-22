@@ -83,6 +83,10 @@ LOGGING = {
             'handlers': ['logfile', 'console'],
             'level': min_level,  # this level or higher goes to the console,
         },
+        'sevovvintegration': {
+            'handlers': ['logfile', 'console'],
+            'level': min_level,  # this level or higher goes to the console,
+        },
         'django': {  # configure all of Django's loggers
             'handlers': ['logfile', 'console'],
             'level': min_django_level,  # this level or higher goes to the console

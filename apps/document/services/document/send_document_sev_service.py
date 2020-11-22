@@ -1,3 +1,5 @@
+""" викор истовується для відправки вокументів  документ через СЕВ ОВВ
+"""
 from apps.document.models.document_model import TRANSFERRED,SEV
 from apps.l_core.exceptions import ServiceException
 from apps.sevovvintegration.services.sender_service import CreateSevOutgoing
@@ -13,11 +15,18 @@ class SendDocumentLetter:
         self.mailing_method = data.get('mailing_method')
 
     def run(self):
+        self.validate_sender()
         self.validate_send_method()
         self.validate_mailing_list()
         self.sand_document()
         self.change_document_status()
         return self.document
+
+    def validate_sender(self):
+        if not self.document.organization.system_id:
+            raise ServiceException(
+                f'Організація-відправник не має ідентифікатора для відкравки через СЕВОВВ')
+
 
     def validate_send_method(self):
         if self.mailing_method not in self.VALID_SEND_METHODS:

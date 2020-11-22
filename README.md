@@ -24,33 +24,19 @@ CREATE EXTENSION postgis version '3.0.1';
 ## Імпорт базових налаштувань
 
 ```bash
-python manage.py loaddata apps/l_core/fixtures/initial_auth_data.json
-python manage.py loaddata apps/l_core/fixtures/initial_lcore.json
+python manage.py loaddata apps/l_core/fixtures/initial_organization.json
 python manage.py loaddata apps/document/fixtures/inital_dict.json
 ```
+## Запутисти celery
+
+```bash
+celery -A config worker --loglevel=debug
+celery -A config beat -l INFO --scheduler django_celery_beat.schedulers:DatabaseScheduler
+```
+
 Прописати вірний абсолютний члях до папки з кореневими сертифікатами в файлі  osplm.ini.
 змінити параметр Path в блоці [\SOFTWARE\Institute of Informational Technologies\Certificate Authority-1.3\End User\FileStore]
 
-## Запуск celery  в дебаг режимі
-```bash
-celery -A config worker -l INFO
-```
-
-[program:celery_tasks]
-command=/data/sev_statement_env/bin/celery worker -A sev_statement  --loglevel=INFO
-directory=/data/sev_statement
-user=root
-numprocs=1
-stdout_logfile=/var/log/celery/sev_celery_worker.log
-stderr_logfile=/var/log/celery/sev_celery_worker_error.log
-autostart=true
-autorestart=true
-startsecs=10
-stopwaitsecs = 600
-killasgroup=true
-priority=998
-
-supervisord -n -c /etc/supervisord.conf
 
 
 

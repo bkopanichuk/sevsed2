@@ -5,7 +5,7 @@ import declxml as xml
 from django.conf import settings
 from django.utils.timezone import now
 
-from apps.document.models.document_model import BaseDocument, SEV
+from apps.document.models.document_model import BaseDocument, SEV,ON_REGISTRATION
 from apps.document.models.sign_model import Sign
 from apps.l_core.models import CoreOrganization
 from apps.l_core.ua_sign import verify_external
@@ -25,7 +25,8 @@ def get_incoming_path(document, message_id):
 
 class DownloadMessages():
     def run(self):
-        self.load_messages()
+        res = self.load_messages()
+        return res
 
     def get_consumers(self):
         ## TODO Замінити на явний фільтр
@@ -33,6 +34,7 @@ class DownloadMessages():
 
     def process_xml_list(self, path_list):
         for path in path_list:
+            print('XML_PATH: ',path)
             data = xml.parse_from_file(DocumentXML1207Serializer, path)
             from_sys_id = data.get('from_sys_id')
             from_org = CoreOrganization.objects.get(system_id=from_sys_id)
@@ -42,14 +44,18 @@ class DownloadMessages():
             incoming = SEVIncoming(from_org=from_org, to_org=to_org)
             incoming.xml_file.name = xml_relative_path
             incoming.save()
+            service = ProcessIncoming(incoming_message=incoming)
+            service.run()
 
     def load_messages(self):
+        res = []
         download_client = SEVDownloadClient()
         for _consumer in self.get_consumers():
-            print(_consumer)
             consumer = CompanyInfo(_consumer.id, _consumer.edrpou, _consumer.system_id, _consumer.system_password)
             xml_path_list = download_client.download_messages(consumer)
+            res.append([str(_consumer),xml_path_list])
             self.process_xml_list(xml_path_list)
+        return res
 
 
 class ProcessIncoming():
@@ -64,6 +70,7 @@ class ProcessIncoming():
         data = xml.parse_from_file(DocumentXML1207Serializer, self.incoming_message.xml_file.path)
         document_data = data.get('Document')
         document = BaseDocument(document_cast=INCOMING)
+        print('DOCUMENT: ',document)
         document.comment = document_data.get('annotation')
         print(document.comment)
         document.outgoing_number = document_data.get('RegNumber').get('.')
@@ -73,8 +80,10 @@ class ProcessIncoming():
         document.correspondent = self.incoming_message.from_org
         document.organization = self.incoming_message.to_org  ## Власник листа, організація на яку прийшло повідомлення
         document.main_file.name = self.save_incoming_document_file(data, document)
+        document.status = ON_REGISTRATION
         document.source = SEV
         document.save()
+
         return document, data
 
     def save_sign(self, document, data):

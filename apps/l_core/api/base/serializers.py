@@ -1,33 +1,31 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from typing import Dict
-import json
 
-from django_filters import rest_framework as filters
+import json
+import logging
+from typing import Dict
+
+from django.apps import apps
 from django.contrib.auth.models import Permission, Group
 from django.contrib.contenttypes.models import ContentType
-from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework import serializers, viewsets
-from rest_framework.decorators import api_view
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.views import APIView
-from django.apps import apps
 from django.core.exceptions import FieldError
 from django.db.models import Q
-
-from rest_framework.exceptions import APIException
 from django.http import JsonResponse
-from rest_framework.response import Response
-from rest_framework import status
-from rest_flex_fields import FlexFieldsModelViewSet, FlexFieldsModelSerializer
-
-from drf_yasg.utils import swagger_auto_schema
+from django.http.request import HttpRequest
+from django_filters import rest_framework as filters
 from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_flex_fields import FlexFieldsModelViewSet, FlexFieldsModelSerializer
+from rest_framework import serializers, viewsets
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.exceptions import APIException
+from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from ...models import CoreUser, CoreOrganization, GroupOrganization
-
-import logging
-from django.http.request import HttpRequest
 
 logger = logging.getLogger(__name__)
 
@@ -97,7 +95,7 @@ class BaseViewSetMixing(UserViewMixing, DifferentSerializerMixin, FlexFieldsMode
         instance.delete(mode=mode)
 
 
-class BaseOrganizationViewSetMixing(OrganizationFilterMixing,BaseViewSetMixing, ):
+class BaseOrganizationViewSetMixing(OrganizationFilterMixing, BaseViewSetMixing, ):
     pass
 
 
@@ -202,7 +200,6 @@ class CoreUserViewSet(viewsets.ModelViewSet):
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
     search_fields = ('first_name', 'last_name', 'organization__name')
 
-
     def get_queryset(self):
         if self.request.user.is_superuser:
             return self.queryset
@@ -297,7 +294,8 @@ class CoreOrganizationViewSet(BaseViewSetMixing):
         q = super(CoreOrganizationViewSet, self).get_queryset()
 
         try:
-            filtered_q = q.filter(Q(organization__id=organization__id) | Q(organization__id=SUPERUSER_ID))
+            filtered_q = q.filter(Q(organization__id=organization__id) | Q(organization__id=SUPERUSER_ID)).exclude(
+                id=organization__id)
             logger.warning(filtered_q.query)
         except FieldError:
             filtered_q = q
