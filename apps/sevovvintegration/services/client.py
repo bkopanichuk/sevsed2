@@ -8,6 +8,7 @@ from django.conf import settings
 from django.utils.timezone import now
 from filehash import FileHash
 from zeep import Client
+from ..exceptions import SessionInfoException
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 
@@ -30,6 +31,10 @@ DOCUMENT = 'Document'
 
 INPUT_MESSAGE_COUNT = 1000
 MAX_CHUNK_SIZE = 2500000
+
+
+
+
 
 
 def get_incoming_xml_path(consumer):
@@ -121,10 +126,10 @@ class SEVUploadClient():
                                                                                sessionId=session_id)
         print('SESSION INFO:',session_info)
         if session_info.Error:
-            raise Exception(session_info.Error)
+            raise SessionInfoException(session_info.Error)
 
         if not session_info.MessageSize == session_info.TransferredBytesCount:
-            raise Exception('MessageSize and TransferredBytesCount is no equal')
+            raise SessionInfoException('MessageSize and TransferredBytesCount is no equal')
 
         return session_info
 

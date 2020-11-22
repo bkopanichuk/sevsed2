@@ -38,6 +38,22 @@ celery -A config beat -l INFO --scheduler django_celery_beat.schedulers:Database
 змінити параметр Path в блоці [\SOFTWARE\Institute of Informational Technologies\Certificate Authority-1.3\End User\FileStore]
 
 
+[program:celery_tasks]
+command=/data/sev_statement_env/bin/celery worker -A sev_statement  --loglevel=INFO
+directory=/data/sev_statement
+user=root
+numprocs=1
+stdout_logfile=/var/log/celery/sev_celery_worker.log
+stderr_logfile=/var/log/celery/sev_celery_worker_error.log
+autostart=true
+autorestart=true
+startsecs=10
+stopwaitsecs = 600
+killasgroup=true
+priority=998
+
+supervisord -n -c /etc/supervisord.conf
+
 
 
 ## Contributing

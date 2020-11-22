@@ -1,0 +1,3 @@
+
+class SessionInfoException(Exception):
+    pass

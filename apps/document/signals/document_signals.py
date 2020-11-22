@@ -1,12 +1,12 @@
 from django.db.models import signals
 from apps.document.models.document_model import BaseDocument
 from apps.document.services import CreateFlow
-from apps.document.services.document_service import UpdateMainFileVersion, \
-  CreatePreview, GenerateText
+from apps.document.services.document_service import UpdateMainFileVersion,GenerateText,CreatePreview
 from apps.document.services.document.check_controllers_service import CheckControllers
 from apps.document.services.document.close_task_executor_on_create_doc_service import CloseTaskExecutorOnCreateDoc
 from apps.document.services.document.set_reply_date_service import SetReplyDate
 from apps.document.services.document.set_outgoing_approver_service import SetOutgoingApproval
+#import apps.document.shared_tasks.tasks as tasks
 
 
 
@@ -18,6 +18,11 @@ def generate_text(instance, **kwargs):
 
 def create_preview(instance, created, update_fields, **kwargs):
     if instance.main_file:
+        # if update_fields:
+        #     _update_fields=list(update_fields)
+        # else:
+        #     _update_fields = []
+        # tasks.create_preview.delay(doc_id=instance.id, update_fields=_update_fields)
         service = CreatePreview(doc=instance, update_fields=update_fields)
         service.run()
 

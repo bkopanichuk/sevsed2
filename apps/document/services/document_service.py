@@ -46,7 +46,7 @@ class CreatePreview:
         cache_path = os.path.dirname(full_cache_path)
 
         manager = PreviewManager(cache_path, create_folder=True)
-        path_to_preview_image = manager.get_jpeg_preview(full_path, width=1920, height=1080)
+        path_to_preview_image = manager.get_jpeg_preview(full_path, width=600, height=800)
         preview_dir_path = os.path.dirname(path_to_preview_image)
         preview_base_name = os.path.basename(path_to_preview_image)
         self.document.preview.name = os.path.join(upload_cache_path, os.path.basename(path_to_preview_image))
@@ -56,7 +56,7 @@ class CreatePreview:
             return
 
         os.chdir(preview_dir_path)
-        for file in glob.glob(preview_base_name.replace('-1920x1080.jpeg', '') + "*.pdf"):
+        for file in glob.glob(preview_base_name.replace('-600x800.jpeg', '') + "*.pdf"):
             self.document.preview_pdf.name = os.path.join(upload_cache_path, os.path.basename(file))
             return
 

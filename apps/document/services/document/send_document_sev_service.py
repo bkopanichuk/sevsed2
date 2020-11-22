@@ -3,6 +3,8 @@
 from apps.document.models.document_model import TRANSFERRED,SEV
 from apps.l_core.exceptions import ServiceException
 from apps.sevovvintegration.services.sender_service import CreateSevOutgoing
+from apps.sevovvintegration.exceptions import SessionInfoException
+
 
 
 
@@ -40,8 +42,11 @@ class SendDocumentLetter:
             raise ServiceException(f'Ви не можете відправити документ без вказаних адресатів. Спочатку вкажіть адресатів.')
 
     def sand_document(self):
-        sev_outgoing = CreateSevOutgoing(document=self.document)
-        sev_outgoing.run()
+        try:
+            sev_outgoing = CreateSevOutgoing(document=self.document)
+            sev_outgoing.run()
+        except SessionInfoException as e:
+            raise ServiceException(e)
 
     def change_document_status(self):
         self.document.mailing_method=self.mailing_method
