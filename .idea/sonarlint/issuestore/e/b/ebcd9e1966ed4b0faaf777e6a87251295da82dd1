@@ -1,16 +1,0 @@
-
-upython:S2737-"XAdd logic to this except clause or eliminate it and rethrow the exception automatically.(ÏõîËûÿÿÿÿ
-spython:S1542Ò"ZRename function "GetRelatedObjects" to match the regular expression ^[a-z_][a-z0-9_]{2,}$.(á¿½ß
-vpython:S2737Ú"XAdd logic to this except clause or eliminate it and rethrow the exception automatically.(ÏõîËûÿÿÿÿ
-Bpython:S1481~"%Remove the unused local variable "f".(£Õ·öøÿÿÿÿ
-epython:S1192­"LDefine a constant instead of duplicating this literal "list of ids" 3 times.(îÄª“
-upython:S27374"XAdd logic to this except clause or eliminate it and rethrow the exception automatically.(ÏõîËûÿÿÿÿ
-upython:S2737B"XAdd logic to this except clause or eliminate it and rethrow the exception automatically.(ÏõîËûÿÿÿÿ
-<python:S125²"Remove this commented out code.(ÀÊÕôşÿÿÿÿ
-vpython:S2737°"XAdd logic to this except clause or eliminate it and rethrow the exception automatically.(ÏõîËûÿÿÿÿ
-6python:S125`"Remove this commented out code.(Î°òò
-|python:S1871½"cEither merge this branch with the identical one on line "311" or change one of the implementations.(ŸäÂ’
-<python:S125é"Remove this commented out code.(š²öâúÿÿÿÿ
-jpython:S1542ƒ"LRename function "RPC" to match the regular expression ^[a-z_][a-z0-9_]{2,}$.(ÉŠ¶ûÿÿÿÿ
-upython:S1542¶"WRename function "MultipleDelete" to match the regular expression ^[a-z_][a-z0-9_]{2,}$.(Ä—Ì†úÿÿÿÿ
-7python:S125Í"Remove this commented out code.(Î°òò
