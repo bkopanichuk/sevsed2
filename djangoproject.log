@@ -2715,3 +2715,23 @@ TypeError: 'NoneType' object is not iterable
 2020-11-22 21:41:17,208 [Thread-3    ] [INFO ] [django.server       ]  "GET /api/document/base-document/document_status_count/ HTTP/1.1" 200 102
 2020-11-22 21:41:27,196 [Thread-3    ] [INFO ] [apps.l_core.permissi]  requred permissions permissions :['document.view_basedocument', 'document.view_self_basedocument']
 2020-11-22 21:41:27,225 [Thread-3    ] [INFO ] [django.server       ]  "GET /api/document/base-document/document_status_count/ HTTP/1.1" 200 102
+2020-11-22 21:41:37,195 [Thread-3    ] [INFO ] [apps.l_core.permissi]  requred permissions permissions :['document.view_basedocument', 'document.view_self_basedocument']
+2020-11-22 21:41:37,220 [Thread-3    ] [INFO ] [django.server       ]  "GET /api/document/base-document/document_status_count/ HTTP/1.1" 200 102
+2020-11-22 21:41:47,193 [Thread-3    ] [INFO ] [apps.l_core.permissi]  requred permissions permissions :['document.view_basedocument', 'document.view_self_basedocument']
+2020-11-22 21:41:47,211 [Thread-3    ] [INFO ] [django.server       ]  "GET /api/document/base-document/document_status_count/ HTTP/1.1" 200 102
+2020-11-22 21:41:57,193 [Thread-3    ] [INFO ] [apps.l_core.permissi]  requred permissions permissions :['document.view_basedocument', 'document.view_self_basedocument']
+2020-11-22 21:41:57,218 [Thread-3    ] [INFO ] [django.server       ]  "GET /api/document/base-document/document_status_count/ HTTP/1.1" 200 102
+2020-11-22 21:42:07,194 [Thread-3    ] [INFO ] [apps.l_core.permissi]  requred permissions permissions :['document.view_basedocument', 'document.view_self_basedocument']
+2020-11-22 21:42:07,218 [Thread-3    ] [INFO ] [django.server       ]  "GET /api/document/base-document/document_status_count/ HTTP/1.1" 200 102
+2020-11-22 21:42:17,196 [Thread-3    ] [INFO ] [apps.l_core.permissi]  requred permissions permissions :['document.view_basedocument', 'document.view_self_basedocument']
+2020-11-22 21:42:17,215 [Thread-3    ] [INFO ] [django.server       ]  "GET /api/document/base-document/document_status_count/ HTTP/1.1" 200 102
+2020-11-22 21:42:27,196 [Thread-3    ] [INFO ] [apps.l_core.permissi]  requred permissions permissions :['document.view_basedocument', 'document.view_self_basedocument']
+2020-11-22 21:42:27,215 [Thread-3    ] [INFO ] [django.server       ]  "GET /api/document/base-document/document_status_count/ HTTP/1.1" 200 102
+2020-11-22 21:42:37,197 [Thread-3    ] [INFO ] [apps.l_core.permissi]  requred permissions permissions :['document.view_basedocument', 'document.view_self_basedocument']
+2020-11-22 21:42:37,221 [Thread-3    ] [INFO ] [django.server       ]  "GET /api/document/base-document/document_status_count/ HTTP/1.1" 200 102
+2020-11-22 21:42:47,199 [Thread-3    ] [INFO ] [apps.l_core.permissi]  requred permissions permissions :['document.view_basedocument', 'document.view_self_basedocument']
+2020-11-22 21:42:47,222 [Thread-3    ] [INFO ] [django.server       ]  "GET /api/document/base-document/document_status_count/ HTTP/1.1" 200 102
+2020-11-22 21:42:57,199 [Thread-3    ] [INFO ] [apps.l_core.permissi]  requred permissions permissions :['document.view_basedocument', 'document.view_self_basedocument']
+2020-11-22 21:42:57,218 [Thread-3    ] [INFO ] [django.server       ]  "GET /api/document/base-document/document_status_count/ HTTP/1.1" 200 102
+2020-11-22 21:43:07,201 [Thread-3    ] [INFO ] [apps.l_core.permissi]  requred permissions permissions :['document.view_basedocument', 'document.view_self_basedocument']
+2020-11-22 21:43:07,219 [Thread-3    ] [INFO ] [django.server       ]  "GET /api/document/base-document/document_status_count/ HTTP/1.1" 200 102
