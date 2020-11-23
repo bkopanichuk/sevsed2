@@ -21,12 +21,14 @@ class CreateFlow:
 
     def create_flow(self):
         ## Додати новий процес розгляду, або повернути існуючий
+
         flow_q = self.flow.objects.filter(status=PENDING, document=self.document)
         if flow_q.exists():
             flow = flow_q.first()
             flow.approvers_list.clear()
         else:
-            flow = self.flow.objects.create(author=self.document.author, status=PENDING, document=self.document,
+            flow = self.flow.objects.create(author=self.document.author or self.document.editor, status=PENDING,
+                                            document=self.document,
                                             goal=self.goal)
 
         if not self.approvers_list:
@@ -39,5 +41,6 @@ class CreateFlow:
 
         for approver in self.approvers_list:
             if not FlowApprove.objects.filter(flow=flow, approver=approver).exists():
-                FlowApprove.objects.create(author=self.document.author, status=PENDING, flow=flow, approver=approver)
+                FlowApprove.objects.create(author=self.document.author or self.document.editor, status=PENDING, flow=flow, approver=approver)
+        logger.error(f'CREATE APPROVE FLOW, goal = {flow.goal}')
         return flow

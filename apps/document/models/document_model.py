@@ -10,7 +10,7 @@ from apps.document.models import register_model
 from apps.document.models.coverletter_model import CoverLetter
 from apps.document.models.document_constants import DOCUMENT_CAST
 from apps.document.models.document_constants import CustomDocumentPermissions
-from apps.document.models.documenttype_model import IncomingDocumentType, OutgoingDocumentType
+from apps.document.models.documenttype_model import IncomingDocumentType, OutgoingDocumentType, InnerDocumentType
 from apps.l_core.models import CoreBase, CoreOrganization, Department, CoreUser
 
 #################################################DOCUMENT_STATUS_CHOICES################################################
@@ -157,6 +157,8 @@ class OutgoingDocument(models.Model):
 
 
 class innerDocument(models.Model):
+    inner_type = models.ForeignKey(InnerDocumentType, verbose_name="Тип внутрішнього документа",
+                                      on_delete=models.PROTECT, null=True)
     class Meta:
         abstract = True
 

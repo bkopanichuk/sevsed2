@@ -8,7 +8,7 @@ from apps.document.api.viewsets.document_base_view import BaseDocumentSerializer
     DocumentStartApproveView, UploadDocumentViewSet, DocumentHistoryView, RegisterDocumentView
 from apps.document.api.viewsets.document_file_view import DocumentFileViewSet
 from apps.document.api.viewsets.documenttype_view import IncomingDocumentTypeSerializerViewSet, \
-    OutgoingDocumentTypeSerializerViewSet
+    OutgoingDocumentTypeSerializerViewSet,InnerDocumentTypeViewSet
 from apps.document.api.viewsets.incoming_document_view import IncomingDocumentViewSet
 from apps.document.api.viewsets.inner_document_view import InnerDocumentViewSet
 from apps.document.api.viewsets.outgoing_document_view import OutgoingDocumentViewSet
@@ -37,6 +37,7 @@ router.register(r'approve-flow', ApproveFlowSerializerViewSet)
 router.register(r'sign', SignSerializerViewSet)
 router.register(r'incoming-type', IncomingDocumentTypeSerializerViewSet)
 router.register(r'outgoing-type', OutgoingDocumentTypeSerializerViewSet)
+router.register(r'inner-type', InnerDocumentTypeViewSet)
 router.register(r'cover-letter', CoverLetterSerializerViewSet)
 router.register(r'additional-file/(?P<document_id>[^/.]+)', DocumentFileViewSet)
 

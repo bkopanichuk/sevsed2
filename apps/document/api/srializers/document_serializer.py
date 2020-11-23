@@ -110,17 +110,21 @@ class OutgoingDocumentSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author', 'unique_uuid']
 
 
+
 class InnerDocumentSerializer(serializers.ModelSerializer):
     status = serializers.ChoiceField(choices=INNER_DOCUMENT_STATUS_CHOICES, default=PROJECT)
     document_cast = serializers.ChoiceField(choices=DOCUMENT_CAST, default=INNER)
+    reg_number = serializers.CharField(required=False, allow_null=True, allow_blank=True, label="Реєстраціний номер")
 
     class Meta:
         model = BaseDocument
         fields = ['id', 'main_file', 'reg_number', 'document_cast',
-                  'reg_date', 'approve_type', 'comment',
+                  'reg_date',  'approve_type', 'comment', 'correspondent', 'main_signer',
+                  'inner_type','approve_type',
                   '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview',
-                  'preview_pdf', 'registration_type', 'execute_task_on_create', 'status','unique_uuid']
-        read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author', ]
+                  'preview_pdf', 'registration_type','registration', 'execute_task_on_create', 'status','unique_uuid']
+        read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author', 'unique_uuid']
+
 
 
 class RelatedDocumentSerializer(serializers.ModelSerializer):

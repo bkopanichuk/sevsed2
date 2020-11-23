@@ -26,3 +26,15 @@ class OutgoingDocumentType(CoreBase):
 
     def __str__(self):
         return self.name
+
+
+
+class InnerDocumentType(CoreBase):
+    name = models.CharField(max_length=200, verbose_name='Тип внутрішнього документа')
+
+    class Meta:
+        verbose_name = 'Тип внутрішнього документу'
+        verbose_name_plural = 'Типи внутрішніх документів'
+
+    def __str__(self):
+        return self.name
