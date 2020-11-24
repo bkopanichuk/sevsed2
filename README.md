@@ -37,7 +37,7 @@ celery -A config beat -l INFO --scheduler django_celery_beat.schedulers:Database
 Прописати вірний абсолютний члях до папки з кореневими сертифікатами в файлі  osplm.ini.
 змінити параметр Path в блоці [\SOFTWARE\Institute of Informational Technologies\Certificate Authority-1.3\End User\FileStore]
 
-
+```bash
 [program:celery_tasks]
 command=/data/sev_statement_env/bin/celery worker -A sev_statement  --loglevel=INFO
 directory=/data/sev_statement
@@ -51,9 +51,10 @@ startsecs=10
 stopwaitsecs = 600
 killasgroup=true
 priority=998
-
+```
+```bash
 supervisord -n -c /etc/supervisord.conf
-
+```bash
 
 
 ## Contributing
