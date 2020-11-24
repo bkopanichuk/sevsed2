@@ -4,7 +4,7 @@ from django.db.models import Max,Min
 from rest_framework.exceptions import ValidationError
 
 from apps.document.models.document_model import COMPLETED, PASSED_CONTROL, CONCERTED,ON_EXECUTION,ON_REGISTRATION
-from apps.document.models.document_constants import INCOMING, OUTGOING
+from apps.document.models.document_constants import INCOMING, OUTGOING,INNER
 from apps.document.models.sign_model import Sign
 from apps.document.models.task_model import PENDING, SUCCESS, RETRY, REJECT, RUNNING, MAIN, BY_ORDER, PARALLEL, \
     SIMPLE_SIGN,SIGN,DIGIT_SIGN
@@ -152,6 +152,7 @@ class ChangeTaskOrder:
 class ApproveTask:
     """ Підтвердження виконання завдання"""
     def __init__(self, task, user,data):
+        logger.info(f'START: ApproveTask------------------------------------')
         self.task: Task = task
         self.user = user
         self.data = data
@@ -160,6 +161,7 @@ class ApproveTask:
         self.validate_user()
         self.approve_task()
         self.change_document_status()
+        logger.info(f'FINISH: ApproveTask-----------------------------------')
         return self.task
 
     def validate_user(self):
@@ -176,6 +178,8 @@ class ApproveTask:
         ## Перевіряємо чи залишились невиконані завдання, якщо залишились то не знімаємо документ(завдання) контролю
         ## Інакше - знімаємо з контролю
         is_all_tasks_completed = (not self.task.document.task_set.filter(is_completed=False).exists())
+        #logger.debug(self.task.document.task_set.filter(is_completed=False).query)
+        logger.info(f'is_all_tasks_completed = {is_all_tasks_completed} ')
         if is_all_tasks_completed:
             self.task.document.status = PASSED_CONTROL
             self.task.document.save()
@@ -442,6 +446,8 @@ class HandleExecuteFlow:
                 self.change_incoming_document_status()
             elif self.flow.document.document_cast == OUTGOING:
                 self.change_outgoing_document_status()
+            elif self.flow.document.document_cast == INNER:
+                self.change_inner_document_status()
         elif self.flow.status == REJECT:
             self.reject_document_if_flow_rejected()
 
@@ -462,6 +468,10 @@ class HandleExecuteFlow:
         self.flow.document.save()
 
     def change_outgoing_document_status(self):
+        self.flow.document.status = ON_REGISTRATION
+        self.flow.document.save()
+
+    def change_inner_document_status(self):
         self.flow.document.status = ON_REGISTRATION
         self.flow.document.save()
 

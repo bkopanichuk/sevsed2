@@ -14,7 +14,7 @@ from apps.document.api.srializers.document_serializer import RelatedDocumentSeri
     SendToArchiveSerializer
 from apps.document.api.srializers.task_serializer import CreateFlowSerializer
 from apps.document.models.document_constants import INCOMING, INNER, OUTGOING
-from apps.document.models.document_model import BaseDocument, ON_RESOLUTION, ON_AGREEMENT
+from apps.document.models.document_model import BaseDocument, ON_RESOLUTION, ON_AGREEMENT,PROJECT
 from apps.l_core.api.base.serializers import BaseOrganizationViewSetMixing
 from apps.document.services.document.resolution_service import ResolutionDocument
 from apps.document.services.document.start_approve_service import DocumentStartApprove
@@ -54,6 +54,12 @@ class BaseDocumentSerializerViewSet(OrderingFilterMixin):
     @action(detail=False, methods=['get'])
     def my_resolution(self, request, ):
         self.queryset = BaseDocument.objects.filter(approvers_list__in=[request.user], status=ON_RESOLUTION)
+        return self.list(request, )
+
+    @swagger_auto_schema(method='get', responses={200: DocumentSerializer(many=True)})
+    @action(detail=False, methods=['get'])
+    def my_project(self, request, ):
+        self.queryset = BaseDocument.objects.filter(approvers_list__in=[request.user], status=PROJECT)
         return self.list(request, )
 
     @swagger_auto_schema(method='get', responses={200: DocumentSerializer(many=True)})

@@ -115,15 +115,21 @@ class InnerDocumentSerializer(serializers.ModelSerializer):
     status = serializers.ChoiceField(choices=INNER_DOCUMENT_STATUS_CHOICES, default=PROJECT)
     document_cast = serializers.ChoiceField(choices=DOCUMENT_CAST, default=INNER)
     reg_number = serializers.CharField(required=False, allow_null=True, allow_blank=True, label="Реєстраціний номер")
+    main_signer_name = serializers.SerializerMethodField()
 
     class Meta:
         model = BaseDocument
         fields = ['id', 'main_file', 'reg_number', 'document_cast',
-                  'reg_date',  'approve_type', 'comment', 'correspondent', 'main_signer',
-                  'inner_type','approve_type',
-                  '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview',
+                  'reg_date',  'approve_type', 'comment', 'correspondent', 'main_signer','main_signer_name',
+                  'inner_type','date_add', '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview',
                   'preview_pdf', 'registration_type','registration', 'execute_task_on_create', 'status','unique_uuid']
         read_only_fields = ['id', 'preview', 'preview_pdf', '__str__', 'author', 'unique_uuid']
+
+    def get_main_signer_name(self, obj):
+        if obj.main_signer and hasattr(obj.main_signer, '__str__'):
+            return obj.main_signer.__str__()
+
+
 
 
 

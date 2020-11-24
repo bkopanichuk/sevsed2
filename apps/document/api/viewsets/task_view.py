@@ -11,8 +11,10 @@ from apps.document.api.srializers.document_serializer import DocumentSerializer
 from apps.document.api.srializers.task_serializer import TaskSerializer, FlowSerializer, TaskExecutorSerializer, \
     TaskExecutorFinishSerializer, TaskExecutorFinishApproveSerializer, TaskApproveSerializer
 from apps.document.models.document_model import ON_CONTROL
+from apps.document.models.document_constants import INNER
+
 from apps.document.models.task_model import Task, Flow, TaskExecutor, RUNNING, SUCCESS, EXECUTE, \
-    APPROVE, TASK,RETRY
+    APPROVE, TASK, RETRY
 from apps.document.services.task_service import FinishExecution, ApproveTask, FinishApprove, RejectApprove, RetryTask
 from apps.l_core.api.base.serializers import BaseOrganizationViewSetMixing
 
@@ -93,7 +95,7 @@ class TaskExecutorSerializerViewSet(BaseOrganizationViewSetMixing):
     def my_execution_tasks(self, request, ):
         self.queryset = TaskExecutor.objects.filter(executor=request.user, task__goal=EXECUTE,
                                                     task__task_type=TASK,
-                                                    task__task_status__in=[RUNNING,RETRY])
+                                                    task__task_status__in=[RUNNING, RETRY])
         return self.list(request)
 
     @swagger_auto_schema(method='get',
@@ -101,6 +103,15 @@ class TaskExecutorSerializerViewSet(BaseOrganizationViewSetMixing):
     @action(detail=False, methods=['get'])
     def my_approve_tasks(self, request, ):
         self.queryset = TaskExecutor.objects.filter(executor__id=request.user.id,
+                                                    task__task_type=APPROVE, task__task_status__in=[RUNNING])
+        return self.list(request)
+
+    @swagger_auto_schema(method='get',
+                         responses={200: TaskExecutorSerializer(many=False)})
+    @action(detail=False, methods=['get'])
+    def my_approve_tasks_inner(self, request, ):
+        self.queryset = TaskExecutor.objects.filter(executor__id=request.user.id,
+                                                    task__task__document_document_cast=INNER,
                                                     task__task_type=APPROVE, task__task_status__in=[RUNNING])
         return self.list(request)
 
@@ -171,6 +182,20 @@ class ApproveFlowSerializerViewSet(BaseOrganizationViewSetMixing):
 
 
 class DocumentFlowView(APIView):
+    @swagger_auto_schema(responses={200: FlowSerializer(many=True)})
+    def get(self, request, document_id):
+        q = Flow.objects.filter(goal=EXECUTE, document__id=document_id)
+        serializer = FlowSerializer(q, many=True, context={'request': request})
+        return Response(serializer.data)
+
+class DocumentResolutionView(APIView):
+    @swagger_auto_schema(responses={200: FlowSerializer(many=True)})
+    def get(self, request, document_id):
+        q = Flow.objects.filter(goal=EXECUTE, document__id=document_id)
+        serializer = FlowSerializer(q, many=True, context={'request': request})
+        return Response(serializer.data)
+
+class DocumentConciderationView(APIView):
     @swagger_auto_schema(responses={200: FlowSerializer(many=True)})
     def get(self, request, document_id):
         q = Flow.objects.filter(goal=EXECUTE, document__id=document_id)

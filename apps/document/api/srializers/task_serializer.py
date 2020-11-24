@@ -114,7 +114,7 @@ class FlowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Flow
-        fields = ['id', 'status', 'approvers', 'tasks', 'execution_type','unique_uuid']
+        fields = ['id', 'status', 'approvers', 'tasks', 'execution_type','goal','unique_uuid']
         read_only_fields = [ 'approvers', 'tasks']
 
 
