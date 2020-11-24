@@ -136,7 +136,11 @@ class Task(CoreBase):
 
 def get_result_file_path(instance, filename):
     return os.path.join(
-        f'uploads/tasks/organization_{instance.organization.id}_{instance.author}/task_{instance.task.id}/task_executor_{instance.id}/{filename}')
+        f'uploads/tasks/org_{instance.organization.id}__author_{instance.author}/task_{instance.task.id}/task_executor_{instance.id}/{filename}')
+
+def get_sign_file_path(instance, filename):
+    return os.path.join(
+        f'uploads/tasks/org_{instance.organization.id}__author_{instance.author}/task_{instance.task.id}/task_executor_{instance.id}/sign/{filename}')
 
 class TaskExecutor(CoreBase):
     task = models.ForeignKey(Task, related_name='task_executors', on_delete=models.CASCADE, null=True)
@@ -154,7 +158,7 @@ class TaskExecutor(CoreBase):
     status = models.CharField(verbose_name="Статус завдання", choices=TASK_EXECUTOR_STATUS, max_length=20,
                               default=PENDING)
     sign = models.TextField(null=True, verbose_name='Цифровий підпис')
-    sign_file = models.FileField(null=True, verbose_name='Цифровий підпис(файл)')
+    sign_file = models.FileField(upload_to=get_sign_file_path,null=True, verbose_name='Цифровий підпис(файл)')
     approve_method = models.CharField(max_length=20, verbose_name="Метод підтвердження", choices=APPROVE_METHODS,
                                       null=True)
     sign_info = JSONField(null=True, verbose_name='Детальна інформація про накладений цифровий підпис')

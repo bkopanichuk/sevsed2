@@ -172,7 +172,6 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
                                      max_length=100)
     reg_number = models.CharField(verbose_name="Реєстраціний номер", max_length=100, null=True)
     reg_date = models.DateField(verbose_name="Дата реєстрації", null=True, editable=False)
-
     comment = models.TextField(verbose_name="Короткий зміст", max_length=500, null=True, blank=True)
     document_linked_to = models.ManyToManyField('self', related_name='document_linked_to_document',
                                                 verbose_name="До документа", blank=True)
@@ -187,10 +186,8 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
                                      on_delete=models.PROTECT, null=True, blank=True)
     case_index = models.CharField(verbose_name="Індекс  та  заголовок справи",
                                   max_length=100, null=True)
-
     case_number = models.CharField(verbose_name="Номер тому справи",
                                    max_length=100, null=True)
-
     preview = models.FileField(upload_to=get_preview_directory, null=True, editable=False, max_length=500)
     preview_pdf = models.FileField(upload_to=get_preview_directory, null=True, editable=False, max_length=500)
     status = models.CharField(verbose_name="Статус", max_length=100, default=PROJECT)
@@ -221,11 +218,10 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
             (CustomDocumentPermissions.VIEW_SIGNED, "Переглядати підписані"),
             (CustomDocumentPermissions.VIEW_TRANSFERRED, "Переглядати передані"),
             (CustomDocumentPermissions.CHANGE_DOCUMENT_DICTIONARY, "Редагувати довідники документів"),
-
         ]
 
     def __str__(self):
-        return f'{self.get_document_cast_display()} документ "{self.reg_number}"'
+        return f'{self.get_document_cast_display()} документ "{self.reg_number or ""}"'
 
     def save(self, *args, **kwargs):
         super(BaseDocument, self).save(*args, **kwargs)
