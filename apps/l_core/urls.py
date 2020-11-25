@@ -16,7 +16,9 @@ Including another URLconf
 ##from django.conf.urls import url, include
 
 from django.conf.urls import url, include
+from .views import db_structure_view
 
 urlpatterns = [
     url(r'api-base/', include('apps.l_core.api.base.router')),
+    url(r'api-doc/', db_structure_view),
 ]

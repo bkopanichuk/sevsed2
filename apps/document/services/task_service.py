@@ -378,12 +378,14 @@ class RejectApprove(FinishExecution):
 
 class HandleExecuteTask:
     def __init__(self, task):
+        logger.debug('START HandleExecuteTask: -------------------------')
         self.task: Task = task
 
     def run(self):
         if self.task.flow.status != RUNNING:
             return
         self.close_flow_if_last_task()
+        logger.debug('FINISH HandleExecuteTask: -------------------------')
 
     def close_flow_if_last_task(self):
         if self.task.task_status == SUCCESS:

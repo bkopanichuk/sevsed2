@@ -24,7 +24,8 @@ CREATE EXTENSION postgis version '3.0.1';
 ## Імпорт базових налаштувань
 
 ```bash
-python manage.py loaddata apps/l_core/fixtures/initial_organization.json
+python manage.py loaddata apps/l_core/fixtures/initial_auth_data.json
+python manage.py loaddata apps/l_core/fixtures/initial_lcore.json
 python manage.py loaddata apps/document/fixtures/inital_dict.json
 ```
 ## Запутисти celery
@@ -57,6 +58,14 @@ priority=998
 supervisord -n -c /etc/supervisord.conf
 ```
 
+Очистити тестову базу даних 
+```bash
+find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+find . -path "*/migrations/*.pyc"  -delete
+python manage.py help flush
+python manage.py makemigrations
+python manage.py migrate --fake core zero
+```
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.

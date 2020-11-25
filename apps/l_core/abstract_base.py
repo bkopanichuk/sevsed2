@@ -36,17 +36,14 @@ class SoftDeleteManager(models.Manager):
 
 class AbstractBase(CheckProtected, RelatedObjects, models.Model):
     is_deleted = models.BooleanField(null=False, default=False, db_index=True)
-    unique_uuid = models.UUIDField(default=uuid.uuid4)
+    unique_uuid = models.UUIDField(default=uuid.uuid4, verbose_name="**Унікальний ідентифікатор запису, в загальному просторі імен",
+                                   help_text="Інформацію, відмічену за допомогою UUID, можна використовувати без необхідності вирішення конфлікту імен")
     objects = SoftDeleteManager(mode='clear')
     deleted_objects = SoftDeleteManager(mode='deleted')
     objects_with_deleted = SoftDeleteManager(mode='all')
 
     class Meta:
         abstract = True
-
-
-
-
 
     def delete(self, **kwargs):
         MODE_VALUES = ['hard', 'soft']

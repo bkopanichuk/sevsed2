@@ -115,14 +115,14 @@ from rest_framework.exceptions import ValidationError
 
 
 class CoreBase(AbstractBase):
-    date_add = models.DateTimeField(auto_now_add=True, null=True, editable=False)
-    date_edit = models.DateTimeField(auto_now=True, null=True, editable=False)
+    date_add = models.DateTimeField(auto_now_add=True, null=True, editable=False, verbose_name="**Дата створення")
+    date_edit = models.DateTimeField(auto_now=True, null=True, editable=False, verbose_name="**Дата останньої зміни")
     author = models.ForeignKey(CoreUser, related_name='%(class)s_author', null=True, editable=False,
-                               on_delete=models.PROTECT)
+                               on_delete=models.PROTECT,verbose_name="**Автор")
     editor = models.ForeignKey(CoreUser, related_name='%(class)s_editor', null=True, editable=False,
-                               on_delete=models.PROTECT)
-    organization = models.ForeignKey(CoreOrganization, null=True, on_delete=models.PROTECT)
-    is_deleted = models.BooleanField(null=False, default=False, editable=False, db_index=True)
+                               on_delete=models.PROTECT,verbose_name="**Останій редактор")
+    organization = models.ForeignKey(CoreOrganization, null=True, on_delete=models.PROTECT,verbose_name="**Організація",help_text="До якої організації відноситься інформація")
+    is_deleted = models.BooleanField(null=False, default=False, editable=False, db_index=True,verbose_name="**Дані помічено на видалення?")
 
 
     def save(self, *args, **kwargs):

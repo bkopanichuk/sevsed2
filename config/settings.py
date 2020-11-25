@@ -65,10 +65,11 @@ INSTALLED_APPS = [
     'preview_generator',
     'django_celery_results',
     'django_celery_beat',
-    #'silk',
+    # 'silk',
     'apps.uaoauth',
     'apps.contracts',
     'multiselectfield',
+
     # 'sync_client',
 
 ]
@@ -86,7 +87,7 @@ MIDDLEWARE = [
     'simple_history.middleware.HistoryRequestMiddleware',
     ##'activity_log.middleware.ActivityLogMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
-    #'silk.middleware.SilkyMiddleware',
+    # 'silk.middleware.SilkyMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -129,14 +130,14 @@ CACHES = {
     # … default cache config and others
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL+"/1",
+        "LOCATION": REDIS_URL + "/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
     },
     "select2": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL+"/1",
+        "LOCATION": REDIS_URL + "/1",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
@@ -202,6 +203,5 @@ AUTH_SERVER_SYNC_PERMISSION_URL = 'http://10.0.30.220:9999/sync-server/sync-perm
 AUTH_SERVER_MAX_TOKEN_AGE = 40 * 60  ##140 хвилин
 AUTH_SERVER_SECRET_KEY = 'sed2'
 AUTH_SERVER_CLIENT_ID = 'sed2'
-
 
 from config.logger import LOGGING
