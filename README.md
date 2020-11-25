@@ -52,9 +52,10 @@ stopwaitsecs = 600
 killasgroup=true
 priority=998
 ```
+
 ```bash
 supervisord -n -c /etc/supervisord.conf
-```bash
+```
 
 
 ## Contributing

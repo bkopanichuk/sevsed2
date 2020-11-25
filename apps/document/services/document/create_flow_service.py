@@ -16,6 +16,7 @@ class CreateFlow:
         self.goal = goal or EXECUTE
         self.approvers_list = self.document.approvers_list.all()
 
+
     def run(self):
         return self.create_flow()
 
@@ -25,11 +26,16 @@ class CreateFlow:
         flow_q = self.flow.objects.filter(status=PENDING, document=self.document)
         if flow_q.exists():
             flow = flow_q.first()
+            flow.goal=self.goal
+            flow.save()
             flow.approvers_list.clear()
         else:
             flow = self.flow.objects.create(author=self.document.author or self.document.editor, status=PENDING,
                                             document=self.document,
                                             goal=self.goal)
+
+        #raise Exception(flow.goal)
+
 
         if not self.approvers_list:
             return flow

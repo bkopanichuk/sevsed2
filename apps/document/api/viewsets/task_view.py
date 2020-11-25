@@ -198,7 +198,7 @@ class DocumentResolutionView(APIView):
 class DocumentConciderationView(APIView):
     @swagger_auto_schema(responses={200: FlowSerializer(many=True)})
     def get(self, request, document_id):
-        q = Flow.objects.filter(goal=EXECUTE, document__id=document_id)
+        q = Flow.objects.filter(goal=APPROVE, document__id=document_id)
         serializer = FlowSerializer(q, many=True, context={'request': request})
         return Response(serializer.data)
 

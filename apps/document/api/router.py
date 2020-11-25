@@ -16,7 +16,8 @@ from apps.document.api.viewsets.registration_views import RegistrationJournalVie
     RegistrationMaskViewSet
 from apps.document.api.viewsets.sign_view import SignSerializerViewSet
 from apps.document.api.viewsets.task_view import TaskSerializerViewSet, FlowSerializerViewSet, DocumentFlowView, \
-    TaskExecutorSerializerViewSet, ApproveTaskSerializerViewSet, ApproveFlowSerializerViewSet, ApproveDocumentFlowView
+    TaskExecutorSerializerViewSet, ApproveTaskSerializerViewSet, ApproveFlowSerializerViewSet, ApproveDocumentFlowView,\
+DocumentConciderationView,DocumentResolutionView
 
 router = routers.DefaultRouter()
 
@@ -45,6 +46,8 @@ urlpatterns = [
 
     url(r'document-history/(?P<document_id>[^/.]+)/$', DocumentHistoryView.as_view()),
     url(r'document-flow/(?P<document_id>[^/.]+)/$', DocumentFlowView.as_view()),
+    url(r'document-resolution/(?P<document_id>[^/.]+)/$', DocumentResolutionView.as_view()),
+    url(r'document-consideration/(?P<document_id>[^/.]+)/$', DocumentConciderationView.as_view()),
     url(r'approve-document-flow/(?P<document_id>[^/.]+)/$', ApproveDocumentFlowView.as_view()),
     url(r'action/register/(?P<document_id>[^/.]+)/$', RegisterDocumentView.as_view()),
     url(r'action/consideration/(?P<document_id>[^/.]+)/$', DocumentConsiderationView.as_view()),

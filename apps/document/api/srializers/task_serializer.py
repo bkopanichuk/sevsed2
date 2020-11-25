@@ -8,7 +8,7 @@ from drf_writable_nested.serializers import WritableNestedModelSerializer
 
 from apps.l_core.models import CoreUser
 from apps.document.api.srializers.comment_serializer import CommentSerializer
-from apps.document.models.task_model import Task, TaskExecutor, Flow, FlowApprove, EXECUTOR_ROLE, EXECUTION_TYPE
+from apps.document.models.task_model import Task, TaskExecutor, Flow, FlowApprove, EXECUTOR_ROLE, EXECUTION_TYPE,TASK_GOAL
 
 
 class SimpleTaskSerializer(serializers.ModelSerializer):
@@ -120,3 +120,4 @@ class FlowSerializer(serializers.ModelSerializer):
 
 class CreateFlowSerializer(serializers.Serializer):
     execution_type = serializers.ChoiceField(choices=EXECUTION_TYPE, required=True)
+    goal = serializers.ChoiceField(choices=TASK_GOAL, required=False)
