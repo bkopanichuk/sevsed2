@@ -6,6 +6,7 @@ from rest_framework import routers
 from .serializers import (CoreUserViewSet, CoreOrganizationViewSet,
                           GroupOrganizationViewSet, GetUserPermissions, GetRelatedObjects, RPC,
                           MultipleDelete, PermissionsViewSet, ContentTypeViewSet, GroupViewSet)
+from .views import GetTaskResult
 
 router = routers.DefaultRouter()
 
@@ -18,6 +19,7 @@ router.register(r'group', GroupViewSet)
 
 urlpatterns = [
     url(r'user-permissions', GetUserPermissions.as_view()),
+    url(r'get-celery-task/(?P<task_id>[^/.]+)', GetTaskResult.as_view()),
     url(r'get-related-objects', GetRelatedObjects),
     url(r'rpc', RPC),
     url(r'multiple-delete', MultipleDelete)

@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from apps.document.api.srializers.document_serializer import DocumentSerializer
 from apps.document.api.srializers.task_serializer import TaskSerializer, FlowSerializer, TaskExecutorSerializer, \
     TaskExecutorFinishSerializer, TaskExecutorFinishApproveSerializer, TaskApproveSerializer
-from apps.document.models.document_model import ON_CONTROL
+from apps.document.models.document_model import ON_CONTROL,BaseDocument
 from apps.document.models.document_constants import INNER
 
 from apps.document.models.task_model import Task, Flow, TaskExecutor, RUNNING, SUCCESS, EXECUTE, \
@@ -24,13 +24,7 @@ class TaskSerializerViewSet(BaseOrganizationViewSetMixing):
     serializer_class = TaskSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
 
-    @swagger_auto_schema(method='get',
-                         responses={200: TaskSerializer(many=True)})
-    @action(detail=False, methods=['get'])
-    def my_control(self, request, ):
-        self.queryset = Task.objects.filter(controller=request.user, goal=EXECUTE, document__status=ON_CONTROL,
-                                            task_status__in=[SUCCESS])
-        return self.list(request)
+
 
     @swagger_auto_schema(method='patch', request_body=TaskApproveSerializer(),
                          responses={200: TaskSerializer(many=False)})

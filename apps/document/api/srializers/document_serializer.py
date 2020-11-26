@@ -88,7 +88,7 @@ class IncomingDocumentSerializer(serializers.ModelSerializer):
         model = BaseDocument
         fields = ['id', 'main_file', 'document_cast', 'outgoing_number', 'outgoing_date', 'reg_number',
                   'reg_date', 'incoming_type', 'approve_type', 'comment', 'correspondent', 'correspondent_name',
-                  'signer',
+                  'signer','source',
                   '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview', 'incoming_type_name',
                   'reply_date',
                   'preview_pdf', 'registration','registration_type', 'execute_task_on_create', 'status','unique_uuid']

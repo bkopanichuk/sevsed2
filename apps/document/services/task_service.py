@@ -1,13 +1,15 @@
 from django.utils.timezone import localdate
 import base64
-from django.db.models import Max,Min
+from django.db.models import Max, Min
 from rest_framework.exceptions import ValidationError
 
-from apps.document.models.document_model import COMPLETED, PASSED_CONTROL, CONCERTED,ON_EXECUTION,ON_REGISTRATION
-from apps.document.models.document_constants import INCOMING, OUTGOING,INNER
+from apps.document.models.document_model import COMPLETED, PASSED_CONTROL, CONCERTED, ON_EXECUTION, ON_REGISTRATION, \
+    ON_CONTROL, \
+    ON_AGREEMENT
+from apps.document.models.document_constants import INCOMING, OUTGOING, INNER
 from apps.document.models.sign_model import Sign
 from apps.document.models.task_model import PENDING, SUCCESS, RETRY, REJECT, RUNNING, MAIN, BY_ORDER, PARALLEL, \
-    SIMPLE_SIGN,SIGN,DIGIT_SIGN
+    SIMPLE_SIGN, SIGN, DIGIT_SIGN
 from apps.document.models.task_model import Task, Flow, TaskExecutor
 from apps.l_core.exceptions import ServiceException
 from apps.l_core.ua_sign import verify_external
@@ -36,10 +38,8 @@ class SetTaskParams:
         logger.info(f'order aggregate: {res}')
         order__max = res.get('order__max') or 0
         logger.info(f'order__max: {order__max}')
-        self.task.order = order__max+1
+        self.task.order = order__max + 1
         logger.info(f'self.task.order: {self.task.order}')
-
-
 
     # def set_parent_task(self):
     #     logger.info(f'set_parent_task')
@@ -80,7 +80,7 @@ class SetTaskController:
 
     def set_controller(self):
         if self.task.author_is_controller:
-            self.task.controller = self.task.editor or  self.task.author
+            self.task.controller = self.task.editor or self.task.author
 
     def set_end_date(self):
         if not self.task.end_date:
@@ -105,6 +105,7 @@ class SetInitialTaskExecutorParams:
 
 class SetChildStatus:
     """Змінити статус дочірніх завдань"""
+
     def __init__(self, task):
         self.task: Task = task
 
@@ -115,7 +116,7 @@ class SetChildStatus:
         """Відмітити """
         logger.info(f'set_child_task_status:  -  task_status: {self.task.task_status}')
         if self.task.task_status == SUCCESS:
-            q = self.task.flow.tasks.filter(parent_task=self.task)##.exclude(task_status__in=[SUCCESS, RUNNING])
+            q = self.task.flow.tasks.filter(parent_task=self.task)  ##.exclude(task_status__in=[SUCCESS, RUNNING])
             if q.exists():
                 self.child = q.earliest('date_add')
                 self.child.task_status = SUCCESS
@@ -124,8 +125,9 @@ class SetChildStatus:
 
 class ChangeTaskOrder:
     """Змінити порядок виконання завдань"""
+
     ## TODO Додати функціональність зміни порядку виконання завдан
-    def __init__(self, task:Task, order:str):
+    def __init__(self, task: Task, order: str):
         self.task: Task = task
         self.order = order
 
@@ -145,13 +147,10 @@ class ChangeTaskOrder:
         pass
 
 
-
-
-
-
 class ApproveTask:
     """ Підтвердження виконання завдання"""
-    def __init__(self, task, user,data):
+
+    def __init__(self, task, user, data):
         logger.info(f'START: ApproveTask------------------------------------')
         self.task: Task = task
         self.user = user
@@ -178,7 +177,7 @@ class ApproveTask:
         ## Перевіряємо чи залишились невиконані завдання, якщо залишились то не знімаємо документ(завдання) контролю
         ## Інакше - знімаємо з контролю
         is_all_tasks_completed = (not self.task.document.task_set.filter(is_completed=False).exists())
-        #logger.debug(self.task.document.task_set.filter(is_completed=False).query)
+        # logger.debug(self.task.document.task_set.filter(is_completed=False).query)
         logger.info(f'is_all_tasks_completed = {is_all_tasks_completed} ')
         if is_all_tasks_completed:
             self.task.document.status = PASSED_CONTROL
@@ -187,7 +186,8 @@ class ApproveTask:
 
 class RetryTask:
     """Повернення завдання на доопрацювання"""
-    def __init__(self, task, user,data):
+
+    def __init__(self, task, user, data):
         self.task: Task = task
         self.user = user
         self.data = data
@@ -220,16 +220,18 @@ class RetryTask:
     def retry_task_executors(self):
         """ Переводимо виконавців завдання в активний статус,
          інакше виконавці не побачать що задача повернута на доопрацювання"""
-        task_executors =  self.task.task_executors.all()
-        task_executors.update(status= RETRY)
+        task_executors = self.task.task_executors.all()
+        task_executors.update(status=RETRY)
 
     def change_document_status(self):
         """ Повертаємо документ в статус  'На виконанні'"""
         self.task.document.status = ON_EXECUTION
         self.task.document.save()
 
+
 class FinishExecution:
     """Завершити виконання завдання"""
+
     def __init__(self, task_executor, data, user):
         self.task_executor: TaskExecutor = task_executor
         self.data = data
@@ -275,9 +277,8 @@ class FinishApprove(FinishExecution):
         self.finish_approve()
         return self.task_executor
 
-
     def validate_data(self):
-        if self.task_executor.task.approve_type == SIGN and self.task_executor.approve_method==DIGIT_SIGN:
+        if self.task_executor.task.approve_type == SIGN and self.task_executor.approve_method == DIGIT_SIGN:
             if not self.data.get('sign_file') and not self.data.get('sign'):
                 raise ServiceException('Завантажте файл з підписом, або підпишіть скориставшись віджетом підпису')
 
@@ -291,8 +292,6 @@ class FinishApprove(FinishExecution):
             self.task_executor.sign_file = sign_file
             sign_b64 = base64.b64encode(sign_file.read()).decode()
             self.task_executor.sign = sign_b64
-
-
 
     def finish_execution(self):
         if self.data.get('sign_file') and not self.data.get('sign'):
@@ -308,8 +307,6 @@ class FinishApprove(FinishExecution):
     def set_simple_result(self):
         if self.task_executor.approve_method == SIMPLE_SIGN:
             self.task_executor.result = self.data.get('result', 'Підтверджено')
-
-
 
     def validate_sign(self):
         sign_b64 = self.task_executor.sign
@@ -378,14 +375,14 @@ class RejectApprove(FinishExecution):
 
 class HandleExecuteTask:
     def __init__(self, task):
-        logger.debug('START HandleExecuteTask: -------------------------')
+        logger.warning('START HandleExecuteTask: -------------------------')
         self.task: Task = task
 
     def run(self):
         if self.task.flow.status != RUNNING:
             return
         self.close_flow_if_last_task()
-        logger.debug('FINISH HandleExecuteTask: -------------------------')
+        logger.warning('FINISH HandleExecuteTask: -------------------------')
 
     def close_flow_if_last_task(self):
         if self.task.task_status == SUCCESS:
@@ -397,14 +394,15 @@ class HandleExecuteTask:
 
     def run_next_task_if_this_success(self):
         logger.info(f'run_next_task_if_this_success')
-        q = self.task.flow.tasks.filter(task_status__in=[PENDING,RUNNING,RETRY]).exclude(id = self.task.id)
+        q = self.task.flow.tasks.filter(task_status__in=[PENDING, RUNNING, RETRY]).exclude(id=self.task.id)
         if q.exists():
-            res= q.aggregate(Min('order'))
+            res = q.aggregate(Min('order'))
             order__min = res.get('order__min')
             if order__min:
                 task_by_order = self.task.flow.tasks.get(order=order__min)
                 task_by_order.task_status = RUNNING
                 task_by_order.save()
+
 
 # class RunNextTask:
 #     def __init__(self, task_executor):
@@ -434,13 +432,14 @@ class HandleExecuteTask:
 #                 task_by_order.save()
 
 
-
 class HandleExecuteFlow:
     def __init__(self, flow):
+        logger.warning('START HandleExecuteFlow: -------------------------')
         self.flow: Flow = flow
 
     def run(self):
         self.close_document_if_flow_success()
+        logger.warning('FINISH HandleExecuteTask: -------------------------')
 
     def close_document_if_flow_success(self):
         if self.flow.status == SUCCESS:
@@ -454,16 +453,18 @@ class HandleExecuteFlow:
             self.reject_document_if_flow_rejected()
 
     def change_incoming_document_status(self):
+        self.change_on_control_document_status()
+        self.flow.document.save()
+
+    def change_on_control_document_status(self):
         ## Переносимо документ в статус "знято з контролю" якщо немає контролерів
         is_not_controllers = (
             not self.flow.document.task_set.filter(controller__isnull=False, task_status=SUCCESS).exists())
         if is_not_controllers:
             self.flow.document.status = PASSED_CONTROL
-            self.flow.document.save()
         else:
             ## Якщо контролери вказані
             self.flow.document.status = COMPLETED
-            self.flow.document.save()
 
     def reject_document_if_flow_rejected(self):
         self.flow.document.status = REJECT
@@ -474,12 +475,18 @@ class HandleExecuteFlow:
         self.flow.document.save()
 
     def change_inner_document_status(self):
-        self.flow.document.status = ON_REGISTRATION
+        logger.info(f' document status before change: {self.flow.document.status}')
+        if self.flow.document.status == ON_EXECUTION:
+            self.change_on_control_document_status()
+        if self.flow.document.status == ON_AGREEMENT:
+            self.flow.document.status = ON_REGISTRATION
+        logger.info(f' document status after change: {self.flow.document.status}')
         self.flow.document.save()
 
 
 class HandleRunFlow:
     """Обробник сигналу запуску пректу завдань на виконання"""
+
     def __init__(self, flow):
         self.flow: Flow = flow
 

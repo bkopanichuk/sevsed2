@@ -14,7 +14,7 @@ from apps.document.api.srializers.document_serializer import RelatedDocumentSeri
     SendToArchiveSerializer
 from apps.document.api.srializers.task_serializer import CreateFlowSerializer
 from apps.document.models.document_constants import INCOMING, INNER, OUTGOING
-from apps.document.models.document_model import BaseDocument, ON_RESOLUTION, ON_AGREEMENT,PROJECT
+from apps.document.models.document_model import BaseDocument, ON_RESOLUTION, ON_AGREEMENT, PROJECT, ON_CONTROL
 from apps.l_core.api.base.serializers import BaseOrganizationViewSetMixing
 from apps.document.services.document.resolution_service import ResolutionDocument
 from apps.document.services.document.start_approve_service import DocumentStartApprove
@@ -23,7 +23,6 @@ from apps.document.services.document.consideration_service import DocumentConsid
 from apps.document.services.document.senc_to_archive_service import SendToArchive
 from apps.document.services.document.register_document_service import RegisterDocument
 from apps.l_core.permissions import LCoreDjangoModelPermissions
-
 
 import logging
 
@@ -55,6 +54,14 @@ class BaseDocumentSerializerViewSet(OrderingFilterMixin):
     def my_resolution(self, request, ):
         self.queryset = BaseDocument.objects.filter(approvers_list__in=[request.user], status=ON_RESOLUTION)
         return self.list(request, )
+
+    @swagger_auto_schema(method='get',
+                         responses={200: DocumentSerializer(many=True)})
+    @action(detail=False, methods=['get'])
+    def my_control(self, request, ):
+        self.queryset = BaseDocument.objects.prefetch_related('task_set').filter(task__controller=request.user,
+                                                                                 status=ON_CONTROL).distinct()
+        return self.list(request)
 
     @swagger_auto_schema(method='get', responses={200: DocumentSerializer(many=True)})
     @action(detail=False, methods=['get'])

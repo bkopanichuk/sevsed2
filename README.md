@@ -21,6 +21,7 @@ CREATE EXTENSION postgis version '3.0.1';
 \q
 ```
 
+
 ## Імпорт базових налаштувань
 
 ```bash

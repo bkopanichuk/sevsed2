@@ -8,5 +8,5 @@ import time
 
 @shared_task
 def simulate_work():
-    time.sleep(5)
-    return  'task complete'
+    time.sleep(55)
+    return  {'result':'task complete'}

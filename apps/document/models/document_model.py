@@ -211,6 +211,7 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
             (CustomDocumentPermissions.VIEW_ON_EXECUTION, "Переглядати документи на виконанні"),
             (CustomDocumentPermissions.VIEW_COMPLETED, "Переглядати документи виконані"),
             (CustomDocumentPermissions.VIEW_ON_CONTROL, "Переглядати документи на контролі"),
+            (CustomDocumentPermissions.VIEW_PASSED_CONTROL, "Переглядати документи зняті з котролю"),
             (CustomDocumentPermissions.VIEW_ARCHIVED, "Переглядати документи в архіві"),
             (CustomDocumentPermissions.VIEW_ON_AGREEMENT, "Переглядати документи на погодженні"),
             (CustomDocumentPermissions.VIEW_PROJECT, "Переглядати документи (проекти)"),
