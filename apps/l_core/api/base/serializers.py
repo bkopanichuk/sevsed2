@@ -315,9 +315,22 @@ class CoreOrganizationViewSet(BaseViewSetMixing):
             else:
                 self.perform_destroy(instance, mode)
                 return Response(status=status.HTTP_204_NO_CONTENT)
-
-
 ##-------------------------------------------------------------
+class LocalCoreOrganizationViewSet(CoreOrganizationViewSet):
+    def get_queryset(self):
+        if self.request.user.is_superuser:
+            return self.queryset
+
+        organization__id = self.request.user.organization_id
+        q = super(LocalCoreOrganizationViewSet, self).get_queryset()
+
+        try:
+            filtered_q = q.filter(organization__id=organization__id).exclude(id=organization__id)
+        except FieldError:
+            filtered_q = q
+        except Exception as e:
+            raise e
+        return filtered_q
 
 
 ##GroupOrganization-------------------------------------------------------

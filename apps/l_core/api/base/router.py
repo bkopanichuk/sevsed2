@@ -3,7 +3,7 @@
 from django.conf.urls import *
 from rest_framework import routers
 
-from .serializers import (CoreUserViewSet, CoreOrganizationViewSet,
+from .serializers import (CoreUserViewSet, CoreOrganizationViewSet,LocalCoreOrganizationViewSet,
                           GroupOrganizationViewSet, GetUserPermissions, GetRelatedObjects, RPC,
                           MultipleDelete, PermissionsViewSet, ContentTypeViewSet, GroupViewSet)
 from .views import GetTaskResult
@@ -14,6 +14,7 @@ router.register(r'user', CoreUserViewSet)
 router.register(r'permission', PermissionsViewSet)
 router.register(r'content-type', ContentTypeViewSet)
 router.register(r'organization', CoreOrganizationViewSet)
+router.register(r'local-organization', LocalCoreOrganizationViewSet)
 router.register(r'group-organization', GroupOrganizationViewSet)
 router.register(r'group', GroupViewSet)
 

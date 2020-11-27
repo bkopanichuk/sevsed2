@@ -81,6 +81,31 @@ class CoreOrganization(AbstractBase):
         return '{0} {1}'.format(self.name or self.full_name, self.edrpou or '')
 
 
+
+    def save(self, *args, **kwargs):
+        self.validate_organization()
+        self.set_organization()
+        self.check_org()
+        super(CoreOrganization, self).save(*args, **kwargs)
+
+    def set_organization(self):
+        if hasattr(self, 'organization'):
+            if not self.organization and self.author:
+                self.organization = self.author.organization
+
+    def validate_organization(self):
+        if hasattr(self, 'organization'):
+            if self.organization:
+                return
+            if not self.author.organization:
+                raise AuthorOrganizationNotSet(self.author.organization)
+
+    def check_org(self):
+        if not self.organization:
+            raise Exception('field "organization" not allowed null value')
+
+
+
 class Department(AbstractBase):
     organization = models.ForeignKey(CoreOrganization, on_delete=models.PROTECT, null=True)
     name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Назва')
