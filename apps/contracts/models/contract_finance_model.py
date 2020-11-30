@@ -34,7 +34,7 @@ class ContractFinance(CoreBase):
             return self.contract.registerpayment_set.all().aggregate(Sum('sum_payment'))['sum_payment__sum'] or 0
 
     def get_last_accrual_date(self):
-        from apps.contracts.models import RegisterAccrual
+        from apps.contracts.models.register_accrual_model import RegisterAccrual
         if self.contract:
             accruals = RegisterAccrual.objects.filter(contract=self.contract).order_by('-date_accrual')
             if accruals.count() > 0:

@@ -7,5 +7,4 @@ class ContractSubscriptionSerializer(DynamicFieldsModelSerializer):
         model = ContractSubscription
         fields = (
             'id', '__str__', 'count', 'price', 'pdv', 'total_price', 'total_price_pdv', 'is_legal', 'product',
-            'contract',
-            'start_period', 'end_period')
+            'contract','product_name','start_period', 'end_period')

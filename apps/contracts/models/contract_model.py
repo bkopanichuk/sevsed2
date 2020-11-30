@@ -159,7 +159,7 @@ class Contract(CoreBase):
 
 
     def calculate_accrual(self):
-        from apps.contracts.models import RegisterAccrual
+        from apps.contracts.models.register_accrual_model import RegisterAccrual
         res = RegisterAccrual.calculate_accruals(contract=self)
         return res
 

@@ -20,13 +20,13 @@ class ProductMixin(object):
 
 
 class XXXProducts(ProductMixin, CoreBase):
-    product = models.ForeignKey('Product', on_delete=models.CASCADE)
+    product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True)
     product_name = models.CharField(max_length=250,null=True, verbose_name="Назва товару чи послуги")
-    count = models.IntegerField(default=1)
-    price = models.FloatField(default=0)
-    total_price = models.FloatField(default=0)
-    pdv = models.FloatField(default=0)
-    total_price_pdv = models.FloatField(default=0)
+    count = models.IntegerField(default=1,verbose_name="Кількість одиниць")
+    price = models.FloatField(default=0,verbose_name="Вартість одиниці")
+    pdv = models.FloatField(default=0, verbose_name="ПДВ")
+    total_price = models.FloatField(default=0,verbose_name="Загальна вартість")
+    total_price_pdv = models.FloatField(default=0,verbose_name="Загальна вартість з ПДВ")
 
     class Meta:
         abstract = True
@@ -37,7 +37,8 @@ class XXXProducts(ProductMixin, CoreBase):
 
 
 class XXXSubscription(ProductMixin, CoreBase):
-    product = models.ForeignKey('Subscription', on_delete=models.CASCADE)
+    product = models.ForeignKey('Subscription', on_delete=models.SET_NULL,null=True)
+    product_name = models.CharField(max_length=250, null=True, verbose_name="Назва товару чи послуги")
     charging_day = models.IntegerField(verbose_name="Дата місяця на яку необхідно здійснювати нарахування оплати")
     start_period = models.DateField(verbose_name='Початок дії тарифного плану', )
     end_period = models.DateField(default=default_end_period, verbose_name='Кінець дії тарифного плану')
@@ -62,7 +63,7 @@ class ContractProducts(XXXProducts):
     contract = models.ForeignKey('Contract', on_delete=models.CASCADE)
 
     class Meta:
-        verbose_name_plural = u'Послуги(товари) по договору'
+        verbose_name_plural = u'Послуга (товар) по договору'
         verbose_name = u'Послуги(товари) по договору'
 
     def __str__(self):
@@ -74,8 +75,8 @@ class ContractSubscription(XXXSubscription):
     objects = ContractSubscriptionManager()
 
     class Meta:
-        verbose_name_plural = u'Послуги(товари) по договору'
-        verbose_name = u'Послуги(товари) по договору'
+        verbose_name_plural = u'Щомісячна послуга за договором'
+        verbose_name = u'Щомісячні послуги за договором'
 
     def __str__(self):
         return str(self.product)

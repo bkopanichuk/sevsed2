@@ -69,4 +69,4 @@ urlpatterns = [
     # path('sync-client/', include('sync_client.urls')),
 ]
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + urlpatterns
-#urlpatterns += [path('silk/', include('silk.urls'))]
+urlpatterns += [path('silk/', include('silk.urls'))]

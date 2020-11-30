@@ -178,24 +178,25 @@ class CoreUserSerializer(DynamicFieldsModelSerializer, serializers.ModelSerializ
         model = CoreUser
         fields = ('id', 'username', 'first_name', 'last_name', 'email', 'ipn',
                   'groups', 'user_permissions',  ##'user_permissions_items',
-                  'organization', 'org_name', '__str__', 'related_objects')
+                  'organization', 'org_name', '__str__'##, 'related_objects'
+                  )
 
     def orgname(self, obj):
         return obj.organization.__str__() if obj.organization else None
 
-    def get_user_permissions_items(self, obj):
-        data = []
-        unicode_ids = []
-        for item in Permission.objects.all():
-            if item.id not in unicode_ids:
-                unicode_ids.append(item.id)
-                data.append({'id': item.id, 'name': item.name})
-        return data
+    # def get_user_permissions_items(self, obj):
+    #     data = []
+    #     unicode_ids = []
+    #     for item in Permission.objects.all():
+    #         if item.id not in unicode_ids:
+    #             unicode_ids.append(item.id)
+    #             data.append({'id': item.id, 'name': item.name})
+    #     return data
 
 
 # ViewSets define the view behavior.
 class CoreUserViewSet(viewsets.ModelViewSet):
-    queryset = CoreUser.objects.all()
+    queryset = CoreUser.objects.prefetch_related('user_permissions','groups').select_related('organization').all()
     serializer_class = CoreUserSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
     search_fields = ('first_name', 'last_name', 'organization__name')

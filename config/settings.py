@@ -67,7 +67,7 @@ INSTALLED_APPS = [
     'preview_generator',
     'django_celery_results',
     'django_celery_beat',
-    # 'silk',
+    'silk',
     'apps.uaoauth',
     'multiselectfield',
 
@@ -88,7 +88,7 @@ MIDDLEWARE = [
     'simple_history.middleware.HistoryRequestMiddleware',
     ##'activity_log.middleware.ActivityLogMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
-    # 'silk.middleware.SilkyMiddleware',
+    'silk.middleware.SilkyMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'

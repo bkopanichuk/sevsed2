@@ -8,9 +8,11 @@ class StageProperty(AbstractCoreOrganization, ComplexBaseMixin):
     """"""
     contract = models.OneToOneField('Contract',
                                     on_delete=models.CASCADE, verbose_name="Договір")
+    edrpou = models.CharField(max_length=50, blank=True, null=True,  verbose_name="ЄДРПОУ")
     history = HistoricalRecords()
 
     class Meta:
+        unique_together = [['contract', 'edrpou']]
         verbose_name_plural = u'Реквізити договорів'
         verbose_name = u'Реквізити договору'
 
