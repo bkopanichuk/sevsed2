@@ -8,9 +8,11 @@ from drf_renderer_xlsx.mixins import XLSXFileMixin
 from ...models.contract_model import Contract
 from apps.contracts.api.views.contract_views import ContractSerializerViewSet
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from apps.l_core.api.base.serializers import BaseViewSetMixing
+from apps.l_core.api.base.serializers import BaseOrganizationViewSetMixing
 from collections import OrderedDict
+import logging
 
+logger = logging.getLogger(__name__)
 
 CONTRACT_FIELD_TITLES =OrderedDict([('number_contract',"Номер договору"),
                                    ('contractor_name',"Контрагент"),
@@ -33,7 +35,7 @@ class XLSXContractSerializer(serializers.ModelSerializer):
 
 
 # ViewSets define the view behavior.
-class XLSXContractSerializerViewSet(XLSXFileMixin,BaseViewSetMixing,ReadOnlyModelViewSet):
+class XLSXContractSerializerViewSet(XLSXFileMixin,BaseOrganizationViewSetMixing,ReadOnlyModelViewSet):
     queryset = Contract.objects.all()
     serializer_class = XLSXContractSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
@@ -61,6 +63,11 @@ class XLSXContractSerializerViewSet(XLSXFileMixin,BaseViewSetMixing,ReadOnlyMode
             }
         }
     }
+    def get_queryset(self):
+        q = super(XLSXContractSerializerViewSet, self).get_queryset()
+        logger.error(q.query)
+        return q
+
 
 
 ##-------------------------------------------------------------

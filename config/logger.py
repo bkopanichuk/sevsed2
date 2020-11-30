@@ -83,6 +83,10 @@ LOGGING = {
             'handlers': ['logfile', 'console'],
             'level': min_level,  # this level or higher goes to the console,
         },
+        'contracts': {
+            'handlers': ['logfile', 'console'],
+            'level': min_level,  # this level or higher goes to the console,
+        },
         'sevovvintegration': {
             'handlers': ['logfile', 'console'],
             'level': min_level,  # this level or higher goes to the console,

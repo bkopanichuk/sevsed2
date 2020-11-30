@@ -14,9 +14,13 @@ def contract_summary_data(request):
     with  connection.cursor() as cursor:
         cursor.execute(sql)
         row = cursor.fetchone()
-        return Response(row[0]) \
- \
- \
+        if row:
+            data= row[0]
+        else:
+            data = {}
+        return Response(row[0])
+
+
 @api_view(['GET'])
 def contract_accrual_data(request):
     sql = """select json_agg(row_to_json(res)) from (

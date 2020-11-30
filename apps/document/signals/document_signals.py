@@ -60,11 +60,11 @@ def set_reply_date(instance,**kwargs):
 
 
 
-
-signals.pre_save.connect(receiver=set_reply_date, sender=BaseDocument)
-signals.pre_save.connect(receiver=check_controlers, sender=BaseDocument)
-signals.post_save.connect(receiver=create_preview, sender=BaseDocument)
-signals.post_save.connect(receiver=close_task_if_exist, sender=BaseDocument)
-signals.post_save.connect(receiver=update_main_file_version, sender=BaseDocument)
-signals.post_save.connect(receiver=set_outgoing_approval, sender=BaseDocument)
-signals.m2m_changed.connect(receiver=create_base_task, sender=BaseDocument.approvers_list.through)
+def init_document_signals():
+    signals.pre_save.connect(receiver=set_reply_date, sender=BaseDocument)
+    signals.pre_save.connect(receiver=check_controlers, sender=BaseDocument)
+    signals.post_save.connect(receiver=create_preview, sender=BaseDocument)
+    signals.post_save.connect(receiver=close_task_if_exist, sender=BaseDocument)
+    signals.post_save.connect(receiver=update_main_file_version, sender=BaseDocument)
+    signals.post_save.connect(receiver=set_outgoing_approval, sender=BaseDocument)
+    signals.m2m_changed.connect(receiver=create_base_task, sender=BaseDocument.approvers_list.through)

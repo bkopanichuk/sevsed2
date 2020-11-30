@@ -44,13 +44,12 @@ def set_task_controller(sender, instance,  **kwargs):
     flow = SetTaskController(task=instance)
     flow.run()
 
-
-
-signals.pre_save.connect(receiver=set_parent_task, sender=Task)
-signals.pre_save.connect(receiver=set_task_controller, sender=Task)
-signals.pre_save.connect(receiver=set_task_executor_organization, sender=TaskExecutor)
-signals.post_save.connect(receiver=set_child_status, sender=Task)
-signals.post_save.connect(receiver=handle_execute_task, sender=Task)
-#signals.post_save.connect(receiver=run_next_task, sender=TaskExecutor)
-signals.post_save.connect(receiver=handle_execute_flow, sender=Flow)
-signals.post_save.connect(receiver=handle_run_flow, sender=Flow)
+def init_task_signals():
+    signals.pre_save.connect(receiver=set_parent_task, sender=Task)
+    signals.pre_save.connect(receiver=set_task_controller, sender=Task)
+    signals.pre_save.connect(receiver=set_task_executor_organization, sender=TaskExecutor)
+    signals.post_save.connect(receiver=set_child_status, sender=Task)
+    signals.post_save.connect(receiver=handle_execute_task, sender=Task)
+    #signals.post_save.connect(receiver=run_next_task, sender=TaskExecutor)
+    signals.post_save.connect(receiver=handle_execute_flow, sender=Flow)
+    signals.post_save.connect(receiver=handle_run_flow, sender=Flow)

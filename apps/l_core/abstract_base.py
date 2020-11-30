@@ -1,6 +1,8 @@
-from django.contrib.gis.db import models
 import uuid
+
+from django.contrib.gis.db import models
 from django.forms.models import model_to_dict
+
 from .mixins import CheckProtected, RelatedObjects
 
 
@@ -35,8 +37,10 @@ class SoftDeleteManager(models.Manager):
 
 
 class AbstractBase(CheckProtected, RelatedObjects, models.Model):
-    is_deleted = models.BooleanField(null=False, default=False, db_index=True)
-    unique_uuid = models.UUIDField(default=uuid.uuid4, verbose_name="**Унікальний ідентифікатор запису, в загальному просторі імен",
+    is_deleted = models.BooleanField(null=False, default=False, editable=False, db_index=True,
+                                     verbose_name="**Дані помічено на видалення?")
+    unique_uuid = models.UUIDField(default=uuid.uuid4, db_index=True,
+                                   verbose_name="**Унікальний ідентифікатор запису, в загальному просторі імен",
                                    help_text="Інформацію, відмічену за допомогою UUID, можна використовувати без необхідності вирішення конфлікту імен")
     objects = SoftDeleteManager(mode='clear')
     deleted_objects = SoftDeleteManager(mode='deleted')

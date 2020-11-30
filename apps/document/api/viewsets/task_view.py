@@ -129,7 +129,7 @@ class TaskExecutorSerializerViewSet(BaseOrganizationViewSetMixing):
                          responses={200: TaskExecutorSerializer(many=False)})
     @action(detail=True, methods=['patch'])
     def finish_execution(self, request, pk=None):
-        """Викононати завдання. Відправляється виконавцем завдання"""
+        """Викононати завдання. Відповідальний виконавець відправляє результати викоананого звдання"""
         task_executor = TaskExecutor.objects.get(pk=pk)
         task_executor_serializer = TaskExecutorFinishSerializer(data=request.data)
         task_executor_serializer.is_valid(raise_exception=True)
@@ -142,7 +142,6 @@ class TaskExecutorSerializerViewSet(BaseOrganizationViewSetMixing):
                          responses={200: TaskExecutorSerializer(many=False)})
     @action(detail=True, methods=['patch'])
     def finish_approve(self, request, pk=None):
-
         task_executor = TaskExecutor.objects.get(pk=pk)
         task_executor_serializer = TaskExecutorFinishApproveSerializer(data=request.data)
         task_executor_serializer.is_valid(raise_exception=True)

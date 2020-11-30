@@ -60,6 +60,8 @@ INSTALLED_APPS = [
     'apps.atu',
     'apps.l_core.apps.CoreConfig',
     'apps.document.apps.DocumentConfig',
+     'apps.contracts.apps.ContractsConfig',
+     'apps.client_settings',
     'apps.sevovvintegration.apps.SevovvintegrationConfig',
     'simple_history',
     'preview_generator',
@@ -67,7 +69,6 @@ INSTALLED_APPS = [
     'django_celery_beat',
     # 'silk',
     'apps.uaoauth',
-    'apps.contracts',
     'multiselectfield',
 
     # 'sync_client',

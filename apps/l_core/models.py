@@ -1,17 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, Permission, Group
 from django.contrib.gis.db import models
+from django.core.validators import FileExtensionValidator
+from django.db import transaction
+from django.utils.translation import gettext_lazy as _
 
 from apps.atu.models import ATURegion, ATUDistrict
-
-from django.utils.translation import gettext_lazy as _
-from django.db import transaction
-from django.core.validators import FileExtensionValidator
 from .abstract_base import AbstractBase
-from .mixins import RelatedObjects, CheckProtected
 from .exceptions import AuthorNotSet, AuthorOrganizationNotSet
+from .mixins import RelatedObjects, CheckProtected
 
 
 class GroupOrganization(AbstractBase):
@@ -27,7 +26,7 @@ class GroupOrganization(AbstractBase):
         return '{0}'.format(self.name)
 
 
-class CoreOrganization(AbstractBase):
+class AbstractCoreOrganization(AbstractBase):
     BANK = (('K', 'Комерційний'), ('Б', 'Бюджет'))
 
     name = models.TextField(blank=True, null=True, db_index=True, verbose_name="Назва організації")
@@ -63,13 +62,19 @@ class CoreOrganization(AbstractBase):
                                     validators=[
                                         FileExtensionValidator(allowed_extensions=['pdf', 'doc', 'docx', 'jpg'])])
     note = models.TextField(blank=True, null=True, verbose_name="Примітка")
+
+    class Meta:
+        abstract = True
+
+
+class CoreOrganization(AbstractCoreOrganization):
     author = models.ForeignKey('l_core.CoreUser', related_name='%(class)s_author', null=True, editable=False,
                                on_delete=models.PROTECT)
     editor = models.ForeignKey('l_core.CoreUser', related_name='%(class)s_editor', null=True, editable=False,
                                on_delete=models.PROTECT)
     organization = models.ForeignKey('self', null=True, on_delete=models.PROTECT)
-    system_id = models.CharField(max_length=256,null=True)
-    system_password = models.CharField(max_length=256,null=True)
+    system_id = models.CharField(max_length=256, null=True)
+    system_password = models.CharField(max_length=256, null=True)
 
     class Meta:
         verbose_name = u'Організації'
@@ -79,8 +84,6 @@ class CoreOrganization(AbstractBase):
 
     def __unicode__(self):
         return '{0} {1}'.format(self.name or self.full_name, self.edrpou or '')
-
-
 
     def save(self, *args, **kwargs):
         self.validate_organization()
@@ -103,7 +106,6 @@ class CoreOrganization(AbstractBase):
     def check_org(self):
         if not self.organization:
             raise Exception('field "organization" not allowed null value')
-
 
 
 class Department(AbstractBase):
@@ -136,19 +138,42 @@ class CoreUser(RelatedObjects, CheckProtected, AbstractUser):
         return f' {self.last_name} {self.first_name}'
 
 
-from rest_framework.exceptions import ValidationError
+class SystemFieldsMixin(models.Model):
+    date_add = models.DateTimeField(auto_now_add=True, null=True, editable=False, verbose_name="**Дата створення",
+                                    db_index=True)
+    date_edit = models.DateTimeField(auto_now=True, null=True, editable=False, verbose_name="**Дата останньої зміни",
+                                     db_index=True)
+
+    class Meta:
+        abstract = True
 
 
-class CoreBase(AbstractBase):
-    date_add = models.DateTimeField(auto_now_add=True, null=True, editable=False, verbose_name="**Дата створення")
-    date_edit = models.DateTimeField(auto_now=True, null=True, editable=False, verbose_name="**Дата останньої зміни")
+class PersonIdentityMixin(models.Model):
     author = models.ForeignKey(CoreUser, related_name='%(class)s_author', null=True, editable=False,
-                               on_delete=models.PROTECT,verbose_name="**Автор")
+                               on_delete=models.PROTECT, verbose_name="**Автор")
     editor = models.ForeignKey(CoreUser, related_name='%(class)s_editor', null=True, editable=False,
-                               on_delete=models.PROTECT,verbose_name="**Останій редактор")
-    organization = models.ForeignKey(CoreOrganization, null=True, on_delete=models.PROTECT,verbose_name="**Організація",help_text="До якої організації відноситься інформація")
-    is_deleted = models.BooleanField(null=False, default=False, editable=False, db_index=True,verbose_name="**Дані помічено на видалення?")
+                               on_delete=models.PROTECT, verbose_name="**Останій редактор")
 
+    class Meta:
+        abstract = True
+
+
+class OrganizationIdentityMixin(models.Model):
+    organization = models.ForeignKey(CoreOrganization, null=True, on_delete=models.PROTECT,
+                                     verbose_name="**Організація",
+                                     help_text="До якої організації відноситься інформація")
+
+    class Meta:
+        abstract = True
+
+
+class ComplexBaseMixin(SystemFieldsMixin, PersonIdentityMixin, OrganizationIdentityMixin):
+    class Meta:
+        abstract = True
+
+
+class CoreBase(AbstractBase, SystemFieldsMixin, PersonIdentityMixin, OrganizationIdentityMixin):
+    pass
 
     def save(self, *args, **kwargs):
         ##TODO Довелось закоментувати, бо при інтеграції з СЕВОВВ недостатньо даних для вказування повноцінного автора-(користувача)

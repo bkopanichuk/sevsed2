@@ -23,7 +23,7 @@ from simple_history.models import HistoricalRecords
 from apps.contracts.exceptions import StartDateOrEndDateIsNone
 from apps.contracts.managers import ContractSubscriptionManager
 from apps.contracts.tasks import async_create_accrual_doc, async_create_act_doc
-from apps.l_core.models import CoreBase
+from apps.l_core.models import CoreBase, AbstractCoreOrganization, ComplexBaseMixin
 from apps.l_core.models import Counter
 from apps.l_core.utilits.converter import LibreOfficeConverter
 from apps.l_core.utilits.finance import get_pdv
@@ -50,6 +50,7 @@ CONTRACT_STATUS = [
     [CONTRACT_STATUS_ARCHIVE, 'Архівний'],
     [CONTRACT_STATUS_REJECTED, 'Не заключений']
 ]
+
 
 class Contract(CoreBase):
     parent_element = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True,
@@ -357,24 +358,10 @@ class AccrualSubscription(XXXSubscription):
         verbose_name = u'Послуги(товари) по договору'
 
 
-class StageProperty(CoreBase):
+class StageProperty(AbstractCoreOrganization, ComplexBaseMixin):
     """"""
     contract = models.OneToOneField('Contract',
                                     on_delete=models.CASCADE, verbose_name="Договір")
-    name = models.TextField(default='', verbose_name="Назва організації", null=True, blank=True)
-    address = models.TextField(default='', null=True, blank=True)
-    settlement_account = models.CharField(max_length=30, verbose_name="Розрахунковий рахунок", null=True, blank=True)
-    bank_name = models.CharField(max_length=200, null=True, verbose_name="Назва банку")
-    main_unit = models.CharField(max_length=200, blank=True, null=True, verbose_name="Уповноважена особа")
-    main_unit_state = models.CharField(max_length=200, blank=True, null=True, verbose_name="Посада уповноваженої особи")
-    mfo = models.CharField(max_length=50, null=True, blank=True, verbose_name='МФО')
-    ipn = models.CharField(max_length=200, blank=True, null=True, verbose_name="ІПН")
-    certificate_number = models.CharField(max_length=200, blank=True, null=True, verbose_name="Номер свідотства ПДВ")
-    edrpou = models.CharField(max_length=10, verbose_name="ЄДРПОУ", null=True, blank=True)
-    phone = models.CharField(max_length=150, verbose_name="Телефон", null=True, blank=True)
-    email = models.CharField(max_length=150, verbose_name="email", null=True, blank=True)
-    work_reason = models.TextField(null=True, verbose_name="Працює на підставі")
-    statute_copy = models.FileField(null=True, verbose_name="Статутні документи")
     history = HistoricalRecords()
 
     class Meta:
@@ -386,25 +373,6 @@ class StageProperty(CoreBase):
 
     def __unicode__(self):
         return 'Реквізити {0}'.format(str(self.contract) or '-')
-
-    def load_from_contract(self):
-        contractor = self.contract.contractor
-        if not contractor:
-            return
-        self.name = contractor.full_name
-        self.main_unit_state = contractor.main_unit_state
-        self.main_unit = contractor.main_unit
-        self.edrpou = contractor.edrpou
-        self.bank_name = contractor.bank_name
-        self.mfo = contractor.mfo
-        self.ipn = contractor.ipn
-        self.certificate_number = contractor.certificate_number
-        self.address = contractor.address
-        self.settlement_account = contractor.settlement_account
-        self.phone = contractor.phone
-        self.email = contractor.email
-        self.work_reason = contractor.work_reason
-        self.statute_copy = contractor.statute_copy
 
 
 class Coordination(CoreBase):

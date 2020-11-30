@@ -11,11 +11,12 @@ from django.core.files.storage import default_storage
 from django.utils.crypto import get_random_string
 from rest_framework import serializers
 
+from apps.contracts.models.payment_model import ImportPayment
 from apps.l_core.api.base.serializers import CoreOrganizationSerializer
 from apps.l_core.api.base.serializers import DynamicFieldsModelSerializer
+from apps.l_core.models import CoreOrganization
 from ...models.contract_model import Contract, RegisterAccrual, ContractFinance, RegisterPayment, RegisterAct, \
     StageProperty, Coordination, ContractSubscription, ContractProducts
-from apps.contracts.models.payment_model import ImportPayment
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 MEDIA_URL = settings.MEDIA_URL
@@ -39,6 +40,7 @@ class ContractSerializer(DynamicFieldsModelSerializer):
     contractor_name = serializers.SerializerMethodField()
     contractfinance = ContractFinanceSerializer(read_only=True)
     contractor_data = serializers.PrimaryKeyRelatedField(read_only=True)
+    contractor = serializers.PrimaryKeyRelatedField(required=True, queryset=CoreOrganization.objects.all())
 
     class Meta:
         model = Contract
@@ -115,6 +117,7 @@ class RegisterActSerializer(DynamicFieldsModelSerializer):
                 ContractSerializer, {'source': 'contract', 'fields': ['id', '__str__', 'contractor']}),
 
         }
+
 
 ##StageProperty-------------------------------------------------------
 class StagePropertySerializer(DynamicFieldsModelSerializer):
