@@ -2,7 +2,6 @@ from __future__ import absolute_import, unicode_literals
 
 from celery import shared_task
 import time
-from apps.contracts.models import contract_model
 
 
 @shared_task
@@ -13,17 +12,20 @@ def simulate_work():
 
 @shared_task
 def calculate_accruals():
-    contract_model.Contract.calculate_accruals()
+    from apps.contracts.models.contract_model import Contract
+    Contract.calculate_accruals()
 
 
 @shared_task
 def generate_acts():
-    contract_model.RegisterAct.generate_acts()
+    from apps.contracts.models.register_act_model import RegisterAct
+    RegisterAct.generate_acts()
 
 
 @shared_task
 def async_create_accrual_doc(id):
-    obj = contract_model.RegisterAccrual.objects.get(pk=id)
+    from apps.contracts.models.register_accrual_model import RegisterAccrual
+    obj = RegisterAccrual.objects.get(pk=id)
     obj.set_docx(save=True)
 
     return 'Success'
@@ -31,6 +33,7 @@ def async_create_accrual_doc(id):
 
 @shared_task
 def async_create_act_doc(id):
-    obj = contract_model.RegisterAct.objects.get(pk=id)
+    from apps.contracts.models.register_act_model import RegisterAct
+    obj = RegisterAct.objects.get(pk=id)
     obj.generate_act_docs()
     return 'Success'

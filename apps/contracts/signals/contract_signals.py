@@ -2,8 +2,11 @@ import logging
 
 from django.db.models import signals
 
-from apps.contracts.models import RegisterAct, ContractFinance, Contract, RegisterAccrual, RegisterPayment, \
-    ContractProducts, ContractSubscription
+from apps.contracts.models.contract_model import  Contract,   ContractProducts, ContractSubscription
+from apps.contracts.models.register_accrual_model import RegisterAccrual
+from apps.contracts.models.register_payment_model import RegisterPayment
+from apps.contracts.models.register_act_model import RegisterAct
+from apps.contracts.models.contract_finance_model import ContractFinance
 from apps.contracts.services.create_stage_property import CreateStageProperty
 
 logger = logging.getLogger(__name__)

@@ -93,8 +93,8 @@ HAND_OUT = 'HAND_OUT'
 MAILING_METHODS = ((EMAIL, 'Електронна пошта'),
                    (SEV, 'СЕВОВВ'),
                    (LETTER, 'Поштою (просте)'),
-                    (REGISTERED_LETTER, 'Поштою (рекомендоване)'),
-                    (HAND_OUT, 'Наручно'),
+                   (REGISTERED_LETTER, 'Поштою (рекомендоване)'),
+                   (HAND_OUT, 'Наручно'),
                    )
 
 
@@ -158,7 +158,8 @@ class OutgoingDocument(models.Model):
 
 class innerDocument(models.Model):
     inner_type = models.ForeignKey(InnerDocumentType, verbose_name="Тип внутрішнього документа",
-                                      on_delete=models.PROTECT, null=True)
+                                   on_delete=models.PROTECT, null=True)
+
     class Meta:
         abstract = True
 
@@ -191,6 +192,8 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
     preview = models.FileField(upload_to=get_preview_directory, null=True, editable=False, max_length=500)
     preview_pdf = models.FileField(upload_to=get_preview_directory, null=True, editable=False, max_length=500)
     status = models.CharField(verbose_name="Статус", max_length=100, default=PROJECT)
+    controller = models.ForeignKey('l_core.CoreUser',related_name='controller_documents', on_delete=models.SET_NULL, null=True,
+                                   verbose_name="Контролер документа")
     history = HistoricalRecords()
 
     class Meta:
@@ -230,7 +233,8 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
 class MainFileVersion(models.Model):
     document = models.ForeignKey(BaseDocument, on_delete=models.CASCADE)
     add_date = models.DateTimeField(auto_now_add=True, null=True)
-    main_file = models.FileField(verbose_name="Головинй файл", upload_to=get_upload_document_path, null=True,max_length=500)
+    main_file = models.FileField(verbose_name="Головинй файл", upload_to=get_upload_document_path, null=True,
+                                 max_length=500)
 
     class Meta:
         verbose_name = 'Документ'

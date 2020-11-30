@@ -1,11 +1,16 @@
 from django.conf.urls import *
 from rest_framework import routers
 
-from apps.contracts.api.views.contract_views import ContractSerializerViewSet, RegisterAccrualViewSet,\
-    RegisterPaymentViewSet, RegisterActViewSet, \
-    refresh_total_balance, calculate_accrual, clear_accrual_data, StagePropertyViewSet, \
-    CoordinationViewSet, generate_acts_view,  ContractSubscriptionViewSet, calculate_accrual_in_range, \
-    upload_client_bank, UploadClientBankViewSet, get_accrual_zip, ConvertClientBankView, ContractProductsViewSet
+from apps.contracts.api.views.contract_views import ContractSerializerViewSet, refresh_total_balance
+from apps.contracts.api.views.client_banck_views import UploadClientBankViewSet, upload_client_bank, \
+    ConvertClientBankView
+from apps.contracts.api.views.contract_product_viewset import ContractProductsViewSet
+from apps.contracts.api.views.contract_subscription_viewset import ContractSubscriptionViewSet
+from apps.contracts.api.views.stage_propperty_viewset import StagePropertyViewSet
+from apps.contracts.api.views.regiater_act_viewset import RegisterActViewSet, generate_acts_view
+from apps.contracts.api.views.register_payment_viewset import RegisterPaymentViewSet
+from apps.contracts.api.views.register_accrual_viewset import RegisterAccrualViewSet, get_accrual_zip, \
+    clear_accrual_data, calculate_accrual, calculate_accrual_in_range
 from apps.contracts.api.serializers.xlsx_serializers import XLSXContractSerializerViewSet
 from apps.contracts.api.views.report_views import contract_summary_data, contract_accrual_data, contract_largest_debtors
 
@@ -16,7 +21,6 @@ router.register(r'register-accurual', RegisterAccrualViewSet)
 router.register(r'register-payment', RegisterPaymentViewSet)
 router.register(r'register-act', RegisterActViewSet)
 router.register(r'stage-property', StagePropertyViewSet)
-router.register(r'coordination', CoordinationViewSet)
 router.register(r'contract-subscription', ContractSubscriptionViewSet)
 router.register(r'contract-products', ContractProductsViewSet)
 router.register(r'import-client-bank', UploadClientBankViewSet)

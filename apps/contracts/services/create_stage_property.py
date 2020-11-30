@@ -1,4 +1,4 @@
-from apps.contracts.models.contract_model import StageProperty
+from apps.contracts.models.stage_propperty_model import StageProperty
 from apps.l_core.models import CoreOrganization
 
 
