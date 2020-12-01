@@ -15,4 +15,4 @@ class Comment(CoreBase):
         verbose_name_plural = 'Коментарі'
 
     def __str__(self):
-        return f'{self.description} - {self.author} - {self.date_add}'
+        return f'{self.author}'
