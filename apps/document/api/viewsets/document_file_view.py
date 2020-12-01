@@ -1,7 +1,5 @@
 from __future__ import unicode_literals
 from django_filters import rest_framework as filters
-from rest_framework.exceptions import ValidationError
-from rest_framework.response import Response
 from collections import OrderedDict
 from rest_framework.request import Request
 from rest_framework.filters import SearchFilter, OrderingFilter

@@ -21,7 +21,7 @@ DocumentConciderationView,DocumentResolutionView
 
 router = routers.DefaultRouter()
 
-router.register(r'comment', CommentViewSet)
+router.register(r'comment/(?P<document_id>[^/.]+)', CommentViewSet)
 router.register(r'registration-journal', RegistrationJournalViewSet)
 router.register(r'registration-mask', RegistrationMaskViewSet)
 router.register(r'registration-journal-volume', RegistrationJournalVolumeViewSet)
