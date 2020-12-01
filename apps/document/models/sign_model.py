@@ -10,7 +10,7 @@ class Sign(models.Model):
                                  on_delete=models.CASCADE, null=True, blank=True)
     signer = models.ForeignKey(CoreUser, verbose_name="Підписант", on_delete=models.PROTECT, null=True,
                                blank=True)
-    sign = models.TextField(max_length=100, null=True, blank=True, verbose_name="Підпис")
+    sign = models.TextField(max_length=500, null=True, blank=True, verbose_name="Підпис")
     sign_info = JSONField(null=True, verbose_name='Детальна інформація про накладений цифровий підпис')
 
     class Meta:

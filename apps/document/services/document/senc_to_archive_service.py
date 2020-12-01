@@ -3,7 +3,9 @@ from rest_framework.exceptions import PermissionDenied
 from apps.document.models.document_constants import CustomDocumentPermissions
 from apps.document.models.document_model import BaseDocument, ARCHIVED
 
+import logging
 
+logger = logging.getLogger(__name__)
 class SendToArchive:
     def __init__(self, document, data, user):
         self.document: BaseDocument = document
@@ -15,7 +17,7 @@ class SendToArchive:
         self.send_to_archive()
 
     def check_user_permissions(self):
-        if not self.user.has_perm(CustomDocumentPermissions.SEND_TO_ARCHIVE):
+        if not self.user.has_perm('document.'+CustomDocumentPermissions.SEND_TO_ARCHIVE):
             raise PermissionDenied('Поточний користувач не має дозвому переміщати документи до архіву.')
 
     def send_to_archive(self):

@@ -158,7 +158,7 @@ class TaskExecutor(CoreBase):
     status = models.CharField(verbose_name="Статус завдання", choices=TASK_EXECUTOR_STATUS, max_length=20,
                               default=PENDING)
     sign = models.TextField(null=True, verbose_name='Цифровий підпис')
-    sign_file = models.FileField(upload_to=get_sign_file_path,null=True, verbose_name='Цифровий підпис(файл)')
+    sign_file = models.FileField(upload_to=get_sign_file_path,null=True, verbose_name='Цифровий підпис(файл)', max_length=500)
     approve_method = models.CharField(max_length=20, verbose_name="Метод підтвердження", choices=APPROVE_METHODS,
                                       null=True)
     sign_info = JSONField(null=True, verbose_name='Детальна інформація про накладений цифровий підпис')

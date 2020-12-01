@@ -39,7 +39,7 @@ class OrderingFilterMixin(BaseOrganizationViewSetMixing):
 
 
 class BaseDocumentSerializerViewSet(OrderingFilterMixin):
-    permission_classes = [LCoreDjangoModelPermissions]
+    ##permission_classes = [LCoreDjangoModelPermissions]
     queryset = BaseDocument.objects.all()
     search_fields = ['reg_number', 'title', 'comment']
     ordering_fields = ['reg_number', 'reg_date']
