@@ -2,12 +2,15 @@ import logging
 
 from django.db.models import signals
 
-from apps.contracts.models.contract_model import  Contract,   ContractProducts, ContractSubscription
+from apps.l_core.models import CoreOrganization
+
+from apps.contracts.models.contract_model import Contract, ContractProducts, ContractSubscription
 from apps.contracts.models.register_accrual_model import RegisterAccrual
 from apps.contracts.models.register_payment_model import RegisterPayment
 from apps.contracts.models.register_act_model import RegisterAct
 from apps.contracts.models.contract_finance_model import ContractFinance
 from apps.contracts.services.create_stage_property import CreateStageProperty
+from apps.contracts.services.create_initial_templates import CreateInitialTemplates
 
 logger = logging.getLogger(__name__)
 
@@ -71,6 +74,12 @@ def save_finance(sender, instance, created, **kwargs):
     finance.save()
 
 
+def create_initial_templates(sender, instance, created, **kwargs):
+    if created:
+        service = CreateInitialTemplates(instance)
+        service.run()
+
+
 def init_signals():
     logger.info('-------------CONTRACT SIGNALS INIT------------')
     signals.post_save.connect(receiver=save_finance, sender=Contract)
@@ -84,3 +93,5 @@ def init_signals():
     signals.post_save.connect(receiver=create_update_ContractProduct, sender=ContractProducts)
     signals.post_delete.connect(receiver=delete_ContractXXX, sender=ContractSubscription)
     signals.post_delete.connect(receiver=delete_ContractXXX, sender=ContractProducts)
+
+    signals.post_save.connect(receiver=create_initial_templates, sender=CoreOrganization)

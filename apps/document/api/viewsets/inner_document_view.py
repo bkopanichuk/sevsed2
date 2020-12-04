@@ -15,7 +15,13 @@ from ..srializers.document_serializer import InnerDocumentSerializer
 class InnerDocumentViewSet(OrderingFilterMixin):
     serializer_class = InnerDocumentSerializer
     queryset = BaseDocument.objects.filter(document_cast=INNER).select_related('main_signer')
-
+    search_fields = ['reg_number', 'title', 'comment']
+    filterset_fields = {
+        'id': ['in'],
+        'reg_number': ['icontains'],
+        'comment': ['icontains'],
+        'main_signer':['exact']
+    }
     ### STATUS FILTERS #######################################################################
     @swagger_auto_schema(method='get', responses={200: InnerDocumentSerializer(many=True)})
     @action(detail=False, methods=['get'])

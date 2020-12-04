@@ -9,7 +9,7 @@ from django.utils.crypto import get_random_string
 from django.conf import settings
 from num2words import num2words
 
-from apps.contracts.models.dict_model import TemplateDocument
+from apps.dict_register.models import TemplateDocument
 from apps.contracts.models.stage_propperty_model import StageProperty
 from apps.contracts.models.contract_product_model import AccrualProducts, AccrualSubscription
 from apps.l_core.models import CoreBase
@@ -54,6 +54,7 @@ class RegisterAct(CoreBase):
     def __unicode__(self):
         return u'{}'.format(self.number_act or '-')
 
+    ## TODO Видалити generate_acts, його неможливо икористовувати в мультипаспортному режимі
     @classmethod
     def generate_acts(cls, regenerate_all=None):
         template_obj = TemplateDocument.objects.get(related_model_name='registeract')
@@ -80,13 +81,15 @@ class RegisterAct(CoreBase):
         ##act_pdf_file = self.convert_docx_to_pdf()
         ##self.copy_act_pdf.name = act_pdf_file
         self.save()
+
         return {'copy_act': self.copy_act.name}  # , 'copy_act_pdf': self.copy_act_pdf.name}
 
     def generate_docx_act(self, doc=None):
         """ Return *.docx path from MEDIA_ROOT """
         logger.debug(' start function "generate_docx_act"')
         if not doc:
-            template_obj = TemplateDocument.objects.get(related_model_name='registeract')
+            template_obj = TemplateDocument.objects.get(related_model_name='registeract',
+                                                        organization_id=self.organization.id)
             docx_template = template_obj.template_file.path
             doc = docxtpl.DocxTemplate(docx_template)
 

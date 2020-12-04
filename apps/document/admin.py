@@ -25,16 +25,13 @@ from apps.document.models.task_model import Task
 #     extra = 0
 #
 #
-# @admin.register(BaseDocument)
-# class DocumentAdmin(SimpleHistoryAdmin):
-#     list_display = ['reg_number', 'incoming_type']
-#     search_fields = ['reg_number', ]
-#     list_filter = ['incoming_type', ]
-#     readonly_fields = ['status', 'reg_number']
-#     inlines = [
-#         DocumentResolutionInline,
-#         SignInline
-#     ]
+@admin.register(BaseDocument)
+class DocumentAdmin(SimpleHistoryAdmin):
+    list_display = ['reg_number', 'incoming_type']
+    search_fields = ['reg_number', ]
+    list_filter = ['incoming_type', ]
+    readonly_fields = ['status', 'reg_number']
+
 
     # def get_queryset(self, request):
     #     #     org = request.user.organization

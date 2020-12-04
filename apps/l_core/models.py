@@ -108,6 +108,7 @@ class CoreOrganization(AbstractCoreOrganization):
             raise Exception('field "organization" not allowed null value')
 
 
+
 class Department(AbstractBase):
     organization = models.ForeignKey(CoreOrganization, on_delete=models.PROTECT, null=True)
     name = models.CharField(max_length=200, blank=True, null=True, verbose_name=u'Назва')
@@ -208,6 +209,11 @@ class CoreBase(AbstractBase, SystemFieldsMixin, PersonIdentityMixin, Organizatio
     class Meta:
         default_permissions = ('add', 'change', 'delete', 'view', 'view_self', 'delete_self', 'change_self')
         abstract = True
+
+
+
+
+
 
 
 class Counter(models.Model):

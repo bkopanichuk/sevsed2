@@ -6,7 +6,7 @@ from django.conf import settings
 from apps.l_core.models import CoreOrganization
 from apps.contracts.models.contract_model import Contract
 from apps.contracts.models.contract_constants import CONTRACT_STATUS_ACTUAL
-from apps.contracts.models import RegisterPayment
+from apps.contracts.models.register_payment_model import RegisterPayment
 import logging
 
 logger = logging.getLogger(__name__)

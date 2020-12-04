@@ -4,6 +4,7 @@ from apps.document.models.document_constants import OUTGOING, INCOMING, INNER
 from apps.document.models.document_model import BaseDocument, ON_REGISTRATION, AUTOMATIC_REG, REGISTERED
 from apps.document.services import CreateFlow
 from apps.l_core.exceptions import ServiceException
+from apps.l_core.utilits.add_qrcode_to_pdf import AddQRCode2PDF
 
 
 class RegisterDocument:
@@ -62,6 +63,12 @@ class RegisterDocument:
             self.register_inner_document()
         else:
             raise ServiceException('document_cast is not set')
+        ##TODO пофіксити проблему зміни власника файлу після додавання QR
+        self.set_qrcode()
+
+    def set_qrcode(self):
+        qr_service = AddQRCode2PDF(self.document.preview_pdf.path, self.document.reg_number)
+        qr_service.run()
 
     def register_incoming_document(self):
         self.document.status = REGISTERED

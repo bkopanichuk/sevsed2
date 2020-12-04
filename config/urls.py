@@ -66,6 +66,7 @@ urlpatterns = [
     path(r'api/', include('apps.l_core.urls')),
     path(r'api/', include('apps.uaoauth.urls')),
     path(r'api/', include('apps.contracts.urls')),
+    path(r'api/', include('apps.dict_register.urls')),
     # path('sync-client/', include('sync_client.urls')),
 ]
 urlpatterns = static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + urlpatterns

@@ -13,7 +13,7 @@ from num2words import num2words
 from rest_framework.exceptions import ValidationError
 from django.conf import settings
 from apps.contracts.models.contract_constants import CHARGING_DATE, CONTRACT_STATUS_ACTUAL
-from apps.contracts.models.dict_model import TemplateDocument
+from apps.dict_register.models import TemplateDocument
 from apps.contracts.models.contract_product_model import AccrualProducts, AccrualSubscription
 from apps.contracts.tasks import async_create_accrual_doc, async_create_act_doc
 from apps.l_core.models import CoreBase
@@ -24,6 +24,8 @@ MEDIA_ROOT = settings.MEDIA_ROOT
 
 logger = logging.getLogger(__name__)
 
+
+## TODO Перенести нарпхування в окремий сервіс
 
 class RegisterAccrual(CoreBase):
     """ Реєстр нарахувань (Рахунків) """
@@ -96,6 +98,7 @@ class RegisterAccrual(CoreBase):
             if cls.objects.filter(contract=contract).count() > 0:
                 return {'message': 'accrual alredy exist'}
             accrual = cls(contract=contract,
+                          organization=contract.organization,
                           title='Послуги',
                           accrual_type=RegisterAccrual.SERVICE,
                           date_start_period=start_date,
@@ -110,6 +113,7 @@ class RegisterAccrual(CoreBase):
             contract_products = ContractProducts.objects.filter(contract=contract)
             for contract_product in contract_products:
                 accrual_product = AccrualProducts(accrual=accrual, product=contract_product.product,
+                                                  organization=accrual.organization,
                                                   count=contract_product.count, price=contract_product.price,
                                                   total_price=contract_product.total_price, pdv=contract_product.pdv,
                                                   total_price_pdv=contract_product.total_price_pdv)
@@ -121,10 +125,15 @@ class RegisterAccrual(CoreBase):
             ## Створення АКТУ ВИКОНАНИХ ПОСЛУГ
             number_act = u"Акт №{}-{} до договору № {}".format(accrual.date_accrual.strftime("%m"), accrual.pk,
                                                                accrual.contract.number_contract)
-            act = RegisterAct(number_act=number_act, accrual=accrual, contract=accrual.contract,
+            act = RegisterAct(number_act=number_act, organization=accrual.organization, accrual=accrual,
+                              contract=accrual.contract,
                               date_formation_act=accrual.date_accrual)
             act.save()
             act.generate_act_docs()
+            async_create_accrual_doc.delay(accrual.id)
+            async_create_act_doc.delay(act.id)
+
+
             ## Створення АКТУ ВИКОНАНИХ ПОСЛУГ
 
     @classmethod
@@ -190,6 +199,7 @@ class RegisterAccrual(CoreBase):
             ###
 
             accrual = cls(contract=contract,
+                          organization=contract.organization,
                           title='Абонплата',
                           accrual_type=RegisterAccrual.SUBSCRIPTION,
                           date_start_period=period.get('start_date'),
@@ -205,6 +215,7 @@ class RegisterAccrual(CoreBase):
                 contract=contract)
             for contract_subscription in actual_contract_subscriptions:
                 AccrualSubscription.objects.create(accrual=accrual,
+                                                   organization = accrual.organization,
                                                    charging_day=contract_subscription.charging_day,
                                                    start_period=period.get('start_date'),
                                                    end_period=period.get('end_date'),
@@ -221,7 +232,7 @@ class RegisterAccrual(CoreBase):
 
             number_act = u"Акт №{} до договору № {}".format(accrual.date_accrual.strftime("%m"),
                                                             accrual.contract.number_contract)
-            act = RegisterAct(number_act=number_act, accrual=accrual, contract=accrual.contract,
+            act = RegisterAct(number_act=number_act, accrual=accrual, organization=accrual.organization, contract=accrual.contract,
                               date_formation_act=accrual.date_accrual)
             act.save()
             async_create_act_doc.delay(act.id)
@@ -235,7 +246,8 @@ class RegisterAccrual(CoreBase):
         """ Return *.docx path from MEDIA_ROOT """
         logger.debug(' start function "generate_docx_invoice"')
         if not doc:
-            template_obj = TemplateDocument.objects.get(related_model_name='registerinvoice')
+            template_obj = TemplateDocument.objects.get(related_model_name='registerinvoice',
+                                                        organization_id=self.organization.id)
             docx_template = template_obj.template_file.path
             doc = docxtpl.DocxTemplate(docx_template)
 

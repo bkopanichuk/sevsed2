@@ -14,14 +14,14 @@ DATABASES = {
         'PASSWORD': 'sed_user',
     },
     # # LOG
-    # 'logs': {
-    #     'ENGINE': 'django.contrib.gis.db.backends.postgis',
-    #     'NAME': 'logs',
-    #     'HOST': 'localhost',
-    #     'PORT': '5432',
-    #     'USER': 'sed',
-    #     'PASSWORD': 'sed',
-    # }
+    'logs': {
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
+        'NAME': 'logs',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'USER': 'sed',
+        'PASSWORD': 'sed',
+    }
     # 'default': {
     #     'ENGINE': 'django.db.backends.sqlite3',
     #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),

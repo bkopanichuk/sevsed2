@@ -2,10 +2,11 @@ from __future__ import unicode_literals
 
 from django_filters import rest_framework as filters
 from rest_framework.filters import SearchFilter, OrderingFilter
-from apps.l_core.api.base.serializers import DynamicFieldsModelSerializer
+
+from apps.l_core.api.base.serializers import DynamicFieldsModelSerializer,BaseOrganizationViewSetMixing
 from rest_flex_fields import FlexFieldsModelViewSet
-from apps.contracts.models.dict_model import  MainActivity, OrganizationType, PropertyType, TemplateDocument, \
-    Product, Subscription,ProductPriceDetails, SubscriptionPriceDetails
+from apps.contracts.models.dict_model import Product, Subscription,ProductPriceDetails, SubscriptionPriceDetails
+from apps.dict_register.models import MainActivity, OrganizationType, PropertyType
 
 
 ##MainActivity-------------------------------------------------------
@@ -16,7 +17,7 @@ class MainActivitySerializer(DynamicFieldsModelSerializer):
 
 
 # ViewSets define the view behavior.
-class MainActivityViewSet(FlexFieldsModelViewSet):
+class MainActivityViewSet(BaseOrganizationViewSetMixing):
     queryset = MainActivity.objects.all()
     serializer_class = MainActivitySerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
@@ -27,13 +28,13 @@ class MainActivityViewSet(FlexFieldsModelViewSet):
 
 
 ##OrganizationType-------------------------------------------------------
-class OrganizationTypeSerializer(MainActivitySerializer):
+class OrganizationTypeSerializer(DynamicFieldsModelSerializer):
     class Meta(MainActivitySerializer.Meta):
         model = OrganizationType
 
 
 # ViewSets define the view behavior.
-class OrganizationTypeViewSet(MainActivityViewSet):
+class OrganizationTypeViewSet(BaseOrganizationViewSetMixing):
     queryset = OrganizationType.objects.all()
     serializer_class = OrganizationTypeSerializer
 
@@ -47,7 +48,7 @@ class PropertyTypeSerializer(MainActivitySerializer):
 
 
 # ViewSets define the view behavior.
-class PropertyTypeViewSet(MainActivityViewSet):
+class PropertyTypeViewSet(BaseOrganizationViewSetMixing):
     queryset = PropertyType.objects.all()
     serializer_class = PropertyTypeSerializer
 
@@ -56,33 +57,17 @@ class PropertyTypeViewSet(MainActivityViewSet):
 
 ##-------------------------------------------------------------
 
-
-##ContractStatus-------------------------------------------------------
-class TemplateDocumentSerializer(MainActivitySerializer):
-    class Meta(MainActivitySerializer.Meta):
-        model = TemplateDocument
-        fields = ('id', '__str__', 'template_file', 'related_model_name')
-
-
-# ViewSets define the view behavior.
-class TemplateDocumentViewSet(MainActivityViewSet):
-    queryset = TemplateDocument.objects.all()
-    serializer_class = TemplateDocumentSerializer
-    filterset_fields = {
-        'related_model_name': ['exact']}
-
-
 ##-------------------------------------------------------------
 
 ##Subscription-------------------------------------------------------
 class SubscriptionSerializer(DynamicFieldsModelSerializer):
     class Meta:
         model = Subscription
-        fields = ('id', '__str__', 'code', 'name', 'price', 'pdv', 'price_pdv','s_count','service_type')
+        fields = ['id', '__str__', 'code', 'name', 'price', 'pdv', 'price_pdv','s_count','service_type']
 
 
 # ViewSets define the view behavior.
-class SubscriptionViewSet(FlexFieldsModelViewSet):
+class SubscriptionViewSet(BaseOrganizationViewSetMixing):
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
@@ -99,7 +84,7 @@ class SubscriptionPriceDetailsSerializer(DynamicFieldsModelSerializer):
 
 
 # ViewSets define the view behavior.
-class SubscriptionPriceDetailsViewSet(FlexFieldsModelViewSet):
+class SubscriptionPriceDetailsViewSet(BaseOrganizationViewSetMixing):
     queryset = SubscriptionPriceDetails.objects.all()
     serializer_class = SubscriptionPriceDetailsSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
@@ -118,7 +103,7 @@ class ProductSerializer(DynamicFieldsModelSerializer):
 
 
 # ViewSets define the view behavior.
-class ProductViewSet(FlexFieldsModelViewSet):
+class ProductViewSet(BaseOrganizationViewSetMixing):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)
@@ -133,7 +118,7 @@ class ProductPriceDetailsSerializer(DynamicFieldsModelSerializer):
 
 
 # ViewSets define the view behavior.
-class ProductPriceDetailsViewSet(FlexFieldsModelViewSet):
+class ProductPriceDetailsViewSet(BaseOrganizationViewSetMixing):
     queryset = ProductPriceDetails.objects.all()
     serializer_class = ProductPriceDetailsSerializer
     filter_backends = (filters.DjangoFilterBackend, SearchFilter, OrderingFilter)

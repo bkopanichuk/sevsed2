@@ -166,14 +166,14 @@ class innerDocument(models.Model):
 
 class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
     # General
-    title = models.CharField(verbose_name="Назва", max_length=100, default='-')
+    title = models.CharField(verbose_name="Назва", max_length=100, default='-',db_index=True)
     main_file = models.FileField(verbose_name="Головинй файл", upload_to=get_upload_document_path, null=True,
                                  max_length=500)
     document_cast = models.CharField(verbose_name="Вид документа", choices=DOCUMENT_CAST,
-                                     max_length=100)
-    reg_number = models.CharField(verbose_name="Реєстраціний номер", max_length=100, null=True)
-    reg_date = models.DateField(verbose_name="Дата реєстрації", null=True, editable=False)
-    comment = models.TextField(verbose_name="Короткий зміст", max_length=500, null=True, blank=True)
+                                     max_length=100,db_index=True)
+    reg_number = models.CharField(verbose_name="Реєстраціний номер", max_length=100, null=True,db_index=True)
+    reg_date = models.DateField(verbose_name="Дата реєстрації", null=True, editable=False,db_index=True)
+    comment = models.TextField(verbose_name="Короткий зміст", max_length=500, null=True, blank=True,db_index=True)
     document_linked_to = models.ManyToManyField('self', related_name='document_linked_to_document',
                                                 verbose_name="До документа", blank=True)
     department = models.ForeignKey(Department, verbose_name="Департамент", on_delete=models.SET_NULL, null=True,
@@ -191,7 +191,7 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
                                    max_length=100, null=True)
     preview = models.FileField(upload_to=get_preview_directory, null=True, editable=False, max_length=500)
     preview_pdf = models.FileField(upload_to=get_preview_directory, null=True, editable=False, max_length=500)
-    status = models.CharField(verbose_name="Статус", max_length=100, default=PROJECT)
+    status = models.CharField(verbose_name="Статус", max_length=100, default=PROJECT,db_index=True)
     controller = models.ForeignKey('l_core.CoreUser',related_name='controller_documents', on_delete=models.SET_NULL, null=True,
                                    verbose_name="Контролер документа")
     history = HistoricalRecords()

@@ -16,10 +16,12 @@ from ...models.document_constants import OUTGOING
 class OutgoingDocumentViewSet(OrderingFilterMixin):
     serializer_class = OutgoingDocumentSerializer
     queryset = BaseDocument.objects.filter(document_cast=OUTGOING)
-    filterset_fields = OrderingFilterMixin.filterset_fields.update(
-        {'outgoing_type': ['exact'],
-         'status': ['exact']
-         })
+    search_fields = ['reg_number', 'title', 'comment']
+    filterset_fields = {
+        'id': ['in'],
+        'reg_number': ['icontains']
+    }
+
 
     def get_queryset(self):
         q = super(OutgoingDocumentViewSet, self).get_queryset()

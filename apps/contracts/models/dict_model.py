@@ -2,42 +2,10 @@
 from __future__ import unicode_literals
 
 from django.contrib.gis.db import models
-from django.utils.crypto import get_random_string
 from django.utils.timezone import now
 
+from apps.dict_register.models import DictBase
 from apps.l_core.models import CoreBase
-
-
-class DictBase(CoreBase):
-    parent = models.ForeignKey('self', null=True, on_delete=models.SET_NULL)
-    is_group = models.BooleanField(default=False)
-    code = models.SlugField(verbose_name="Код", default=get_random_string)
-    name = models.CharField(max_length=200, blank=True, null=True, verbose_name="Значення")
-
-    class Meta:
-        abstract = True
-        unique_together = ['code']
-
-    def __str__(self):
-        return self.__unicode__()
-
-    def __unicode__(self):
-        return '{0} {1}'.format(self.code or '-', self.name or '-')
-
-
-class MainActivity(DictBase):
-    class Meta:
-        verbose_name = u'Вид основної діяльності'
-
-
-class OrganizationType(DictBase):
-    class Meta:
-        verbose_name = u'Типів органцізації'
-
-
-class PropertyType(DictBase):
-    class Meta:
-        verbose_name = u'Тип власності'
 
 
 class ProductPropertyMixin():
@@ -98,7 +66,7 @@ class ServiceType(CoreBase):
 
 
 class Subscription(DictBase, ProductPropertyMixin):
-    service_type = models.ForeignKey(ServiceType, on_delete=models.PROTECT)
+    service_type = models.ForeignKey(ServiceType, on_delete=models.PROTECT, null=True)
 
     class Meta:
         verbose_name = u'Обслуговування, абонплата'
@@ -136,18 +104,3 @@ class SubscriptionPriceDetails(DictBase):
 
     def __str__(self):
         return f'{self.subscription} -  від {self.start_period}'
-
-
-class TemplateDocument(DictBase):
-    template_file = models.FileField(upload_to='uploads/doc_templates/%Y/%m/%d/', null=True,
-                                     verbose_name="Шаблон документу (договору)")
-    related_model_name = models.SlugField(unique=True, max_length=100, verbose_name="Шаблон документу")
-
-    class Meta:
-        verbose_name = u'Шаблон документу'
-
-    def __str__(self):
-        return self.__unicode__()
-
-    def __unicode__(self):
-        return '{0}'.format(self.related_model_name or '-', )

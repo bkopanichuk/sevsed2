@@ -56,8 +56,9 @@ INSTALLED_APPS = [
     'rest_registration',
     'django_postgres_createdb',
     'drf_yasg',
-    # 'activity_log',
+    'activity_log',
     'apps.atu',
+    'apps.dict_register',
     'apps.l_core.apps.CoreConfig',
     'apps.document.apps.DocumentConfig',
      'apps.contracts.apps.ContractsConfig',
@@ -86,7 +87,7 @@ MIDDLEWARE = [
     'apps.l_core.middleware.PyCallGraphMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
-    ##'activity_log.middleware.ActivityLogMiddleware',
+    'activity_log.middleware.ActivityLogMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
     'silk.middleware.SilkyMiddleware',
 ]
@@ -193,11 +194,7 @@ MEDIA_URL = '/media/'  # URL для медии в шаблонах
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-ACTIVITYLOG_EXCLUDE_URLS = ('/admin/activity_log/activitylog', '/admin/jsi18n', '/media/admin-interface/')
-ACTIVITYLOG_EXCLUDE_STATUSES = (302,)
-ACTIVITYLOG_METHODS = ('POST', 'GET')
-ACTIVITYLOG_LAST_ACTIVITY = True
-ACTIVITYLOG_GET_EXTRA_DATA = 'config.activity_log_extra.make_extra_data'
+
 
 AUTH_SERVER_CHECK_TOKEN_URL = 'http://10.0.30.220:9999/sync-server/sync-endpoint/'
 AUTH_SERVER_SYNC_PERMISSION_URL = 'http://10.0.30.220:9999/sync-server/sync-permissions/'
@@ -205,4 +202,5 @@ AUTH_SERVER_MAX_TOKEN_AGE = 40 * 60  ##140 хвилин
 AUTH_SERVER_SECRET_KEY = 'sed2'
 AUTH_SERVER_CLIENT_ID = 'sed2'
 
+from .activity_log_settings import *
 from config.logger import LOGGING

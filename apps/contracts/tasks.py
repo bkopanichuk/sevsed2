@@ -2,7 +2,8 @@ from __future__ import absolute_import, unicode_literals
 
 from celery import shared_task
 import time
-
+import logging
+logger = logging.getLogger(__name__)
 
 @shared_task
 def simulate_work():
@@ -27,7 +28,6 @@ def async_create_accrual_doc(id):
     from apps.contracts.models.register_accrual_model import RegisterAccrual
     obj = RegisterAccrual.objects.get(pk=id)
     obj.set_docx(save=True)
-
     return 'Success'
 
 
