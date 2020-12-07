@@ -1,6 +1,7 @@
+from apps.l_core.exceptions import ServiceException
 from apps.document.models.document_constants import INCOMING, INNER
 from apps.document.models.document_model import BaseDocument, ON_RESOLUTION
-from apps.l_core.exceptions import ServiceException
+from apps.document.services import CreateFlow
 
 
 class DocumentConsideration:
@@ -33,3 +34,5 @@ class DocumentConsideration:
     def considerate_inner_document(self):
         self.document.status = ON_RESOLUTION
         self.document.save(update_fields=['status'])
+        process = CreateFlow(doc=self.document)
+        process.run()

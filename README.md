@@ -13,7 +13,7 @@ psql
 ```sql
 CREATE USER sed_user WITH PASSWORD 'sed_user';
 ALTER USER sed_user CREATEDB;
-GRANT ALL PRIVILEGES ON DATABASE "sed_test_db" to sed_user;
+GRANT ALL PRIVILEGES ON DATABASE "sed_test_db_5" to sed_user;
 ALTER ROLE sed_user SUPERUSER;
 CREATE EXTENSION IF NOT EXISTS ltree;
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
@@ -63,9 +63,9 @@ supervisord -n -c /etc/supervisord.conf
 ```bash
 find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
 find . -path "*/migrations/*.pyc"  -delete
-python manage.py help flush
+python manage.py  flush
 python manage.py makemigrations
-python manage.py migrate --fake core zero
+python manage.py migrate --fake
 ```
 
 ## Contributing

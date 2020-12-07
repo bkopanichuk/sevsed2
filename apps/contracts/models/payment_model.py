@@ -11,8 +11,13 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+def import_client_bunk_directory_path(instance, filename):
+    return 'uploads/org_{0}/import_client_bunk/{1}/{2}'.format(instance.contract.organization.id,
+                                                                      instance.unique_uuid,
+                                                                      filename)
+
 class ImportPayment(CoreBase):
-    in_file = models.FileField(upload_to='contracts/import_client_bunk/')
+    in_file = models.FileField(upload_to=import_client_bunk_directory_path)
     details = JSONField(editable=False, null=True)
     is_imported = models.BooleanField(default=False, editable=False)
 

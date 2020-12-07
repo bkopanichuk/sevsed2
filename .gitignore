@@ -4,3 +4,10 @@
 /media/
 /db.sqlite3
 /.idea
+/apps/atu/migrations/
+/apps/client_settings/migrations/
+/apps/contracts/migrations/
+/apps/document/migrations/
+/apps/l_core/migrations/
+/apps/sevovvintegration/migrations/
+/apps/uaoauth/migrations/

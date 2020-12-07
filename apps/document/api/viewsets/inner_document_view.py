@@ -19,6 +19,8 @@ class InnerDocumentViewSet(OrderingFilterMixin):
     filterset_fields = {
         'id': ['in'],
         'reg_number': ['icontains'],
+        'case_index': ['icontains'],
+          'create_date': ['range'],
         'comment': ['icontains'],
         'main_signer':['exact']
     }

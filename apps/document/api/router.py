@@ -3,7 +3,7 @@ from rest_framework import routers
 
 from apps.document.api.viewsets.comment_view import CommentViewSet
 from apps.document.api.viewsets.coverletter_view import CoverLetterSerializerViewSet
-from apps.document.api.viewsets.document_base_view import BaseDocumentSerializerViewSet, DocumentConsiderationView, \
+from apps.document.api.viewsets.document_base_view import BaseDocumentSerializerViewSet, DocumentStartConsiderationView, \
     ResolutionDocumentView, \
     DocumentStartApproveView, UploadDocumentViewSet, DocumentHistoryView, RegisterDocumentView
 from apps.document.api.viewsets.document_file_view import DocumentFileViewSet
@@ -50,7 +50,7 @@ urlpatterns = [
     url(r'document-consideration/(?P<document_id>[^/.]+)/$', DocumentConciderationView.as_view()),
     url(r'approve-document-flow/(?P<document_id>[^/.]+)/$', ApproveDocumentFlowView.as_view()),
     url(r'action/register/(?P<document_id>[^/.]+)/$', RegisterDocumentView.as_view()),
-    url(r'action/consideration/(?P<document_id>[^/.]+)/$', DocumentConsiderationView.as_view()),
+    url(r'action/consideration/(?P<document_id>[^/.]+)/$', DocumentStartConsiderationView.as_view()),
     url(r'action/start-approve/(?P<document_id>[^/.]+)/$', DocumentStartApproveView.as_view()),
     url(r'action/resolution/(?P<document_id>[^/.]+)/$', ResolutionDocumentView.as_view()),
 

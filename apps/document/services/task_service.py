@@ -283,7 +283,7 @@ class FinishApprove(FinishExecution):
                 raise ServiceException('Завантажте файл з підписом, або підпишіть скориставшись віджетом підпису')
 
     def validate_signer(self):
-        ##TODO додати перевірку підписанта чи співпадаться реквізити в ЕЦП з вказаним підписантом
+        ##TODO додати перевірку підписанта чи співпадають реквізити в ЕЦП з даними підписанта
         pass
 
     def extract_sign_from_file(self):
@@ -312,7 +312,7 @@ class FinishApprove(FinishExecution):
         sign_b64 = self.task_executor.sign
         data_path = self.task_executor.task.document.main_file.path
         res = verify_external(data_path=data_path, sign_data=sign_b64)
-        if res.get('code') == 1:
+        if res.get('code') != 0:
             raise ServiceException(res.get('code_message'))
         self.task_executor.sign_info = res
 

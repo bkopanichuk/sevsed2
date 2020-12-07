@@ -136,11 +136,11 @@ class Task(CoreBase):
 
 def get_result_file_path(instance, filename):
     return os.path.join(
-        f'uploads/tasks/org_{instance.organization.id}__author_{instance.author}/task_{instance.task.id}/task_executor_{instance.id}/{filename}')
+        f'uploads/org_{instance.organization.id}/tasks/author_{instance.author}/task_{instance.task.id}/task_executor_{instance.id}/{filename}')
 
 def get_sign_file_path(instance, filename):
     return os.path.join(
-        f'uploads/tasks/org_{instance.organization.id}__author_{instance.author}/task_{instance.task.id}/task_executor_{instance.id}/sign/{filename}')
+        f'uploads/org_{instance.organization.id}/tasks/author_{instance.author}/task_{instance.task.id}/task_executor_{instance.id}/sign/{filename}')
 
 class TaskExecutor(CoreBase):
     task = models.ForeignKey(Task, related_name='task_executors', on_delete=models.CASCADE, null=True)

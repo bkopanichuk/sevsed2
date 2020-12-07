@@ -23,6 +23,23 @@ MEDIA_ROOT = settings.MEDIA_ROOT
 logger = logging.getLogger(__name__)
 
 
+def act_docx_directory_path(instance, filename):
+    return 'uploads/org_{0}/contract/{1}/act_docx/{2}/{3}'.format(instance.contract.organization.id,
+                                                                      instance.contract.unique_uuid,
+                                                                      instance.unique_uuid,
+                                                                      filename)
+
+def act_pdf_directory_path(instance, filename):
+    return 'uploads/org_{0}/contract/{1}/act_pdf/{2}/{3}'.format(instance.contract.organization.id,
+                                                                      instance.contract.unique_uuid,
+                                                                      instance.unique_uuid,
+                                                                      filename)
+
+def act_pdf_legal_directory_path(instance, filename):
+    return 'uploads/org_{0}/contract/{1}/act_pdf_legal/{2}/{3}'.format(instance.contract.organization.id,
+                                                                      instance.contract.unique_uuid,
+                                                                      instance.unique_uuid,
+                                                                      filename)
 
 class RegisterAct(CoreBase):
     number_act = models.TextField(verbose_name="Номер акту")
@@ -33,11 +50,11 @@ class RegisterAct(CoreBase):
     date_sending_act = models.DateField(verbose_name="Дата відправлення акту", null=True)
     is_send_successful = models.BooleanField(verbose_name="Акт успішно відправлено?", null=True)
     date_return_act = models.DateField(verbose_name="Дата повернення акту", null=True, )
-    copy_act = models.FileField(null=True, upload_to='uploads/docx_act/%Y/%m/%d/', verbose_name="Копія акту(DOCX)")
-    copy_act_pdf = models.FileField(null=True, upload_to='uploads/pdf_act/%Y/%m/%d/', verbose_name="Копія акту(PDF)")
+    copy_act = models.FileField(null=True, upload_to=act_docx_directory_path, verbose_name="Копія акту(DOCX)")
+    copy_act_pdf = models.FileField(null=True, upload_to=act_pdf_directory_path, verbose_name="Копія акту(PDF)")
     sign_act_from_contractor = models.TextField(null=True, verbose_name="Цифровий підпис контрагента",
-                                                help_text="Підписант може накласти цифровий підпис на копію акту в пдф")
-    copy_act_from_contractor = models.FileField(null=True, upload_to='uploads/pdf_act_stamp/%Y/%m/%d/',
+                                                help_text="Підписант може накласти цифровий підпис на копію акту в PDF")
+    copy_act_from_contractor = models.FileField(null=True, upload_to=act_pdf_legal_directory_path,
                                                 verbose_name="Копія акту підписана контрагентом",
                                                 help_text="Повинна містити скановану копію з штампом організації підписанта")
 

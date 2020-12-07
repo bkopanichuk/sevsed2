@@ -19,9 +19,12 @@ class OutgoingDocumentViewSet(OrderingFilterMixin):
     search_fields = ['reg_number', 'title', 'comment']
     filterset_fields = {
         'id': ['in'],
-        'reg_number': ['icontains']
+        'reg_number': ['icontains'],
+        'reg_date': ['range'],
+        'create_date': ['range'],
+        'case_index': ['icontains'],
+        'comment': ['icontains'],
     }
-
 
     def get_queryset(self):
         q = super(OutgoingDocumentViewSet, self).get_queryset()

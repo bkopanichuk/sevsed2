@@ -6,16 +6,17 @@ from typing import List
 
 import docxtpl
 from babel.dates import format_datetime
+from django.conf import settings
 from django.db import models
 from django.db.models import Sum
 from django.utils.crypto import get_random_string
 from num2words import num2words
 from rest_framework.exceptions import ValidationError
-from django.conf import settings
+
 from apps.contracts.models.contract_constants import CHARGING_DATE, CONTRACT_STATUS_ACTUAL
-from apps.dict_register.models import TemplateDocument
 from apps.contracts.models.contract_product_model import AccrualProducts, AccrualSubscription
 from apps.contracts.tasks import async_create_accrual_doc, async_create_act_doc
+from apps.dict_register.models import TemplateDocument
 from apps.l_core.models import CoreBase
 from apps.l_core.utilits.finance import get_pdv
 from apps.l_core.utilits.month import LOCAL_MONTH
@@ -26,6 +27,13 @@ logger = logging.getLogger(__name__)
 
 
 ## TODO Перенести нарпхування в окремий сервіс
+
+def accrual_docx_directory_path(instance, filename):
+    return 'uploads/org_{0}/contract/{1}/accrual_docx/{2}/{3}'.format(instance.contract.organization.id,
+                                                                      instance.contract.unique_uuid,
+                                                                      instance.unique_uuid,
+                                                                      filename)
+
 
 class RegisterAccrual(CoreBase):
     """ Реєстр нарахувань (Рахунків) """
@@ -45,7 +53,7 @@ class RegisterAccrual(CoreBase):
     pay_size = models.FloatField(null=True, verbose_name="Сума до сплати")
     balance = models.FloatField(null=True, verbose_name="Баланс на поточний період")
     penalty = models.FloatField(null=True, verbose_name="Пеня за попередній період")
-    accrual_docx = models.FileField(upload_to='uploads/accrual_docx/%Y/%m/%d/', null=True,
+    accrual_docx = models.FileField(upload_to=accrual_docx_directory_path, null=True,
                                     verbose_name="Проект Рахунку")
     date_sending_doc = models.DateField(verbose_name="Дата відправлення акту", null=True)
     is_doc_send_successful = models.BooleanField(verbose_name="Акт успішно відправлено?", null=True)
@@ -133,7 +141,6 @@ class RegisterAccrual(CoreBase):
             async_create_accrual_doc.delay(accrual.id)
             async_create_act_doc.delay(act.id)
 
-
             ## Створення АКТУ ВИКОНАНИХ ПОСЛУГ
 
     @classmethod
@@ -215,7 +222,7 @@ class RegisterAccrual(CoreBase):
                 contract=contract)
             for contract_subscription in actual_contract_subscriptions:
                 AccrualSubscription.objects.create(accrual=accrual,
-                                                   organization = accrual.organization,
+                                                   organization=accrual.organization,
                                                    charging_day=contract_subscription.charging_day,
                                                    start_period=period.get('start_date'),
                                                    end_period=period.get('end_date'),
@@ -232,7 +239,8 @@ class RegisterAccrual(CoreBase):
 
             number_act = u"Акт №{} до договору № {}".format(accrual.date_accrual.strftime("%m"),
                                                             accrual.contract.number_contract)
-            act = RegisterAct(number_act=number_act, accrual=accrual, organization=accrual.organization, contract=accrual.contract,
+            act = RegisterAct(number_act=number_act, accrual=accrual, organization=accrual.organization,
+                              contract=accrual.contract,
                               date_formation_act=accrual.date_accrual)
             act.save()
             async_create_act_doc.delay(act.id)
@@ -251,7 +259,7 @@ class RegisterAccrual(CoreBase):
             docx_template = template_obj.template_file.path
             doc = docxtpl.DocxTemplate(docx_template)
 
-        upload_to = datetime.today().strftime('uploads/accrual_docx/%Y/%m/%d/')
+        upload_to = accrual_docx_directory_path(self,self.accrual_docx.name)
         base_dir = os.path.join(MEDIA_ROOT, upload_to)
         if not os.path.exists(base_dir):
             os.makedirs(base_dir)

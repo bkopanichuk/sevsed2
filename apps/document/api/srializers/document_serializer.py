@@ -9,7 +9,7 @@ from apps.document.models.document_constants import INCOMING, OUTGOING, INNER, D
 from apps.document.models.document_model import INNER_DOCUMENT_STATUS_CHOICES, OUTGOING_DOCUMENT_STATUS_CHOICES, \
     INCOMING_DOCUMENT_STATUS_CHOICES
 from apps.document.models.document_model import ON_REGISTRATION, PROJECT
-from apps.document.models.document_model import MAILING_METHODS
+from apps.document.models.document_model import MAILING_METHODS,INCOMING_SOURCES,LETTER
 
 from  apps.l_core.models import CoreOrganization
 
@@ -72,6 +72,7 @@ class DocumentSerializer(serializers.ModelSerializer):
 class IncomingDocumentSerializer(serializers.ModelSerializer):
     status = serializers.ChoiceField(choices=INCOMING_DOCUMENT_STATUS_CHOICES, default=ON_REGISTRATION)
     document_cast = serializers.ChoiceField(choices=DOCUMENT_CAST, default=INCOMING)
+    source = serializers.ChoiceField(choices=INCOMING_SOURCES, required=True,label="Джерело надходження")
     reg_number = serializers.CharField(required=False, allow_null=True, allow_blank=True, label="Реєстраціний номер")
     correspondent_name = serializers.SerializerMethodField()
     incoming_type_name = serializers.SerializerMethodField()
@@ -86,7 +87,7 @@ class IncomingDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BaseDocument
-        fields = ['id', 'main_file', 'document_cast', 'outgoing_number', 'outgoing_date', 'reg_number',
+        fields = ['id', 'main_file', 'document_cast', 'outgoing_number', 'outgoing_date', 'reg_number','create_date',
                   'reg_date', 'incoming_type', 'approve_type', 'comment', 'correspondent', 'correspondent_name',
                   'signer','source',
                   '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview', 'incoming_type_name',
@@ -103,7 +104,7 @@ class OutgoingDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BaseDocument
-        fields = ['id', 'main_file', 'reg_number', 'document_cast',
+        fields = ['id', 'main_file', 'reg_number', 'document_cast','create_date',
                   'reg_date', 'outgoing_type', 'approve_type', 'comment', 'correspondent', 'signer','main_signer',
                   '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview','mailing_list','mailing_method',
                   'preview_pdf', 'registration_type','registration', 'execute_task_on_create', 'status','unique_uuid']
@@ -119,7 +120,7 @@ class InnerDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = BaseDocument
-        fields = ['id', 'main_file', 'reg_number', 'document_cast',
+        fields = ['id', 'main_file', 'reg_number', 'document_cast','create_date',
                   'reg_date',  'approve_type', 'comment', 'correspondent', 'main_signer','main_signer_name',
                   'inner_type','date_add', '__str__', 'author', 'document_linked_to', 'approvers_list', 'preview',
                   'preview_pdf', 'registration_type','registration', 'execute_task_on_create', 'status','unique_uuid']

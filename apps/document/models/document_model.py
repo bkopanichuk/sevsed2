@@ -3,13 +3,12 @@ import uuid
 
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.utils import timezone
 from simple_history.models import HistoricalRecords
 
 from apps.document.models import register_model
 from apps.document.models.coverletter_model import CoverLetter
-from apps.document.models.document_constants import DOCUMENT_CAST
 from apps.document.models.document_constants import CustomDocumentPermissions
+from apps.document.models.document_constants import DOCUMENT_CAST
 from apps.document.models.documenttype_model import IncomingDocumentType, OutgoingDocumentType, InnerDocumentType
 from apps.l_core.models import CoreBase, CoreOrganization, Department, CoreUser
 
@@ -90,6 +89,12 @@ LETTER = 'LETTER'
 REGISTERED_LETTER = 'REGISTERED_LETTER'
 HAND_OUT = 'HAND_OUT'
 
+INCOMING_SOURCES = ((EMAIL, 'Електронна пошта'),
+                   (LETTER, 'Поштою (просте)'),
+                   (REGISTERED_LETTER, 'Поштою (рекомендоване)'),
+                   (HAND_OUT, 'Наручно'),
+                   )
+
 MAILING_METHODS = ((EMAIL, 'Електронна пошта'),
                    (SEV, 'СЕВОВВ'),
                    (LETTER, 'Поштою (просте)'),
@@ -101,12 +106,12 @@ MAILING_METHODS = ((EMAIL, 'Електронна пошта'),
 ########################################################################################################################
 def get_upload_document_path(instance, filename):
     return os.path.join(
-        f'uploads/document/org_{instance.organization.id}/{instance.unique_uuid}/files', filename)
+        f'uploads/org_{instance.organization.id}/document/{instance.unique_uuid}/files', filename)
 
 
 def get_upload_path(instance, filename):
     return os.path.join(
-        f'uploads/document/org_{instance.organization.id}_{instance.unique_uuid}/')
+        f'uploads/org_{instance.organization.id}/document/{instance.unique_uuid}/')
 
 
 def def_reg_number(*args):
@@ -115,16 +120,17 @@ def def_reg_number(*args):
 
 def get_preview_directory(instance, filename):
     return os.path.join(
-        f'uploads/document/org_{instance.organization.id}/{instance.unique_uuid}/preview/')
+        f'uploads/org_{instance.organization.id}/document/{instance.unique_uuid}/preview/')
 
 
 class IncomingDocument(models.Model):
     # Incoming details
-    outgoing_number = models.CharField(verbose_name="*Вихідний номер", max_length=100, null=True, blank=True)
+    outgoing_number = models.CharField(verbose_name="*Вихідний номер", max_length=100, null=True, blank=True,
+                                       db_index=True)
     outgoing_date = models.DateField(verbose_name="*Вихідна дата", null=True, blank=True)
     correspondent = models.ForeignKey(CoreOrganization, related_name='incoming_documents', verbose_name="Кореспондент",
                                       on_delete=models.PROTECT, null=True, blank=True)
-    signer = models.CharField(verbose_name="*Підписант", max_length=100, null=True, blank=True)
+    signer = models.CharField(verbose_name="*Підписант", max_length=100, null=True, blank=True, db_index=True)
     sign = models.TextField(verbose_name="*Підпис", max_length=100, null=True, blank=True)
     cover_letter = models.ForeignKey(CoverLetter, verbose_name="*Супровідний лист", on_delete=models.PROTECT, null=True,
                                      blank=True)
@@ -134,6 +140,7 @@ class IncomingDocument(models.Model):
                                                on_delete=models.PROTECT, null=True)
     reply_date = models.DateField(verbose_name="Кінцева дата  для надання відповіді", null=True, blank=True)
     source = models.CharField(choices=MAILING_METHODS, default=LETTER, verbose_name="Джерело надходження",
+                              db_index=True,
                               max_length=50)
 
     class Meta:
@@ -145,12 +152,12 @@ class OutgoingDocument(models.Model):
     outgoing_type = models.ForeignKey(OutgoingDocumentType, verbose_name="Тип вихідного документа",
                                       on_delete=models.PROTECT, null=True)
     approve_type = models.CharField(verbose_name="Чи потрібне узгодження", default=WITH_APPROVE, choices=APPROVE_TYPE,
-                                    max_length=20)
+                                    max_length=20, db_index=True, )
     mailing_list = models.ManyToManyField(CoreOrganization, related_name='outgoing_documents', verbose_name='Адресати')
     main_signer = models.ForeignKey(CoreUser, related_name='outgoing_document_signer', verbose_name='Підписант',
                                     on_delete=models.PROTECT, null=True)
     mailing_method = models.CharField(choices=MAILING_METHODS, default=LETTER, verbose_name="Спосіб відпралення",
-                                      max_length=50)
+                                      max_length=50, db_index=True)
 
     class Meta:
         abstract = True
@@ -166,14 +173,16 @@ class innerDocument(models.Model):
 
 class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
     # General
-    title = models.CharField(verbose_name="Назва", max_length=100, default='-',db_index=True)
+    title = models.CharField(verbose_name="Назва", max_length=100, default='-', db_index=True)
     main_file = models.FileField(verbose_name="Головинй файл", upload_to=get_upload_document_path, null=True,
                                  max_length=500)
     document_cast = models.CharField(verbose_name="Вид документа", choices=DOCUMENT_CAST,
-                                     max_length=100,db_index=True)
-    reg_number = models.CharField(verbose_name="Реєстраціний номер", max_length=100, null=True,db_index=True)
-    reg_date = models.DateField(verbose_name="Дата реєстрації", null=True, editable=False,db_index=True)
-    comment = models.TextField(verbose_name="Короткий зміст", max_length=500, null=True, blank=True,db_index=True)
+                                     max_length=100, db_index=True)
+    reg_number = models.CharField(verbose_name="Реєстраціний номер", max_length=100, null=True, db_index=True)
+    reg_date = models.DateField(verbose_name="Дата реєстрації", null=True, editable=False, db_index=True)
+    create_date = models.DateField(verbose_name="Дата створення документа", auto_now_add=True, editable=False,
+                                   db_index=True, null=True)
+    comment = models.TextField(verbose_name="Короткий зміст", max_length=500, null=True, blank=True, db_index=True)
     document_linked_to = models.ManyToManyField('self', related_name='document_linked_to_document',
                                                 verbose_name="До документа", blank=True)
     department = models.ForeignKey(Department, verbose_name="Департамент", on_delete=models.SET_NULL, null=True,
@@ -186,13 +195,14 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
                                      verbose_name="Журнал реєстрації",
                                      on_delete=models.PROTECT, null=True, blank=True)
     case_index = models.CharField(verbose_name="Індекс  та  заголовок справи",
-                                  max_length=100, null=True)
+                                  max_length=100, null=True, db_index=True)
     case_number = models.CharField(verbose_name="Номер тому справи",
-                                   max_length=100, null=True)
+                                   max_length=100, null=True, db_index=True)
     preview = models.FileField(upload_to=get_preview_directory, null=True, editable=False, max_length=500)
     preview_pdf = models.FileField(upload_to=get_preview_directory, null=True, editable=False, max_length=500)
-    status = models.CharField(verbose_name="Статус", max_length=100, default=PROJECT,db_index=True)
-    controller = models.ForeignKey('l_core.CoreUser',related_name='controller_documents', on_delete=models.SET_NULL, null=True,
+    status = models.CharField(verbose_name="Статус", max_length=100, default=PROJECT, db_index=True)
+    controller = models.ForeignKey('l_core.CoreUser', related_name='controller_documents', on_delete=models.SET_NULL,
+                                   null=True,
                                    verbose_name="Контролер документа")
     history = HistoricalRecords()
 

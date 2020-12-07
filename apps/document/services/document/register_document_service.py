@@ -1,10 +1,14 @@
 from django.utils.timezone import localdate
+from django.conf import settings
 
 from apps.document.models.document_constants import OUTGOING, INCOMING, INNER
 from apps.document.models.document_model import BaseDocument, ON_REGISTRATION, AUTOMATIC_REG, REGISTERED
 from apps.document.services import CreateFlow
+from apps.document.models.sign_model import Sign
 from apps.l_core.exceptions import ServiceException
 from apps.l_core.utilits.add_qrcode_to_pdf import AddQRCode2PDF
+
+SITE_URL = settings.SITE_URL
 
 
 class RegisterDocument:
@@ -66,8 +70,23 @@ class RegisterDocument:
         ##TODO пофіксити проблему зміни власника файлу після додавання QR
         self.set_qrcode()
 
+    def get_signers4qrcode(self):
+        res = "Підписанти:\n-------------------------------"
+        sign_objects = Sign.objects.filter(document=self.document)
+        for sign in sign_objects:
+            f_string = sign.get_signer_info_text()
+            res+=f_string
+        return res
+
+
+    def get_detail_url4qrcode(self):
+        data = f'{SITE_URL}/api/document_details/{self.document.unique_uuid}/'
+        return data
+
+
     def set_qrcode(self):
-        qr_service = AddQRCode2PDF(self.document.preview_pdf.path, self.document.reg_number)
+        data = self.get_signers4qrcode()
+        qr_service = AddQRCode2PDF(self.document.preview_pdf.path, data)
         qr_service.run()
 
     def register_incoming_document(self):

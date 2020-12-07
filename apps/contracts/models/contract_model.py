@@ -24,7 +24,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 ############################################################
+def copy_contract_directory_path(instance, filename):
+    return 'uploads/org_{0}/contract/{1}/copy_contract/{2}'.format(instance.contract.organization.id,
+                                                                    instance.contract.unique_uuid, filename)
 
+def contract_docx_directory_path(instance, filename):
+    return 'uploads/org_{0}/contract/{1}/contract_docx/{2}'.format(instance.contract.organization.id,
+                                                                    instance.contract.unique_uuid, filename)
 
 class Contract(CoreBase):
     parent_element = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True,
@@ -45,9 +51,9 @@ class Contract(CoreBase):
     start_of_contract = models.DateField(verbose_name="Дата початку дії договору")
     start_accrual = models.DateField(null=True, verbose_name="Дата початку нарахувань")
     expiration_date = models.DateField(verbose_name="Дата закінчення")
-    copy_contract = models.FileField(upload_to='uploads/copy_contract/%Y/%m/%d/', null=True,
+    copy_contract = models.FileField(upload_to=copy_contract_directory_path, null=True,
                                      verbose_name="Копія договору")
-    contract_docx = models.FileField(upload_to='uploads/contract_docx/%Y/%m/%d/', null=True,
+    contract_docx = models.FileField(upload_to=contract_docx_directory_path, null=True,
                                      verbose_name="Проект договору")
     status = models.CharField(max_length=20, choices=CONTRACT_STATUS, default='future', verbose_name="Статус")
     change_status_reason = models.CharField(max_length=200, verbose_name="Причина зміни статусу", null=True)

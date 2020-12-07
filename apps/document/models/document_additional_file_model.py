@@ -7,11 +7,12 @@ from apps.l_core.models import CoreBase
 from django.conf import settings
 
 MEDIA_ROOT = settings.MEDIA_ROOT
+DELETE_FILE_ON_DELETING_LINK = settings.DELETE_FILE_ON_DELETING_LINK
 
 
 def related_uid_directory_path(instance, filename):
-    return 'uploads/document/organization_{0}_{1}/files/{2}'.format(instance.document.organization.id,
-                                                                    instance.document.reg_number, filename)
+    return 'uploads/org_{0}/document/{1}/files/{2}'.format(instance.document.organization.id,
+                                                                    instance.document.unique_uuid, filename)
 
 
 class DocumentFile(CoreBase):

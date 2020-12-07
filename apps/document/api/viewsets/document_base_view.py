@@ -175,7 +175,7 @@ class RegisterDocumentView(APIView):
         return Response(serializer.data)
 
 
-class DocumentConsiderationView(APIView):
+class DocumentStartConsiderationView(APIView):
     @swagger_auto_schema(responses={200: DocumentSerializer(many=False)})
     def post(self, request, document_id):
         doc = BaseDocument.objects.get(pk=document_id)

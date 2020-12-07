@@ -1,6 +1,7 @@
 from django.conf.urls import *
 from rest_framework import routers
 
+from apps.contracts.api.views.contract_file_view import ContractFileViewSet
 from apps.contracts.api.views.contract_views import ContractSerializerViewSet, refresh_total_balance
 from apps.contracts.api.views.client_banck_views import UploadClientBankViewSet, upload_client_bank, \
     ConvertClientBankView
@@ -25,6 +26,7 @@ router.register(r'contract-subscription', ContractSubscriptionViewSet)
 router.register(r'contract-products', ContractProductsViewSet)
 router.register(r'import-client-bank', UploadClientBankViewSet)
 router.register(r'xlsxcontract', XLSXContractSerializerViewSet)
+router.register(r'additional-file/(?P<contract_id>[^/.]+)', ContractFileViewSet)
 
 urlpatterns = [
     url(r'refresh-total-balance', refresh_total_balance),

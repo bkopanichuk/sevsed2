@@ -76,3 +76,22 @@ class PyCallGraphMiddleware(MiddlewareMixin):
             self.pycallgraph.done()
 
         return response
+
+
+from django.core.exceptions import RequestDataTooBig
+from .exceptions import ServiceException
+from django.conf import settings
+
+class CheckUploadFileSize(object):
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+
+        return response
+
+    def process_exception(self, request, exception):
+        if isinstance(exception, RequestDataTooBig):
+            raise ServiceException(f'Розмір завантаженого файлу перевищує встановлений ліміт в {settings.DATA_UPLOAD_MAX_MEMORY_SIZE/1024} mb')

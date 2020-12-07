@@ -1,13 +1,17 @@
 from django.db.models import signals
+
+from apps.document.models.document_constants import OUTGOING, INNER
 from apps.document.models.document_model import BaseDocument
+from apps.document.models.task_model import APPROVE, EXECUTE
 from apps.document.services import CreateFlow
-from apps.document.services.document_service import UpdateMainFileVersion,GenerateText,CreatePreview
 from apps.document.services.document.check_controllers_service import CheckControllers
 from apps.document.services.document.close_task_executor_on_create_doc_service import CloseTaskExecutorOnCreateDoc
-from apps.document.services.document.set_reply_date_service import SetReplyDate
 from apps.document.services.document.set_outgoing_approver_service import SetOutgoingApproval
-#import apps.document.shared_tasks.tasks as tasks
+from apps.document.services.document.set_reply_date_service import SetReplyDate
+from apps.document.services.document_service import UpdateMainFileVersion, GenerateText, CreatePreview
 
+
+# import apps.document.shared_tasks.tasks as tasks
 
 
 def generate_text(instance, **kwargs):
@@ -37,6 +41,7 @@ def update_main_file_version(instance, created, **kwargs):
     service = UpdateMainFileVersion(doc=instance)
     service.run()
 
+
 def set_outgoing_approval(instance, created, **kwargs):
     if created:
         service = SetOutgoingApproval(doc=instance)
@@ -44,20 +49,27 @@ def set_outgoing_approval(instance, created, **kwargs):
 
 
 def create_base_task(instance, action, **kwargs):
-    print('action', action)
     if action == 'post_add':
-        service = CreateFlow(doc=instance)
-        service.run()
+        #Якщо  внутрішній документ, або вихідний - автоматично створюємо процес погодження
+        if instance.document_cast in [OUTGOING, INNER]:
+            approve_process = CreateFlow(doc=instance, goal=APPROVE)
+            approve_process.run()
+            return
+        # # Якщо вихідний документ процес виконання не створюється
+        # if instance.document_cast ==OUTGOING:
+        #     return
+        execute_process = CreateFlow(doc=instance)
+        execute_process.run()
 
 
 def check_controlers(instance, **kwargs):
     service = CheckControllers(doc=instance)
     service.run()
 
-def set_reply_date(instance,**kwargs):
+
+def set_reply_date(instance, **kwargs):
     service = SetReplyDate(doc=instance)
     service.run()
-
 
 
 def init_document_signals():

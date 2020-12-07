@@ -18,6 +18,8 @@ class IncomingDocumentViewSet(OrderingFilterMixin):
         'incoming_type': ['exact'],
         'correspondent': ['exact'],
         'reg_number': ['icontains'],
+        'create_date': ['range'],
+        'case_index': ['icontains'],
         'status': ['exact']
     }
 

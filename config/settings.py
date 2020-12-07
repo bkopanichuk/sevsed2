@@ -26,7 +26,7 @@ SECRET_KEY = 'xj#nqodwt31!y@78$6w35r_4g#t*a=91ve4z(g76=_*u$$570v'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
+SITE_URL = 'http://192.168.0.102:8000'
 ALLOWED_HOSTS = ['*']
 
 from .rest_settings import REST_FRAMEWORK, REST_REGISTRATION
@@ -56,7 +56,7 @@ INSTALLED_APPS = [
     'rest_registration',
     'django_postgres_createdb',
     'drf_yasg',
-    'activity_log',
+    #'activity_log',
     'apps.atu',
     'apps.dict_register',
     'apps.l_core.apps.CoreConfig',
@@ -84,12 +84,12 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'apps.l_core.middleware.PyCallGraphMiddleware',
+    #'apps.l_core.middleware.PyCallGraphMiddleware',
+    'apps.l_core.middleware.CheckUploadFileSize',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
-    'activity_log.middleware.ActivityLogMiddleware',
-    'simple_history.middleware.HistoryRequestMiddleware',
-    'silk.middleware.SilkyMiddleware',
+    #'activity_log.middleware.ActivityLogMiddleware',
+   # 'silk.middleware.SilkyMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -146,7 +146,7 @@ CACHES = {
     }
 }
 
-DATA_UPLOAD_MAX_MEMORY_SIZE = 55512000
+
 # Tell select2 which cache configuration to use:
 SELECT2_CACHE_BACKEND = "select2"
 # Password validation
@@ -201,6 +201,20 @@ AUTH_SERVER_SYNC_PERMISSION_URL = 'http://10.0.30.220:9999/sync-server/sync-perm
 AUTH_SERVER_MAX_TOKEN_AGE = 40 * 60  ##140 хвилин
 AUTH_SERVER_SECRET_KEY = 'sed2'
 AUTH_SERVER_CLIENT_ID = 'sed2'
+
+
+# 2.5MB - 2621440
+# 5MB - 5242880
+# 10MB - 10485760
+# 20MB - 20971520
+# 50MB - 5242880
+# 100MB 104857600
+# 250MB - 214958080
+# 500MB - 429916160
+FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880
+## Видиляти файли при видаленні запису в БД
+DELETE_FILE_ON_DELETING_LINK = True
 
 from .activity_log_settings import *
 from config.logger import LOGGING

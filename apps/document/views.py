@@ -1,7 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from apps.document.models.document_model import BaseDocument
+
 from apps.document.api.srializers.document_serializer import DocumentSerializer
+from apps.document.models.document_model import BaseDocument
+from apps.document.models.sign_model import Sign
 
 
 # Create your viewsets here.
@@ -22,5 +24,7 @@ def protectedMedia(request, org_id, doc_id, folder, doc):
 
 def public_document_details(request, doc_uuid):
     doc = BaseDocument.objects.get(unique_uuid=doc_uuid)
-    doc_serializer = DocumentSerializer(instance=doc,context={"request":request})
-    return render(request, 'details/document_details.html', {"doc_data": doc_serializer.data})
+    doc_serializer = DocumentSerializer(instance=doc, context={"request": request})
+    sign_objects = Sign.objects.filter(document=doc)
+    return render(request, 'details/document_details.html',
+                  {"doc_data": doc_serializer.data, "sign_objects": sign_objects})

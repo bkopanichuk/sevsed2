@@ -2,7 +2,7 @@ import logging
 import os
 import glob
 from ..models.document_model import MainFileVersion
-from apps.document.shared_tasks.tasks import generate_text
+from apps.document.tasks import generate_text
 from preview_generator.manager import PreviewManager
 
 from apps.document.models.document_model import get_upload_document_path, get_preview_directory
