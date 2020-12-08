@@ -10,7 +10,7 @@ from lxml import etree
 from apps.document.models.document_model import BaseDocument
 from apps.l_core.models import CoreOrganization
 from ..models import get_outgoing_xml_file_path
-from ..serializers import DocumentXML1207Serializer
+from apps.sevovvintegration.serializers.document_1207_serializer import DocumentXML1207Serializer
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 xml_schema_path = Path('apps/sevovvintegration/wsdl/Order1207_1 5_v.2.2.xsd').absolute().__str__()

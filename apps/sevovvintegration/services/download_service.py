@@ -13,7 +13,7 @@ from apps.l_core.models import CoreOrganization
 from apps.l_core.ua_sign import verify_external
 from .client import SEVDownloadClient, CompanyInfo
 from ..models import SEVIncoming
-from ..serializers import DocumentXML1207Serializer
+from apps.sevovvintegration.serializers.document_1207_serializer import DocumentXML1207Serializer
 from ...document.models.document_constants import INCOMING
 
 

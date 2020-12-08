@@ -9,7 +9,7 @@ from django.conf import settings
 import apps.sevovvintegration.models as sev_models
 import apps.sevovvintegration.services.download_service as download_service
 from apps.l_core.models import CoreOrganization
-from apps.sevovvintegration.serializers import DocumentXML1207Serializer
+from apps.sevovvintegration.serializers.document_1207_serializer import DocumentXML1207Serializer
 
 logger = logging.getLogger(__name__)
 MEDIA_ROOT = settings.MEDIA_ROOT
