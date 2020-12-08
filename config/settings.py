@@ -26,7 +26,7 @@ SECRET_KEY = 'xj#nqodwt31!y@78$6w35r_4g#t*a=91ve4z(g76=_*u$$570v'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-SITE_URL = 'http://192.168.0.102:8000'
+SITE_URL = 'https://testsed.dir.gov.ua'
 ALLOWED_HOSTS = ['*']
 
 from .rest_settings import REST_FRAMEWORK, REST_REGISTRATION

@@ -1,6 +1,7 @@
 import os
 import PyPDF2
 import tempfile
+from reportlab.lib.units import mm
 from reportlab.pdfgen.canvas import Canvas
 from reportlab_qrcode import QRCodeImage
 
@@ -26,9 +27,9 @@ class AddQRCode2PDF():
     def generate_qrcode(self):
         qrcode_path = tempfile.NamedTemporaryFile(suffix='.pdf',delete=False).name
         doc = Canvas(qrcode_path)
-        qr = QRCodeImage(fill_color='blue',back_color='yellow')
+        qr = QRCodeImage(fill_color='blue',back_color='yellow',size=50 * mm)
         qr.add_data(self.qrcode_data)
-        qr.drawOn(doc, 0, 0)
+        qr.drawOn(doc, 10 * mm, 237 * mm)
         doc.showPage()
         doc.save()
         return qrcode_path

@@ -3,8 +3,7 @@ import base64
 from django.db.models import Max, Min
 from rest_framework.exceptions import ValidationError
 
-from apps.document.models.document_model import COMPLETED, PASSED_CONTROL, CONCERTED, ON_EXECUTION, ON_REGISTRATION, \
-    ON_CONTROL, \
+from apps.document.models.document_model import COMPLETED, PASSED_CONTROL, ON_EXECUTION, ON_REGISTRATION, \
     ON_AGREEMENT
 from apps.document.models.document_constants import INCOMING, OUTGOING, INNER
 from apps.document.models.sign_model import Sign
@@ -121,30 +120,6 @@ class SetChildStatus:
                 self.child = q.earliest('date_add')
                 self.child.task_status = SUCCESS
                 self.child.save()
-
-
-class ChangeTaskOrder:
-    """Змінити порядок виконання завдань"""
-
-    ## TODO Додати функціональність зміни порядку виконання завдан
-    def __init__(self, task: Task, order: str):
-        self.task: Task = task
-        self.order = order
-
-    def run(self):
-        self.change_order()
-
-    def change_order(self):
-        """змінити порядок """
-        pass
-
-    def down_order(self):
-        """підняти задачу на пункт вище"""
-        pass
-
-    def up_order(self):
-        """опустити задачу на пункт нижче"""
-        pass
 
 
 class ApproveTask:

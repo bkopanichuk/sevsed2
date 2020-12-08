@@ -162,6 +162,12 @@ class TaskExecutorSerializerViewSet(BaseOrganizationViewSetMixing):
         task_executor_result_serializer = TaskExecutorSerializer(res, context={'request': request})
         return Response(task_executor_result_serializer.data)
 
+    @swagger_auto_schema(method='post')
+    @action(detail=False, methods=['post'],
+            url_path='change_order/(?P<task_id>[^/.]+)')
+    def change_order(self, request, task_id=None):
+        pass
+
 
 class FlowSerializerViewSet(BaseOrganizationViewSetMixing):
     queryset = Flow.objects.filter(goal=EXECUTE)

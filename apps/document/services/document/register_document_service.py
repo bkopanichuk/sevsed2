@@ -71,7 +71,8 @@ class RegisterDocument:
         self.set_qrcode()
 
     def get_signers4qrcode(self):
-        res = "Підписанти:\n-------------------------------"
+        reg_date = f'Реєстраціний номер: {self.document.reg_number} від {self.document.reg_date}\n'
+        res = reg_date+"Підписанти:\n-------------------------------"
         sign_objects = Sign.objects.filter(document=self.document)
         for sign in sign_objects:
             f_string = sign.get_signer_info_text()
@@ -86,6 +87,7 @@ class RegisterDocument:
 
     def set_qrcode(self):
         data = self.get_signers4qrcode()
+        #data = self.get_detail_url4qrcode()
         qr_service = AddQRCode2PDF(self.document.preview_pdf.path, data)
         qr_service.run()
 

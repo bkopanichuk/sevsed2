@@ -124,7 +124,7 @@ class Task(CoreBase):
     class Meta:
         verbose_name = 'Завдання'
         verbose_name_plural = 'Завдання'
-        ordering = ['date_add']
+        ordering = ['order']
         permissions = [
             (CustomTaskPermissions.SET_CONTROLLER, "Встановлювати контролера"),
 
