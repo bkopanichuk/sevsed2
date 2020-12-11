@@ -6,7 +6,7 @@ from apps.document.models.document_model import BaseDocument, ON_REGISTRATION, A
 from apps.document.services import CreateFlow
 from apps.document.models.sign_model import Sign
 from apps.l_core.exceptions import ServiceException
-from apps.l_core.utilits.add_qrcode_to_pdf import AddQRCode2PDF
+from ..add_qrcode_and_sing_info import AddQRCode2PDF
 
 SITE_URL = settings.SITE_URL
 
@@ -71,8 +71,8 @@ class RegisterDocument:
         self.set_qrcode()
 
     def get_signers4qrcode(self):
-        reg_date = f'Реєстраціний номер: {self.document.reg_number} від {self.document.reg_date}\n'
-        res = reg_date+"Підписанти:\n-------------------------------"
+        reg_date = f'Номер: {self.document.reg_number}\nЗареєстрований: {self.document.reg_date}\n'
+        res = reg_date+"ЕЦП:\n-------------------------------"
         sign_objects = Sign.objects.filter(document=self.document)
         for sign in sign_objects:
             f_string = sign.get_signer_info_text()
