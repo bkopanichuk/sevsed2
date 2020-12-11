@@ -1,4 +1,4 @@
-BASE_URL = "http://10.0.40.121:8080/Server/UACryptoSign?wsdl"
+BASE_URL = "http://10.0.40.205:8080/UACryptoSign/UACryptoSign?wsdl"
 
 UACS_SUCCESS = 0
 UACS_SERVER_INTERNAL_ERROR = 1

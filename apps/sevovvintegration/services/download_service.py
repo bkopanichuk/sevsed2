@@ -15,12 +15,14 @@ from .client import SEVDownloadClient, CompanyInfo
 from ..models import SEVIncoming
 from apps.sevovvintegration.serializers.document_1207_serializer import DocumentXML1207Serializer
 from ...document.models.document_constants import INCOMING
-
+from .sender_service import SendAct2SEVOVVProcess
+from ..constants import AcknowledgementAckType, ErrorCodes
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 import logging
 
 logger = logging.getLogger(__name__)
+
 
 def get_incoming_path(document, message_id):
     _now = now()
@@ -34,32 +36,16 @@ class DownloadMessages():
         return res
 
     def get_consumers(self):
+        logger.info('load_messages')
         ## TODO Замінити на явний фільтр
         return CoreOrganization.objects.exclude(system_password='')
-
-    tasks
-
-    # def process_xml(self, path):
-    #     try:
-    #         data = xml.parse_from_file(DocumentXML1207Serializer, path)
-    #         from_sys_id = data.get('from_sys_id')
-    #         from_org = CoreOrganization.objects.get(system_id=from_sys_id)
-    #         to_sys_id = data.get('to_sys_id')
-    #         to_org = CoreOrganization.objects.get(system_id=to_sys_id)
-    #         xml_relative_path = path.replace(MEDIA_ROOT + '/', '')
-    #         incoming = SEVIncoming(from_org=from_org, to_org=to_org)
-    #         incoming.xml_file.name = xml_relative_path
-    #         incoming.save()
-    #         service = ProcessIncoming(incoming_message=incoming)
-    #         service.run()
-    #     except Exception as e:
-    #         logger.error(e)
 
     def process_xml_list(self, path_list):
         for path in path_list:
             tasks.process_xml(path)
 
     def load_messages(self):
+        logger.info('load_messages')
         res = []
         download_client = SEVDownloadClient()
         for _consumer in self.get_consumers():
@@ -75,8 +61,12 @@ class ProcessIncoming():
         self.incoming_message = incoming_message
 
     def run(self):
+        ## спочатку повідомляємо що документ завантажено
+        self.send_receipt_delivered()
         document, data = self.create_incoming_message()
         self.save_sign(document, data)
+        ## повідомляємо що документ опрацьовані і відправлено на реєстрацію
+        self.send_receipt_accepted(document)
 
     def create_incoming_message(self):
         data = xml.parse_from_file(DocumentXML1207Serializer, self.incoming_message.xml_file.path)
@@ -119,3 +109,15 @@ class ProcessIncoming():
         with open(absolute_path_file, 'wb') as file:
             file.write(b_data)
         return relative_path
+
+    def send_receipt_delivered(self):
+        """ Відправляє повідомлення про успішне завантаження документа з шини обміну"""
+        send_ack_process = SendAct2SEVOVVProcess(self.incoming_message, AcknowledgementAckType.DELIVERED,
+                                                 ErrorCodes.SUCCESS)
+        send_ack_process.run()
+
+    def send_receipt_accepted(self, document):
+        """ Відправляє повідомлення про успішне створення  документа на основі завантаженого з шини обміну"""
+        send_ack_process = SendAct2SEVOVVProcess(self.incoming_message, AcknowledgementAckType.ACCEPTED,
+                                                 ErrorCodes.SUCCESS)
+        send_ack_process.run()

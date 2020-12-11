@@ -1,12 +1,13 @@
 import declxml as xml
+from ..constants import HeaderMsgKnow
 
 AckResult = xml.dictionary('AckResult', [
     xml.string('.', attribute='errorcode', ),
     xml.string('.', attribute='errortext', default="Повідомлення доставлено без помилок"),
 ])
-Acknowledgement = xml.dictionary('AckResult', [
-    xml.string('.', attribute='msg_id', default='0'),
-    xml.string('.', attribute='ack_type', default='1'),
+Acknowledgement = xml.dictionary('Acknowledgement', [
+    xml.string('.', attribute='msg_id'),
+    xml.string('.', attribute='ack_type', ),
     AckResult
 ])
 
@@ -15,9 +16,9 @@ AcknowledgementXML1207Serializer = xml.dictionary('Header', [
     xml.string('.', attribute='version', required=False, omit_empty=True, default='1.5'),
     xml.string('.', attribute='charset', required=False, omit_empty=True, default='UTF-8'),
     xml.string('.', attribute='time'),
-    xml.string('.', attribute='msg_type', required=False, omit_empty=True, default='1'),
+    xml.string('.', attribute='msg_type'),
     xml.string('.', attribute='msg_id'),
-    xml.string('.', attribute='msg_acknow', required=False, omit_empty=True, default='2'),
+    xml.string('.', attribute='msg_acknow', required=False, omit_empty=True, default=HeaderMsgKnow.ALWAYS),
     xml.string('.', attribute='from_org_id'),
     xml.string('.', attribute='from_sys_id'),
     xml.string('.', attribute='from_organization'),

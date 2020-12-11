@@ -6,4 +6,4 @@ class ContractsConfig(AppConfig):
 
     def ready(self):
         from apps.contracts.signals.contract_signals import init_signals
-        init_signals()
+        #init_signals()

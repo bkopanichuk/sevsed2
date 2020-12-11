@@ -17,5 +17,8 @@ CLIENT_SECRET = "3694d1d1b8363827de77b504e208e3de6ba72e98"
 # CLIENT_SECRET = "5cbe9568bb2133a05c5bd72be1a41d1efc6c495f"
 
 
+##
+##client_id=54cb3708d95cf0056c65afd89b57a173
+
 ACCESS_TOKEN_URL = 'https://id.gov.ua/get-access-token'
 USER_INFO_URL = "https://id.gov.ua/get-user-info"

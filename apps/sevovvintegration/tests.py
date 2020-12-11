@@ -2,7 +2,7 @@ from pprint import pprint
 
 import declxml as xml
 
-from serializers import DocumentXML1207Serializer
+from .serializers.document_1207_serializer import DocumentXML1207Serializer
 
 s_xml = """<?xml version="1.0" encoding="UTF-8" ?>
 <Header standart="1207" version="1.5" charset="UTF-8" time="2020-10-22T10:09:05Z" msg_type="1"

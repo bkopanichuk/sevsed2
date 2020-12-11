@@ -38,4 +38,5 @@ class SEVIncoming(models.Model):
     from_org = models.ForeignKey(CoreOrganization, on_delete=models.PROTECT, related_name='incoming_from')
     to_org = models.ForeignKey(CoreOrganization, on_delete=models.PROTECT, related_name='incoming_to')
     xml_file = models.FileField(upload_to=get_incoming_xml_file_path)
+    message_id = models.CharField(max_length=256)
     status = models.CharField(max_length=50)

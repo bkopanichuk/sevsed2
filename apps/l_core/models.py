@@ -86,6 +86,7 @@ class CoreOrganization(AbstractCoreOrganization):
         return '{0} {1}'.format(self.name or self.full_name, self.edrpou or '')
 
     def save(self, *args, **kwargs):
+        self.dont_check_org= kwargs.pop('dont_check_org',False)
         self.validate_organization()
         self.set_organization()
         self.check_org()
@@ -97,6 +98,8 @@ class CoreOrganization(AbstractCoreOrganization):
                 self.organization = self.author.organization
 
     def validate_organization(self):
+        if self.dont_check_org:
+            return
         if hasattr(self, 'organization'):
             if self.organization:
                 return
@@ -104,9 +107,10 @@ class CoreOrganization(AbstractCoreOrganization):
                 raise AuthorOrganizationNotSet(self.author.organization)
 
     def check_org(self):
+        if self.dont_check_org:
+            return
         if not self.organization:
             raise Exception('field "organization" not allowed null value')
-
 
 
 class Department(AbstractBase):
@@ -209,11 +213,6 @@ class CoreBase(AbstractBase, SystemFieldsMixin, PersonIdentityMixin, Organizatio
     class Meta:
         default_permissions = ('add', 'change', 'delete', 'view', 'view_self', 'delete_self', 'change_self')
         abstract = True
-
-
-
-
-
 
 
 class Counter(models.Model):
