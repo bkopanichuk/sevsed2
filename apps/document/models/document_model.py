@@ -211,6 +211,9 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
         verbose_name_plural = 'Документы'
         permissions = [
             (CustomDocumentPermissions.REGISTER_DOCUMENT, "Може реєструвати документ"),
+            (CustomDocumentPermissions.CREATE_INNER_DOCUMENT, "Може створювати внутрішній документ"),
+            (CustomDocumentPermissions.CREATE_INCOMING_DOCUMENT, "Може створювати вхідний документ"),
+            (CustomDocumentPermissions.CREATE_OUTGOING_DOCUMENT, "Може створювати вихіднний документ"),
             (CustomDocumentPermissions.CREATE_RESOLUTION, "Може створювати резолюцію"),
             (CustomDocumentPermissions.EXECUTE_RESOLUTION, "Може запускати резолюцію на виконання"),
             (CustomDocumentPermissions.SEND_TO_ARCHIVE, "Може відправляти документ в архів"),

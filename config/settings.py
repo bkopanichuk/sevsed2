@@ -38,8 +38,9 @@ from .celery_backend_options import *
 # Application definition
 
 INSTALLED_APPS = [
-    'admin_interface',
+    ##'admin_interface',
     'colorfield',
+   'django_json_widget',
     'django.contrib.admin',
     # 'django_select2',
     # 'django_select2_admin_filters',

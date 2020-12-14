@@ -1,20 +1,31 @@
+import logging
 import os
-import PyPDF2
 import tempfile
+
+import PyPDF2
 from reportlab.lib.units import mm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen.canvas import Canvas
 from reportlab_qrcode import QRCodeImage
 
+pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
+
+logger = logging.getLogger(__name__)
 
 class AddQRCode2PDF():
-    def __init__(self, input_file, qrcode_data, add_new_page=True):
+    def __init__(self, input_file, qrcode_data, add_new_page=True, signers_data=None):
+        if signers_data is None:
+            signers_data = []
+
+        self.signers_data = signers_data
         self.input_file = input_file
         self.output_file = tempfile.NamedTemporaryFile(suffix='.pdf', delete=False).name
         self.qrcode_data = qrcode_data
         self.add_new_page = add_new_page
 
     def run(self):
-        qrcode_path = self.generate_qrcode()
+        qrcode_path = self.generate_register_page()
         self.add_qrcode(qrcode_path)
         self.replace_docs()
         os.unlink(qrcode_path)
@@ -24,23 +35,32 @@ class AddQRCode2PDF():
         os.rename(self.output_file, self.input_file)
         os.chmod(self.input_file, 0o444)
 
-    def generate_qrcode(self):
+    def generate_register_page(self):
         qrcode_path = tempfile.NamedTemporaryFile(suffix='.pdf', delete=False).name
         doc = Canvas(qrcode_path)
+        self.generate_qrcode(doc)
+        self.set_sign_text(doc)
+        ##doc.showPage()
+        doc.save()
+        return qrcode_path
+
+    def generate_qrcode(self, doc):
         qr = QRCodeImage(fill_color='black', back_color='white', size=25 * mm)
         qr.add_data(self.qrcode_data)
         qr.drawOn(doc, 10 * mm, 10 * mm)
-        textobject = doc.beginText()
-        textobject.setTextOrigin(55* mm, 25*mm)
-        textobject.setFont("Times-Roman", 12)
-        textobject.textLine("SPUMONI")
-        textobject.textLine("asdadad 54646 dsaa ")
-        textobject.textLine("dsadadadadsadadadadad вфіфвіфвфі")
-        doc.drawText(textobject)
 
-        doc.showPage()
-        doc.save()
-        return qrcode_path
+    def set_sign_text(self, doc):
+        textobject = doc.beginText()
+        _upper_pending = len(self.signers_data) or 1
+        textobject.setTextOrigin(40 * mm, _upper_pending * 25 * mm)
+        textobject.setFont('FreeSans', 8)
+        textobject.textLine("СЕВ СЕД 2.0")
+        logger.warning(self.signers_data)
+        for sign in self.signers_data:
+            textobject.textLine(f'Підписант: {sign.get("pszSubjFullName")}')
+            textobject.textLine(f'Серійний номер: {sign.get("pszSerial")}')
+            textobject.textLine(f'Дата підписання: {sign.get("Time")}')
+        doc.drawText(textobject)
 
     def add_qrcode(self, qrcode_path):
         with open(self.input_file, "rb") as filehandle_input:

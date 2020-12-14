@@ -2,8 +2,6 @@ import base64
 import os
 
 import declxml as xml
-from apps.sevovvintegration import tasks
-
 from django.conf import settings
 from django.utils.timezone import now
 
@@ -11,12 +9,13 @@ from apps.document.models.document_model import BaseDocument, SEV, ON_REGISTRATI
 from apps.document.models.sign_model import Sign
 from apps.l_core.models import CoreOrganization
 from apps.l_core.ua_sign import verify_external
-from .client import SEVDownloadClient, CompanyInfo
-from ..models import SEVIncoming
+from apps.sevovvintegration import tasks
 from apps.sevovvintegration.serializers.document_1207_serializer import DocumentXML1207Serializer
-from ...document.models.document_constants import INCOMING
+from .client import SEVDownloadClient, CompanyInfo
 from .sender_service import SendAct2SEVOVVProcess
 from ..constants import AcknowledgementAckType, ErrorCodes
+from ..models import SEVIncoming
+from ...document.models.document_constants import INCOMING
 
 MEDIA_ROOT = settings.MEDIA_ROOT
 import logging

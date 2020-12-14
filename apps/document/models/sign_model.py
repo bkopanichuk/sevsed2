@@ -1,8 +1,12 @@
+import logging
+
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 from apps.document.models.document_model import BaseDocument
 from apps.l_core.models import CoreUser
+
+logger = logging.getLogger(__name__)
 
 
 class Sign(models.Model):
@@ -17,17 +21,21 @@ class Sign(models.Model):
         verbose_name = 'Підпис'
         verbose_name_plural = 'Підписи'
 
-    def get_formated_sign_time(self,t):
+    def get_formated_sign_time(self, t):
         return f'{t.get("wYear")}-{t.get("wMonth")}-{t.get("wDay")}:{t.get("wHour")}:{t.get("wMinute")}:{t.get("wSecond")}'
 
     def get_signer_info_text(self):
-        template_sign = """Підписант:	{pszSubjFullName}\n
-        Серійний номер: {pszSerial}\n
-        Місце знаходження:	{pszSubjLocality}\n
-        Мітка часу:  {bTimeStamp}\n
-        Дата підписання:{Time} \n
-    -------------------------------"""
+        # template_sign = """Підписант: {pszSubjFullName}\n
+        # Серійний номер: {pszSerial}\n
+        # Дата підписання:{Time} \n"""
+        template_sign = """{pszSubjFullName}\n"""
         info = self.sign_info.get('cert')
         info['Time'] = self.get_formated_sign_time(info['Time'])
         f_string = template_sign.format(**info)
         return f_string
+
+    def get_signer_info(self):
+        info = self.sign_info.get('cert')
+        info['Time'] = self.get_formated_sign_time(info['Time'])
+
+        return info

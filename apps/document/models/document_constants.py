@@ -6,6 +6,9 @@ DOCUMENT_CAST = [(INCOMING, "Вхідний"), (OUTGOING, "Вихідний"), (
 ############PERMISSIONS###############################################################
 class CustomDocumentPermissions:
     REGISTER_DOCUMENT = 'register_document'
+    CREATE_INNER_DOCUMENT = 'create_inner_document'
+    CREATE_INCOMING_DOCUMENT = 'create_incoming_document'
+    CREATE_OUTGOING_DOCUMENT = 'create_outgoing_document'
     CREATE_RESOLUTION = 'create_resolution'
     EXECUTE_RESOLUTION = 'execute_resolution'
     SEND_TO_ARCHIVE = 'send_to_archive'

@@ -1,13 +1,16 @@
-from django.utils.timezone import localdate
+import logging
+
 from django.conf import settings
+from django.utils.timezone import localdate
 
 from apps.document.models.document_constants import OUTGOING, INCOMING, INNER
 from apps.document.models.document_model import BaseDocument, ON_REGISTRATION, AUTOMATIC_REG, REGISTERED
-from apps.document.services import CreateFlow
 from apps.document.models.sign_model import Sign
+from apps.document.services import CreateFlow
 from apps.l_core.exceptions import ServiceException
 from ..add_qrcode_and_sing_info import AddQRCode2PDF
 
+logger = logging.getLogger(__name__)
 SITE_URL = settings.SITE_URL
 
 
@@ -72,23 +75,30 @@ class RegisterDocument:
 
     def get_signers4qrcode(self):
         reg_date = f'Номер: {self.document.reg_number}\nЗареєстрований: {self.document.reg_date}\n'
-        res = reg_date+"ЕЦП:\n-------------------------------"
+        res = reg_date + "ЕЦП:\n"
         sign_objects = Sign.objects.filter(document=self.document)
         for sign in sign_objects:
             f_string = sign.get_signer_info_text()
-            res+=f_string
+            res += f_string
         return res
-
 
     def get_detail_url4qrcode(self):
         data = f'{SITE_URL}/api/document_details/{self.document.unique_uuid}/'
         return data
 
+    def get_main_signer_data(self):
+        sign_objects = Sign.objects.filter(document=self.document)
+        logger.error(sign_objects)
+        data = []
+        for sign in sign_objects:
+            data.append(sign.get_signer_info())
+        return data
 
     def set_qrcode(self):
         data = self.get_signers4qrcode()
-        #data = self.get_detail_url4qrcode()
-        qr_service = AddQRCode2PDF(self.document.preview_pdf.path, data)
+        signers_data = self.get_main_signer_data()
+        logger.error(signers_data)
+        qr_service = AddQRCode2PDF(self.document.preview_pdf.path, data, signers_data=signers_data)
         qr_service.run()
 
     def register_incoming_document(self):
