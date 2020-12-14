@@ -5,9 +5,11 @@ from apps.document.models.sign_model import Sign
 from .client import SEVUploadClient, CompanyInfo
 from .document2xml1207converter import Document2Xml1207Converter
 from .ackonowlage_document_factory import Acknowlage2Xml1207Factory
-from ..models import SEVOutgoing,SEVIncoming
+from ..models import SEVOutgoing, SEVIncoming
 import logging
+
 logger = logging.getLogger(__name__)
+
 
 def get_sign(document):
     sign = Sign.objects.filter(document=document, signer=document.main_signer).first()
@@ -59,9 +61,9 @@ class SendToSEVOVVProcess():
 
 
 class SendAct2SEVOVVProcess():
-    def __init__(self, incoming_message,act_type,error_code):
+    def __init__(self, incoming_message, act_type, error_code):
         logger.info(f'PARAMS: incoming_message:{incoming_message}, act_type:{act_type},error_code:{error_code}')
-        self.incoming_message:SEVIncoming = incoming_message
+        self.incoming_message: SEVIncoming = incoming_message
         self.act_type = act_type
         self.error_code = error_code
         self.client = SEVUploadClient()
@@ -77,7 +79,8 @@ class SendAct2SEVOVVProcess():
         document_message_id = self.incoming_message.message_id
         producer = self.incoming_message.to_org
         consumer = self.incoming_message.from_org
-        ak_f = Acknowlage2Xml1207Factory(document_message_id,message_id,consumer,producer,self.act_type,self.error_code)
+        ak_f = Acknowlage2Xml1207Factory(document_message_id, message_id, consumer, producer, self.act_type,
+                                         self.error_code)
         xml_path, outgoing_path = ak_f.create_xml_and_get_path()
         result = self.client.send_document(xml_path, producer=self.format_company(producer),
                                            consumer=self.format_company(consumer),

@@ -30,6 +30,7 @@ CONCERTED = 'CONCERTED'
 ON_SIGNING = 'ON_SIGNING'
 SIGNED = 'SIGNED'
 TRANSFERRED = 'TRANSFERRED'
+DELIVERED = 'DELIVERED'
 
 ##################################################INCOMING_DOCUMENT_STATUS_CHOICES######################################
 INCOMING_DOCUMENT_STATUS_CHOICES = (
@@ -52,6 +53,7 @@ OUTGOING_DOCUMENT_STATUS_CHOICES = (
     (ON_REGISTRATION, 'На реєстрації'),
     (REGISTERED, 'Зареєстрованний'),
     (TRANSFERRED, 'Відправлено'),
+    (DELIVERED, 'Доставлено'),
     (ARCHIVED, 'В архіві'),
 )
 ########################################################################################################################

@@ -9,7 +9,7 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen.canvas import Canvas
 from reportlab_qrcode import QRCodeImage
 
-pdfmetrics.registerFont(TTFont('FreeSans', 'FreeSans.ttf'))
+pdfmetrics.registerFont(TTFont('DejaVuSerif','DejaVuSerif.ttf', 'UTF-8'))
 
 logger = logging.getLogger(__name__)
 
@@ -53,11 +53,11 @@ class AddQRCode2PDF():
         textobject = doc.beginText()
         _upper_pending = len(self.signers_data) or 1
         textobject.setTextOrigin(40 * mm, _upper_pending * 25 * mm)
-        textobject.setFont('FreeSans', 8)
+        textobject.setFont('DejaVuSerif', 8)
         textobject.textLine("СЕВ СЕД 2.0")
         logger.warning(self.signers_data)
         for sign in self.signers_data:
-            textobject.textLine(f'Підписант: {sign.get("pszSubjFullName")}')
+            textobject.textLine(f'Підписант: {sign.get("pszSubjFullName")} {sign.get("pszSubjCN")}')
             textobject.textLine(f'Серійний номер: {sign.get("pszSerial")}')
             textobject.textLine(f'Дата підписання: {sign.get("Time")}')
         doc.drawText(textobject)

@@ -12,19 +12,19 @@ from apps.l_core.models import CoreOrganization, CoreBase
 def get_outgoing_xml_file_path(instance, filename):
     _now = now()
     return os.path.join(
-        f'sevovv_integration/organization_{instance.document.organization.id}/outgoing/{_now.year}/{_now.month}/{_now.day}/{filename}')
+        f'sevovv_integration/org_{instance.document.organization.id}/outgoing/{_now.year}/{_now.month}/{_now.day}/{filename}')
 
 
 def get_incoming_xml_file_path(instance, filename):
     _now = now()
     return os.path.join(
-        f'sevovv_integration/organization_{instance.to_org.id}/incoming/{_now.year}/{_now.month}/{_now.day}/{filename}')
+        f'sevovv_integration/org_{instance.to_org.id}/incoming/{_now.year}/{_now.month}/{_now.day}/{filename}')
 
 
 class SEVOutgoing(models.Model):
     date_add = models.DateTimeField(auto_now_add=True, null=True, editable=False, verbose_name="**Дата створення")
     sign = models.ForeignKey(Sign, on_delete=models.PROTECT,null=True)
-    document = models.ForeignKey(BaseDocument, on_delete=models.PROTECT)
+    document = models.ForeignKey(BaseDocument, on_delete=models.CASCADE)
     from_org = models.ForeignKey(CoreOrganization, on_delete=models.PROTECT, related_name='outgoing_from')
     to_org = models.ForeignKey(CoreOrganization, on_delete=models.PROTECT, related_name='outgoing_to')
     xml_file = models.FileField(upload_to=get_outgoing_xml_file_path, null=True)
@@ -34,6 +34,7 @@ class SEVOutgoing(models.Model):
 
 
 class SEVIncoming(models.Model):
+    document = models.ForeignKey(BaseDocument, on_delete=models.CASCADE,null=True)
     date_add = models.DateTimeField(auto_now_add=True, null=True, editable=False, verbose_name="**Дата створення")
     from_org = models.ForeignKey(CoreOrganization, on_delete=models.PROTECT, related_name='incoming_from')
     to_org = models.ForeignKey(CoreOrganization, on_delete=models.PROTECT, related_name='incoming_to')

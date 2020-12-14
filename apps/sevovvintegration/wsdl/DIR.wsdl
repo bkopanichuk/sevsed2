@@ -301,7 +301,8 @@
 	</wsdl:binding>
 	<wsdl:service name="IntegrationService">
 		<wsdl:port name="BasicHttpBinding_ICoverIntegrationService" binding="tns:BasicHttpBinding_ICoverIntegrationService">
-			<soap:address location="https://sev18.dir.gov.ua/csp/dirbus/bus.esb.IntegrationService.cls"/>
+{#			<soap:address location="https://sev18.dir.gov.ua/csp/dirbus/bus.esb.IntegrationService.cls"/>#}
+			<soap:address location="http://10.0.40.153:57772/csp/dirbus/bus.esb.IntegrationService.cls"/>
 		</wsdl:port>
 	</wsdl:service>
 </wsdl:definitions>

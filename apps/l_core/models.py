@@ -75,6 +75,7 @@ class CoreOrganization(AbstractCoreOrganization):
     organization = models.ForeignKey('self', null=True, on_delete=models.PROTECT)
     system_id = models.CharField(max_length=256, null=True)
     system_password = models.CharField(max_length=256, null=True)
+    sev_connected = models.BooleanField(default=False)
 
     class Meta:
         verbose_name = u'Організації'

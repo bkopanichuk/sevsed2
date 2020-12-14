@@ -38,7 +38,7 @@ from .celery_backend_options import *
 # Application definition
 
 INSTALLED_APPS = [
-    ##'admin_interface',
+    'admin_interface',
     'colorfield',
    'django_json_widget',
     'django.contrib.admin',
@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'rest_registration',
     'django_postgres_createdb',
     'drf_yasg',
-    #'activity_log',
+    'activity_log',
     'apps.atu',
     'apps.dict_register',
     'apps.l_core.apps.CoreConfig',
@@ -89,7 +89,7 @@ MIDDLEWARE = [
     'apps.l_core.middleware.CheckUploadFileSize',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'simple_history.middleware.HistoryRequestMiddleware',
-    #'activity_log.middleware.ActivityLogMiddleware',
+     'activity_log.middleware.ActivityLogMiddleware',
    # 'silk.middleware.SilkyMiddleware',
 ]
 

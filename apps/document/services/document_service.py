@@ -41,7 +41,8 @@ class CreatePreview:
         if self.document.main_file.name.endswith('.pdf'):
             self.document.preview_pdf.name = upload_document_path
             return
-        full_path = os.path.join(MEDIA_ROOT, upload_document_path)
+        ##full_path = os.path.join(MEDIA_ROOT, upload_document_path)
+        full_path = self.document.main_file.path
         full_cache_path = os.path.join(MEDIA_ROOT, upload_cache_path)
         cache_path = os.path.dirname(full_cache_path)
 

@@ -4,10 +4,11 @@ from django.conf import settings
 from django.utils.timezone import localdate
 
 from apps.document.models.document_constants import OUTGOING, INCOMING, INNER
-from apps.document.models.document_model import BaseDocument, ON_REGISTRATION, AUTOMATIC_REG, REGISTERED
+from apps.document.models.document_model import BaseDocument, ON_REGISTRATION, AUTOMATIC_REG, REGISTERED, SEV
 from apps.document.models.sign_model import Sign
 from apps.document.services import CreateFlow
 from apps.l_core.exceptions import ServiceException
+from apps.sevovvintegration.services.on_registered_service import ProcessRegisteredDocument
 from ..add_qrcode_and_sing_info import AddQRCode2PDF
 
 logger = logging.getLogger(__name__)
@@ -27,16 +28,22 @@ class RegisterDocument:
         self.validate_main_file()
         self.register_document()
         self.create_flow()
+        self.send_registered_status()
         return self.document
 
     def create_flow(self):
         """Автоматично створити потік виконання завдань, якщо реєструється вхідний документ
-
         :return:
         """
         if self.document.document_cast == INCOMING:
             service = CreateFlow(doc=self.document)
             service.run()
+
+    def send_registered_status(self):
+        """Відправити в шину обміну інформацю про успішну реєстрацію документа. Застосовується, тільки у випадку надходження документа з шини обміну."""
+        if self.document.source == SEV:
+            process_registered = ProcessRegisteredDocument(self.document)
+            process_registered.run()
 
     def validate_document_status(self):
         if self.document.status != ON_REGISTRATION:
@@ -45,7 +52,6 @@ class RegisterDocument:
     def set_reg_number(self):
         """Автоматично присвоїти реєстраційний номер, якщо обрано автоматичну реєстрацію документа,
         а також вказано журнал реєстрації
-
         :return:
         """
         if self.document.registration_type == AUTOMATIC_REG and self.document.registration:
@@ -70,7 +76,6 @@ class RegisterDocument:
             self.register_inner_document()
         else:
             raise ServiceException('document_cast is not set')
-        ##TODO пофіксити проблему зміни власника файлу після додавання QR
         self.set_qrcode()
 
     def get_signers4qrcode(self):

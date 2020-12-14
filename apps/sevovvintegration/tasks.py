@@ -25,15 +25,6 @@ def download_sevovv_documents():
 
 
 def process_xml(path):
-    from apps.sevovvintegration.services.download_service import ProcessIncoming
-    data = xml.parse_from_file(DocumentXML1207Serializer, path)
-    from_sys_id = data.get('from_sys_id')
-    from_org = CoreOrganization.objects.get(system_id=from_sys_id)
-    to_sys_id = data.get('to_sys_id')
-    to_org = CoreOrganization.objects.get(system_id=to_sys_id)
-    xml_relative_path = path.replace(MEDIA_ROOT + '/', '')
-    incoming = sev_models.SEVIncoming(from_org=from_org, to_org=to_org)
-    incoming.xml_file.name = xml_relative_path
-    incoming.save()
-    service = ProcessIncoming(incoming_message=incoming)
+    from apps.sevovvintegration.services.download_service import ProcessXml
+    service = ProcessXml(path)
     service.run()

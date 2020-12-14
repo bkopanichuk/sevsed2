@@ -10,3 +10,8 @@ import time
 def simulate_work():
     time.sleep(55)
     return  {'result':'task complete'}
+
+
+@shared_task
+def backup_database():
+    return  {'result':'task complete'}

@@ -41,7 +41,7 @@ def get_incoming_xml_path(consumer):
     _now = now()
 
     path = os.path.join(MEDIA_ROOT,
-                        f'sevovv_integration/organization_{consumer.id}/incoming/{_now.year}/{_now.month}/{_now.day}')
+                        f'sevovv_integration/org_{consumer.id}/incoming/{_now.year}/{_now.month}/{_now.day}')
     if not os.path.exists(path):
         os.makedirs(path)
     return path
