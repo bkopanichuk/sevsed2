@@ -129,6 +129,7 @@ DATABASE_APPS_MAPPING = {'activity_log': 'logs'}
 
 REDIS_URL = "redis://127.0.0.1:6379"
 
+ADMINS = [('Bohdan', 'danbog2000@gmail.com'), ('Mary', 'mary@example.com')]
 CACHES = {
     # … default cache config and others
     "default": {
