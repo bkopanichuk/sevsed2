@@ -20,7 +20,7 @@ class ClientFormSettings(models.Model):
 class ClientFormElementSettings(models.Model):
     client_form = models.ForeignKey(ClientFormSettings, on_delete=models.CASCADE, related_name='elements')
     name = models.CharField(max_length=100)
-    values = models.JSONField(default="['default',]")
+    values = models.JSONField(default=["PROJECT",])
     permissions = models.ManyToManyField(Permission, null=True, blank=True)
     visible = models.BooleanField(default=True)
     disabled = models.BooleanField(default=False)
