@@ -13,7 +13,6 @@ class ErrorCodes(Mixin):
     SUCCESS = 0
     CHOICES = [
         [SUCCESS, "Повідомлення доставлено без помилок"],
-
     ]
 
 class AcknowledgementAckType(Mixin):
@@ -21,10 +20,12 @@ class AcknowledgementAckType(Mixin):
     DELIVERED = 1
     ACCEPTED = 2
     REGISTERED = 3
+    REJECTED = 4
     CHOICES = [
         [DELIVERED, "Сповіщення про доставку Повідомлення"],
         [ACCEPTED, "Сповіщення про прийняття Повідомлення"],
         [REGISTERED, "Сповіщення про реєстрацію документа в системі-одержувачі"],
+        [REJECTED, "Сповіщення про відмову в реєстрації документа в системі-одержувачі"],
     ]
 
 

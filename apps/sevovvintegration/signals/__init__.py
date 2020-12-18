@@ -5,8 +5,9 @@ from ..services.sender_service import SendToSEVOVVProcess
 
 def processing_outgoing(instance, created, update_fields, **kwargs):
     if created:
-        service = SendToSEVOVVProcess(outgoing_doc=instance)
-        service.run()
+        if instance.document:
+            service = SendToSEVOVVProcess(outgoing_doc=instance)
+            service.run()
 
 # def process_incoming(instance, created, update_fields, **kwargs):
 #     print('process_incoming')

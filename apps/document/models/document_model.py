@@ -14,6 +14,7 @@ from apps.l_core.models import CoreBase, CoreOrganization, Department, CoreUser
 
 #################################################DOCUMENT_STATUS_CHOICES################################################
 ON_REGISTRATION = 'ON_REGISTRATION'
+REJECT_REGISTRATION = 'REJECT_REGISTRATION'
 REGISTERED = 'REGISTERED'
 ON_RESOLUTION = 'ON_RESOLUTION'
 ON_EXECUTION = 'ON_EXECUTION'
@@ -35,6 +36,7 @@ DELIVERED = 'DELIVERED'
 ##################################################INCOMING_DOCUMENT_STATUS_CHOICES######################################
 INCOMING_DOCUMENT_STATUS_CHOICES = (
     (ON_REGISTRATION, 'На реєстрації'),
+    (REJECT_REGISTRATION, 'Відмовлено в реєстрації'),
     (REGISTERED, 'Зареєстрованний'),
     (ON_RESOLUTION, 'На резолюції'),
     (ON_EXECUTION, 'На виконанні'),
@@ -206,6 +208,8 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
     controller = models.ForeignKey('l_core.CoreUser', related_name='controller_documents', on_delete=models.SET_NULL,
                                    null=True,
                                    verbose_name="Контролер документа")
+    reject_reason = models.CharField(verbose_name="Причина відмови у реєстрації",
+                                   max_length=250, null=True)
     history = HistoricalRecords()
 
     class Meta:
@@ -236,6 +240,7 @@ class BaseDocument(IncomingDocument, OutgoingDocument, innerDocument, CoreBase):
             (CustomDocumentPermissions.VIEW_SIGNED, "Переглядати підписані"),
             (CustomDocumentPermissions.VIEW_TRANSFERRED, "Переглядати передані"),
             (CustomDocumentPermissions.CHANGE_DOCUMENT_DICTIONARY, "Редагувати довідники документів"),
+            (CustomDocumentPermissions.TRANSFER_DOCUMENT, "Відправляти документи"),
         ]
 
     def __str__(self):

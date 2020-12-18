@@ -6,7 +6,7 @@ from .models import ClientFormSettings, ClientFormElementSettings
 class ClientFormElementSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientFormElementSettings
-        fields = ['name', 'values', 'visible', 'disabled']
+        fields = ['name', 'values', 'visible', 'enabled']
 
 
 class ClientFormSettingsSerializer(serializers.ModelSerializer):

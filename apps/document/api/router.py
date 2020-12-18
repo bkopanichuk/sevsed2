@@ -3,6 +3,7 @@ from rest_framework import routers
 
 from apps.document.api.viewsets.comment_view import CommentViewSet
 from apps.document.api.viewsets.coverletter_view import CoverLetterSerializerViewSet
+from apps.document.api.viewsets.user_viewset import AccountViewSet
 from apps.document.api.viewsets.document_base_view import BaseDocumentSerializerViewSet, DocumentStartConsiderationView, \
     ResolutionDocumentView, \
     DocumentStartApproveView, UploadDocumentViewSet, DocumentHistoryView, RegisterDocumentView
@@ -26,6 +27,7 @@ router.register(r'registration-journal', RegistrationJournalViewSet)
 router.register(r'registration-mask', RegistrationMaskViewSet)
 router.register(r'registration-journal-volume', RegistrationJournalVolumeViewSet)
 router.register(r'base-document', BaseDocumentSerializerViewSet)
+router.register(r'document-user', AccountViewSet)
 router.register(r'incoming-document', IncomingDocumentViewSet)
 router.register(r'outgoing-document', OutgoingDocumentViewSet)
 router.register(r'inner-document', InnerDocumentViewSet)

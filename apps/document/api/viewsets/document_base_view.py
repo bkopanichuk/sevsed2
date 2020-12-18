@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 
 from apps.document.api.srializers import DocumentSerializer, UploadDocumentSerializer, DocumentHistorySerializer
 from apps.document.api.srializers.document_serializer import RelatedDocumentSerializer, EmptySerializer, \
-    SendToArchiveSerializer
+    SendToArchiveSerializer,DocumentRejectRegistrationSerializer
 from apps.document.api.srializers.task_serializer import CreateFlowSerializer
 from apps.document.models.document_constants import INCOMING, INNER, OUTGOING
 from apps.document.models.document_model import BaseDocument, ON_RESOLUTION, ON_AGREEMENT, PROJECT, ON_CONTROL
@@ -22,6 +22,7 @@ from apps.document.services.document.create_new_approve_flow_service import Docu
 from apps.document.services.document.consideration_service import DocumentConsideration
 from apps.document.services.document.senc_to_archive_service import SendToArchive
 from apps.document.services.document.register_document_service import RegisterDocument
+from apps.document.services.document.reject_register_document_service import RejectRegisterDocument
 from apps.l_core.permissions import LCoreDjangoModelPermissions
 
 import logging
@@ -119,6 +120,20 @@ class BaseDocumentSerializerViewSet(OrderingFilterMixin):
         res = process.run()
         serializer = DocumentSerializer(res, context={'request': request})
         return Response(serializer.data)
+
+    @swagger_auto_schema(request_body=DocumentRejectRegistrationSerializer(), responses={200: DocumentSerializer(many=False)})
+    @action(detail=False, methods=['post'],
+            url_path='reject_registration/(?P<document_id>[^/.]+)')
+    def reject_registration(self, request, document_id):
+        """Відмовити в реєстрації документа"""
+        reject_serializer = DocumentRejectRegistrationSerializer(data=request.data)
+        reject_serializer.is_valid(raise_exception=True)
+        doc = BaseDocument.objects.get(pk=document_id)
+        process = RejectRegisterDocument(document=doc, data = reject_serializer.validated_data, user = request.user)
+        res = process.run()
+        serializer = DocumentSerializer(res, context={'request': request})
+        return Response(serializer.data)
+
 
     @swagger_auto_schema(request_body=SendToArchiveSerializer(), responses={200: DocumentSerializer(many=False)})
     @action(detail=False, methods=['patch'],

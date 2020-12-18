@@ -13,6 +13,7 @@ class CustomDocumentPermissions:
     EXECUTE_RESOLUTION = 'execute_resolution'
     SEND_TO_ARCHIVE = 'send_to_archive'
     SEND_TO_OVERVIEW = 'send_to_verview'
+    TRANSFER_DOCUMENT = 'transfer_document'
 
     VIEW_ON_REGISTRATION = 'view_on_registrations'
     VIEW_REGISTERED = 'view_registered'

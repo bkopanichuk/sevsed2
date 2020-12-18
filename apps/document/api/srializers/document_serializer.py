@@ -22,6 +22,10 @@ class EmptySerializer(serializers.Serializer):
 class SendDocumentLetterSerializer(serializers.Serializer):
     mailing_method = serializers.ChoiceField(required=True, choices=MAILING_METHODS)
 
+class DocumentRejectRegistrationSerializer(serializers.Serializer):
+    reject_reason = serializers.CharField(required=True)
+
+
 
 
 class SendToArchiveSerializer(serializers.ModelSerializer):

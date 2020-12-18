@@ -52,10 +52,13 @@ class SendToSEVOVVProcess():
                                          self.outgoing_doc.to_org,
                                          sign=self.outgoing_doc.sign.sign)
         xml_path, outgoing_path = conv.save_xml()
+        logger.info(f'xml_path:{xml_path}')
+        logger.info(f'outgoing_path:{outgoing_path}')
+        self.outgoing_doc.xml_file.name = outgoing_path
+        self.outgoing_doc.save()
         result = self.client.send_document(xml_path, producer=self.format_company(self.outgoing_doc.from_org),
                                            consumer=self.format_company(self.outgoing_doc.to_org),
                                            message_id=self.outgoing_doc.message_id)
-        self.outgoing_doc.xml_file.name = outgoing_path
         self.outgoing_doc.sending_result = result
         self.outgoing_doc.save()
 
@@ -85,4 +88,9 @@ class SendAct2SEVOVVProcess():
         result = self.client.send_document(xml_path, producer=self.format_company(producer),
                                            consumer=self.format_company(consumer),
                                            message_id=message_id)
+        self.save_sevovv_message(message_id, producer, consumer, outgoing_path)
+
         return result
+
+    def save_sevovv_message(self, message_id, producer, consumer, outgoing_path):
+        SEVOutgoing.objects.create(from_org=consumer, to_org=producer, xml_file=outgoing_path, message_id=message_id)

@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django_json_widget.widgets import JSONEditorWidget
+from .admin_actions import copy_settings
 
 from .models import ClientFormSettings, ClientFormElementSettings
 
@@ -8,7 +9,7 @@ from .models import ClientFormSettings, ClientFormElementSettings
 class YourForm(forms.ModelForm):
     class Meta:
         model = ClientFormElementSettings
-        fields = ['client_form', 'name', 'values', 'visible', 'disabled']
+        fields = ['client_form', 'name', 'values', 'visible', 'enabled','title']
         widgets = {
             'values': JSONEditorWidget
         }
@@ -26,7 +27,7 @@ class ClientFormElementSettingsAdmin(admin.ModelAdmin):
 
 class ClientFormElementSettingsInline(admin.TabularInline):
     model = ClientFormElementSettings
-    fields = ['client_form', 'name', 'values', 'visible', 'disabled']
+    fields = ['title','client_form', 'name', 'values', 'visible', 'enabled']
     ##filter_horizontal = ('permissions',)
     show_change_link = True
     min_num = 0
@@ -37,6 +38,7 @@ class ClientFormElementSettingsInline(admin.TabularInline):
 @admin.register(ClientFormSettings)
 class ClientFormSettingsAdmin(admin.ModelAdmin):
     list_display = ['role', 'form_name', 'active']
+    actions = [copy_settings, ]
 
     inlines = [
         ClientFormElementSettingsInline
